@@ -1,0 +1,23 @@
+# Maven / Java build artifacts
+/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE / OS
+/.idea/
+/.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Local credentials and environment files
+.env
+.env.*
+application-local.properties
+application-dev.properties
+/db/credentials.properties

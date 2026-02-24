@@ -1,0 +1,3 @@
+-- INSERT statements per popolare il DB di base
+-- Esempio:
+-- INSERT INTO utenti (nome) VALUES ('Mario Rossi');

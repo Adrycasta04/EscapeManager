@@ -1,0 +1,3 @@
+-- DROP TABLE statements per pulire il DB prima dei test
+-- Esempio:
+-- DROP TABLE IF EXISTS utenti CASCADE;
