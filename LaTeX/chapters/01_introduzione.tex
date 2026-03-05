@@ -1,0 +1,15 @@
+\chapter{Introduzione}
+
+\section{Statement}
+Il progetto \textbf{EscapeManager} modella un sistema software centralizzato per la gestione operativa e commerciale di un franchise di Escape Room. L'obiettivo principale dell'applicativo è fornire un'infrastruttura unificata che permetta ai clienti di esplorare le stanze tematiche disponibili ed effettuare prenotazioni e, allo stesso tempo, mette a disposizione del personale strumenti avanzati per il controllo delle sessioni di gioco e la gestione commerciale.
+
+Le sedi del franchise ospitano diverse stanze fisiche (Room), ciascuna caratterizzata da un tema specifico, un livello di difficoltà, una capienza massima di giocatori e un ciclo di vita operativo ben definito (es. \textit{Disponibile, In Corso, In Manutenzione, In Pulizia}). 
+
+Il sistema è progettato per supportare tre tipologie principali di utenti:
+\begin{itemize}
+    \item \textbf{Cliente:} può visualizzare il catalogo globale delle stanze filtrando per sede o difficoltà, prenotare una sessione di gioco per la propria squadra in uno slot temporale libero, e iscriversi a un sistema di avvisi per ricevere notifiche in tempo reale qualora si liberasse un orario precedentemente al completo.
+    \item \textbf{Game Master (Operatore):} assegnato a una specifica filiale, gestisce il flusso operativo quotidiano. Può monitorare le prenotazioni del giorno, avviare o terminare le sessioni di gioco, aggiornare dinamicamente lo stato delle stanze (es. bloccando una stanza per un guasto tecnico a un enigma) e registrare l'esito della partita (vittoria/sconfitta e tempo di fuga).
+    \item \textbf{Admin (Amministratore):} possiede una visione d'insieme sull'intero franchise. Ha i privilegi per aggiungere nuove filiali, inserire nuovi temi per le stanze e configurare politiche di prezzo dinamiche (es. tariffe maggiorate nei giorni festivi o sconti last-minute per riempire gli slot invenduti).
+\end{itemize}
+
+Per garantire manutenibilità e scalabilità, l'architettura fa uso di principi di Object-Oriented Design e di Design Pattern strutturali e comportamentali per risolvere problemi specifici del dominio, come la gestione delle variazioni di stato delle stanze, l'applicazione delle tariffe e il sistema di notifiche. La persistenza dei dati, fondamentale per evitare sovrapposizioni nelle prenotazioni e mantenere lo storico delle partite, è gestita tramite un database relazionale connesso al sistema.

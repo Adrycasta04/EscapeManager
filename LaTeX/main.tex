@@ -1,0 +1,151 @@
+\documentclass[12pt, a4paper]{report} % Classe report per tesi e relazioni, 12pt per una dimensione del testo più leggibile, a4paper per il formato carta europeo
+
+% --- PACCHETTI ---
+\usepackage[utf8]{inputenc}  % Per la codifica UTF-8
+\usepackage[T1]{fontenc}     % Per una migliore gestione dei font
+\usepackage[italian]{babel}  % Per la lingua italiana
+\usepackage{graphicx}        % Per le immagini
+\usepackage{xcolor}          % Per i colori
+\usepackage{geometry}        % Per i margini
+\usepackage{titlesec}        % Per i titoli
+\usepackage{float}           % Per il posizionamento delle figure
+\usepackage{fancyhdr}        % Per intestazioni e piè di pagina personalizzati
+\usepackage{listings}        % Per il codice
+\usepackage{tabularx}        % Per tabelle che si adattano alla larghezza
+\usepackage{times}           % Font stile Times come nel template di riferimento
+\usepackage{hyperref}        % Per i link ipertestuali
+
+% --- CONFIGURAZIONE LINK E COLORI ---
+\definecolor{linkblue}{RGB}{0, 0, 238}
+\definecolor{darkblue}{RGB}{0, 0, 139}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=linkblue,
+    filecolor=magenta,
+    urlcolor=blue,
+    pdftitle={EscapeManager - Relazione Progetto},
+    pdfauthor={Adriano Luca Castaldo},
+}
+
+% --- CONFIGURAZIONE MARGINI ---
+\geometry{
+    left=25mm,
+    right=25mm,
+    top=25mm,
+    bottom=25mm,
+    headheight=15pt
+}
+
+% --- CONFIGURAZIONE HEADER E FOOTER (Fancyhdr) ---
+\pagestyle{fancy}
+\fancyhf{}
+ 
+% Header
+\fancyhead[L]{\textit{Adriano Luca Castaldo}}
+\fancyhead[R]{\textit{Ingegneria del Software}}
+ 
+% Footer
+\fancyfoot[C]{\thepage}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% --- CONFIGURAZIONE CODICE JAVA ---
+\definecolor{javared}{rgb}{0.6,0,0}
+\definecolor{javagreen}{rgb}{0.25,0.5,0.35}
+\definecolor{javapurple}{rgb}{0.5,0,0.35}
+\definecolor{javadocblue}{rgb}{0.25,0.35,0.75}
+
+\lstset{
+    language=Java,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{javapurple}\bfseries,
+    stringstyle=\color{javared},
+    commentstyle=\color{javagreen},
+    morecomment=[s][\color{javadocblue}]{/**}{*/},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=10pt,
+    tabsize=4,
+    showspaces=false,
+    showstringspaces=false,
+    frame=single,
+    rulecolor=\color{black!30},
+    breaklines=true,
+    captionpos=b
+}
+
+\title{Applicativo Java EscapeManager}
+\author{Adriano Luca Castaldo}
+
+% --- TEMPLATE TESTI FRONTESPIZIO ---
+\newcommand{\CoverUniversity}{Università degli Studi di Firenze}
+\newcommand{\CoverDepartment}{Dipartimento di Ingegneria dell'Informazione}
+\newcommand{\CoverCourse}{Ingegneria del software}
+\newcommand{\CoverProfessor}{Enrico Vicario}
+\newcommand{\CoverStudentId}{7138545}
+
+\begin{document}
+
+% --- FRONTESPIZIO ---
+\begin{titlepage}
+    \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+  \centering
+    \includegraphics[width=14cm]{images/logo_unifi.png}\\[1cm]
+
+  \textsc{\LARGE \CoverUniversity}\\[0.5cm]
+  \textsc{\Large \CoverDepartment}\\[0.5cm]
+
+    \makeatletter
+    \HRule \\[1cm]
+    { \huge \bfseries \@title}\\[0.7cm]
+    \HRule \\[1.2cm]
+
+    \begin{minipage}{0.4\textwidth}
+      \begin{flushleft} \large
+        \textit{Autore:}\\
+        \@author
+        \\[1.2em]
+        \textit{N$^{\circ}$ Matricola:}\\
+        \CoverStudentId \\[1.2em]
+      \end{flushleft}
+    \end{minipage}
+    ~
+    \begin{minipage}{0.4\textwidth}
+      \begin{flushright} \large
+        \textit{Corso principale:} \\
+        \CoverCourse\\[1.2em]
+        \textit{Docente corso:} \\
+        \CoverProfessor
+      \end{flushright}
+    \end{minipage}\\[2cm]
+    \makeatother
+
+    \vfill
+
+    \centering
+    {\large Anno Accademico 2025/2026}
+\end{titlepage}
+
+% --- INDICE ---
+{
+  \hypersetup{linkcolor=blue}
+  \tableofcontents
+}
+\newpage
+
+% --- CAPITOLI ---
+
+\input{chapters/01_introduzione}
+\input{chapters/02_requisiti}
+\input{chapters/03_progettazione}
+\input{chapters/04_implementazione}
+\input{chapters/05_testing}
+
+\end{document}

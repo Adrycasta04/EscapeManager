@@ -1,0 +1,8 @@
+\babel@toc {italian}{}\relax 
+\babel@toc {italian}{}\relax 
+\contentsline {chapter}{\numberline {1}Introduzione}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Statement}{2}{section.1.1}%
+\contentsline {chapter}{\numberline {2}Requisiti}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Use Case Diagram}{3}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Use Case Templates}{4}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}UC1: Prenotazione Stanza}{4}{subsection.2.2.1}%
