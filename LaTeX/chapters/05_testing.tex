@@ -1,0 +1,94 @@
+\chapter{Collaudo e Testing}
+
+La fase di verifica e validazione del sistema \textbf{EscapeManager} è stata condotta seguendo un approccio multilivello, utilizzando il framework \textbf{JUnit 5}. L'obiettivo del collaudo non è stato solo quello di garantire l'assenza di difetti evidenti (bug), ma soprattutto di dimostrare la robustezza dell'architettura e la perfetta aderenza ai requisiti funzionali delineati nel Capitolo 2.
+
+\section{Testing Strutturale (White-Box)}
+
+I test strutturali (o Unit Test) si sono concentrati sulle classi del \texttt{Domain Model}, con l'obiettivo di massimizzare la copertura (Code Coverage) dei rami condizionali e verificare la correttezza algoritmica, in totale isolamento dalle dipendenze esterne.
+
+Particolare attenzione è stata dedicata al collaudo dei Design Pattern. Il Listing \ref{lst:test_strategy} mostra un test parametrizzato per la verifica delle politiche di prezzo dinamiche (\textit{Strategy Pattern}).
+
+\begin{lstlisting}[caption={Unit Test per la logica di calcolo del prezzo (Strategy Pattern)}, label={lst:test_strategy}]
+class PricingStrategyTest {
+
+    @Test
+    void testTariffaWeekendSovrapprezzo() {
+        // Setup
+        Stanza stanza = new Stanza("R01", "Horror Asylum", 6, 20.0);
+        PricingStrategy weekendStrategy = new TariffaWeekend();
+        stanza.setPricingStrategy(weekendStrategy);
+        
+        // Execution: 4 giocatori a 20 euro base = 80 euro. +20% weekend = 96.0 euro
+        double prezzoCalcolato = stanza.calcolaPrezzo(4);
+        
+        // Assertion
+        assertEquals(96.0, prezzoCalcolato, 0.01, 
+            "Il calcolo della tariffa weekend non applica correttamente il sovrapprezzo del 20%");
+    }
+}
+\end{lstlisting}
+
+\section{Testing di Integrazione (DAO e Database)}
+
+Per verificare il corretto interfacciamento tra l'applicazione Java e il database PostgreSQL (livello ORM), sono stati implementati dei test di integrazione sulle classi DAO.
+Per garantire la \textbf{ripetibilità} e l'isolamento dei test (evitando che l'esecuzione di un test sporchi i dati del successivo), è stato sfruttato il costrutto \texttt{@BeforeEach} di JUnit per lanciare uno script SQL di \textit{reset e re-inizializzazione} del database prima di ogni metodo di test.
+
+\begin{lstlisting}[caption={Integration Test per StanzaDAO con reset dello stato}, label={lst:test_dao}]
+class StanzaDAOTest {
+    private StanzaDAO stanzaDAO;
+
+    @BeforeEach
+    void setUpDatabase() throws Exception {
+        // Esegue reset.sql e default.sql per riportare il DB a uno stato noto
+        DatabaseHelper.resetTestDatabase();
+        stanzaDAO = new StanzaDAOPostgres();
+    }
+
+    @Test
+    void testFindStanzeDisponibiliBySede() throws SQLException {
+        // La sede "FI01" nel db di test ha 2 stanze DISPONIBILI e 1 IN_MANUTENZIONE
+        List<Stanza> disponibili = stanzaDAO.findBySedeAndStato("FI01", "DISPONIBILE");
+        
+        assertNotNull(disponibili);
+        assertEquals(2, disponibili.size());
+        assertTrue(disponibili.stream().allMatch(s -> s.getStato().equals("DISPONIBILE")));
+    }
+}
+\end{lstlisting}
+
+\section{Testing Funzionale (Black-Box e Tracciabilità)}
+
+Il livello più alto di collaudo ha riguardato i \texttt{Controllers}. In questa fase (Black-Box Testing) la logica interna viene ignorata e il sistema viene testato esclusivamente in base agli input e agli output attesi.
+
+Per garantire la massima \textbf{tracciabilità}, ogni test funzionale è stato mappato direttamente su uno specifico \textit{Use Case Template} (Sezione 2.2). Sono stati collaudati sia i \textit{Flussi Base} che i \textit{Flussi Alternativi} (le eccezioni).
+
+Il Listing \ref{lst:test_funzionale} dimostra come il sistema gestisce fluidamente la \textit{Race Condition} descritta nell'UC2 (Alternativa 3a), negando la prenotazione se lo slot risulta già occupato a database.
+
+\begin{lstlisting}[caption={Functional Test tracciato sull'UC2 (Flusso Alternativo 3a)}, label={lst:test_funzionale}]
+class PrenotazioneControllerTest {
+
+    @Test
+    void testPrenotazioneNegataPerSlotOccupato_UC2_Alt3a() {
+        // Setup: Il Cliente 2 tenta di prenotare uno slot appena occupato dal Cliente 1
+        PrenotazioneController controller = new PrenotazioneController();
+        String stanzaId = "R01";
+        LocalDateTime slotRichiesto = LocalDateTime.of(2026, 10, 31, 21, 0); // Halloween, ore 21
+        
+        // Simulo la race condition pre-occupando lo slot
+        controller.forzaOccupazioneSlot(stanzaId, slotRichiesto, "CLIENTE_01");
+
+        // Execution & Assertion (Mi aspetto un'eccezione custom di business logic)
+        SlotNonDisponibileException eccezione = assertThrows(
+            SlotNonDisponibileException.class, 
+            () -> controller.effettuaPrenotazione("CLIENTE_02", stanzaId, slotRichiesto, 4)
+        );
+        
+        assertEquals("Lo slot orario selezionato non e' piu' disponibile.", eccezione.getMessage());
+    }
+}
+\end{lstlisting}
+
+\section{Conclusioni}
+
+L'approccio metodologico adottato, guidato dai principi dell'Object-Oriented Design e supportato dall'uso estensivo dei Design Pattern, ha permesso di sviluppare \textbf{EscapeManager} come un sistema robusto, altamente coeso e disaccoppiato. 
+La suite di collaudo ha confermato la solidità della logica di business e la corretta integrazione con il layer relazionale, soddisfacendo integralmente i requisiti posti in fase di analisi e fornendo un'architettura facilmente estensibile per sviluppi futuri (es. integrazione di sensori fisici nelle stanze tramite \textit{Adapter Pattern} o implementazione di un'interfaccia grafica avanzata al posto dell'attuale CLI).

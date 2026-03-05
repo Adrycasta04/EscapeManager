@@ -1,0 +1,61 @@
+@startuml er_diagram
+hide circle
+skinparam linetype ortho
+skinparam EntityBackgroundColor LightCyan
+skinparam EntityBorderColor DarkCyan
+
+entity "SEDE" as sede {
+  * id : VARCHAR <<PK>>
+  --
+  * nome : VARCHAR
+  * citta : VARCHAR
+}
+
+entity "STANZA" as stanza {
+  * id : VARCHAR <<PK>>
+  --
+  * sede_id : VARCHAR <<FK>>
+  * tema : VARCHAR
+  * capienza_max : INT
+  * prezzo_base : DECIMAL
+  * stato_corrente : VARCHAR
+  * pricing_strategy : VARCHAR
+}
+
+entity "UTENTE" as utente {
+  * id : VARCHAR <<PK>>
+  --
+  * email : VARCHAR
+  * password_hash : VARCHAR
+  * ruolo : VARCHAR (CLIENTE, ADMIN, GM)
+  nome : VARCHAR <<Nullable>>
+  telefono : VARCHAR <<Nullable>>
+  matricola : VARCHAR <<Nullable>>
+  livello_accesso : INT <<Nullable>>
+}
+
+entity "PRENOTAZIONE" as prenotazione {
+  * id : VARCHAR <<PK>>
+  --
+  * cliente_id : VARCHAR <<FK>>
+  * stanza_id : VARCHAR <<FK>>
+  * data_ora : TIMESTAMP
+  * numero_giocatori : INT
+  * prezzo_totale : DECIMAL
+  * stato_partita : VARCHAR
+}
+
+entity "LISTA_ATTESA" as lista_attesa {
+  * cliente_id : VARCHAR <<FK>> <<PK>>
+  * stanza_id : VARCHAR <<FK>> <<PK>>
+  * data_richiesta : TIMESTAMP <<PK>>
+  --
+}
+
+sede ||..o{ stanza : "ospita"
+utente ||..o{ prenotazione : "effettua"
+stanza ||..o{ prenotazione : "riservata"
+utente ||..o{ lista_attesa : "iscritto"
+stanza ||..o{ lista_attesa : "ha in coda"
+
+@enduml

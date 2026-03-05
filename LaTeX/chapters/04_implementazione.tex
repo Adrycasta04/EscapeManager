@@ -1,0 +1,105 @@
+\chapter{Implementazione e Architettura del Codice}
+
+Questo capitolo descrive la traduzione del Domain Model e dello Schema Logico in codice sorgente Java. L'architettura software è stata strutturata seguendo il pattern architetturale \textit{Layered} (a strati), che ricalca logicamente il paradigma BCE (Boundary-Control-Entity), garantendo un elevato disaccoppiamento e facilitando il testing isolato dei componenti.
+
+\section{Architettura dei Package}
+
+L'applicazione è organizzata in quattro package principali, illustrati nel Package Diagram in Figura \ref{fig:package_diagram}. Le dipendenze tra i package sono rigorosamente direzionali: lo strato di presentazione (\texttt{cli}) non accede mai direttamente al database, ma passa per i \texttt{controllers}, che a loro volta orchestrano il \texttt{domain} e si interfacciano con i \texttt{dao}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{images/package_diagram.png}
+    \caption{Package Diagram dell'architettura di sistema}
+    \label{fig:package_diagram}
+\end{figure}
+
+\section{Livello di Persistenza (Pattern DAO)}
+
+Per soddisfare i requisiti del modulo di Laboratorio di Informatica, l'accesso al database PostgreSQL è stato isolato tramite il pattern \textbf{Data Access Object (DAO)}. Questo garantisce che la logica di business rimanga del tutto agnostica rispetto alla tecnologia di persistenza.
+
+La connessione al database è gestita tramite un \textbf{Singleton Pattern} (\texttt{ConnectionManager}), che assicura l'esistenza di un'unica istanza di connessione (o di un connection pool) condivisa per tutta l'applicazione, evitando l'overhead di connessioni multiple.
+
+\begin{lstlisting}[caption={Interfaccia DAO e uso dei Generics}, label={lst:dao_interface}]
+public interface GenericDAO<T, ID> {
+    void save(T entity) throws SQLException;
+    T findById(ID id) throws SQLException;
+    List<T> findAll() throws SQLException;
+    void update(T entity) throws SQLException;
+    void delete(ID id) throws SQLException;
+}
+
+public interface StanzaDAO extends GenericDAO<Stanza, String> {
+    List<Stanza> findBySedeAndStato(String sedeId, String statoCorrente) throws SQLException;
+}
+\end{lstlisting}
+
+\section{Implementazione dei Design Pattern}
+
+Di seguito vengono riportati i frammenti di codice più significativi che mostrano l'implementazione pratica dei Design Pattern progettati nel Capitolo 3.
+
+\subsection{State Pattern}
+Lo State Pattern elimina la necessità di costrutti condizionali complessi per la gestione del ciclo di vita della \texttt{Stanza}. Ogni stato concreto implementa il comportamento specifico e gestisce, ove necessario, la transizione allo stato successivo.
+
+\begin{lstlisting}[caption={Implementazione dello State Pattern}, label={lst:state_pattern}]
+public interface RoomState {
+    void prenota(Stanza stanza);
+    void iniziaSessione(Stanza stanza);
+    void terminaSessione(Stanza stanza);
+    String getStatusString();
+}
+
+public class DisponibileState implements RoomState {
+    @Override
+    public void iniziaSessione(Stanza stanza) {
+        // Logica di avvio...
+        stanza.setStato(new InCorsoState()); // Transizione di stato
+    }
+    
+    @Override
+    public void terminaSessione(Stanza stanza) {
+        throw new IllegalStateException("Impossibile terminare una sessione non avviata.");
+    }
+    // ... altri metodi
+}
+\end{lstlisting}
+
+\subsection{Strategy Pattern}
+Il calcolo del prezzo della prenotazione (UC2) è demandato alla \texttt{PricingStrategy}. Il Controller, in base alla data della prenotazione, inietta la strategia corretta all'interno dell'entità.
+
+\begin{lstlisting}[caption={Implementazione dello Strategy Pattern}, label={lst:strategy_pattern}]
+public interface PricingStrategy {
+    double calcola(double prezzoBase, int numeroGiocatori);
+}
+
+public class TariffaWeekend implements PricingStrategy {
+    private static final double SOVRAPPREZZO = 1.20; // +20%
+    
+    @Override
+    public double calcola(double prezzoBase, int numeroGiocatori) {
+        return (prezzoBase * numeroGiocatori) * SOVRAPPREZZO;
+    }
+}
+\end{lstlisting}
+
+\subsection{Observer Pattern}
+La lista d'attesa (UC3) implementa un sistema Publisher-Subscriber puro in Java, disaccoppiando l'evento di cancellazione di una prenotazione dall'invio effettivo delle notifiche.
+
+\begin{lstlisting}[caption={Implementazione dell'Observer Pattern}, label={lst:observer_pattern}]
+public interface WaitingListObserver {
+    void update(Stanza stanza, LocalDateTime slotLiberato);
+}
+
+public class WaitingList {
+    private List<WaitingListObserver> observers = new ArrayList<>();
+
+    public void attach(WaitingListObserver observer) {
+        observers.add(observer);
+    }
+
+    public void notifyObservers(Stanza stanza, LocalDateTime slot) {
+        for (WaitingListObserver obs : observers) {
+            obs.update(stanza, slot); // Notifica asincrona
+        }
+    }
+}
+\end{lstlisting}

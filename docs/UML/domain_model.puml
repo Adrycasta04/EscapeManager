@@ -1,0 +1,103 @@
+@startuml domain_model
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package "Domain Model (Entities & Core Logic)" {
+
+    ' --- GERARCHIA UTENTI ---
+    abstract class Utente {
+        - id: String
+        - email: String
+        - passwordHash: String
+        + login(email: String, psw: String): boolean
+    }
+    class Cliente {
+        - nome: String
+        - telefono: String
+        + prenota(s: Stanza, data: Date): Prenotazione
+    }
+    class GameMaster {
+        - matricola: String
+    }
+    class Admin {
+        - livelloAccesso: int
+    }
+    Utente <|-- Cliente
+    Utente <|-- GameMaster
+    Utente <|-- Admin
+
+    ' --- STRUTTURA FRANCHISE ---
+    class Sede {
+        - id: String
+        - nome: String
+        - citta: String
+    }
+    
+    class Stanza {
+        - id: String
+        - tema: String
+        - capienzaMax: int
+        - prezzoBase: double
+        + cambiaStato(nuovoStato: RoomState): void
+        + calcolaPrezzo(data: Date, giocatori: int): double
+    }
+
+    ' --- RELAZIONI PRINCIPALI ---
+    Sede "1" *-- "*" Stanza : ospita >
+    GameMaster "*" -- "1" Sede : lavora in >
+
+    ' --- PRENOTAZIONE E OBSERVER PATTERN ---
+    class Prenotazione {
+        - id: String
+        - dataOra: Date
+        - numeroGiocatori: int
+        - prezzoTotale: double
+        - stato: String
+    }
+    Cliente "1" -- "*" Prenotazione : effettua >
+    Prenotazione "*" -- "1" Stanza : riservata per >
+
+    ' Observer Pattern per Lista Attesa
+    interface WaitingListObserver <<Observer>> {
+        + update(stanza: Stanza, data: Date): void
+    }
+    class WaitingList <<Subject>> {
+        - observers: List<WaitingListObserver>
+        + attach(o: WaitingListObserver): void
+        + detach(o: WaitingListObserver): void
+        + notifyObservers(s: Stanza, d: Date): void
+    }
+    Cliente ..|> WaitingListObserver
+    Stanza "1" -- "1" WaitingList : ha >
+
+    ' --- STATE PATTERN (Ciclo di vita Stanza) ---
+    interface RoomState <<State>> {
+        + prenota(s: Stanza): void
+        + iniziaSessione(s: Stanza): void
+        + terminaSessione(s: Stanza): void
+        + setManutenzione(s: Stanza): void
+    }
+    class Disponibile implements RoomState
+    class InCorso implements RoomState
+    class InPulizia implements RoomState
+    class InManutenzione implements RoomState
+
+    Stanza o-- "1" RoomState : statoCorrente
+
+    ' --- STRATEGY PATTERN (Prezzi Dinamici) ---
+    interface PricingStrategy <<Strategy>> {
+        + calcola(prezzoBase: double, giocatori: int): double
+    }
+    class TariffaBase implements PricingStrategy
+    class TariffaWeekend implements PricingStrategy
+    class ScontoStudenti implements PricingStrategy
+
+    Stanza o-- "1" PricingStrategy : usa
+}
+
+' Note per evidenziare i pattern al professore
+note right of RoomState : **State Pattern**\nElimina gli if/else per\nla gestione del ciclo di vita
+note right of PricingStrategy : **Strategy Pattern**\nCalcolo dinamico delle\ntariffe intercambiabile a runtime
+note top of WaitingList : **Observer Pattern**\nNotifica asincrona dei clienti\nin lista d'attesa
+
+@enduml

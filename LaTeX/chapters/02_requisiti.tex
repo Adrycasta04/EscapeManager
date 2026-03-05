@@ -1,7 +1,6 @@
-\chapter{Requisiti}
+\chapter{Analisi dei Requisiti}
 
-\section{Use Case Diagram}
-Per definire i requisiti funzionali del sistema in ottica Object-Oriented, si è proceduto all'identificazione degli attori principali e dei relativi casi d'uso. 
+Per definire i requisiti funzionali del sistema in ottica Object-Oriented, si è proceduto all'identificazione degli attori principali e dei relativi casi d'uso. La modellazione è stata divisa in due livelli di astrazione: un diagramma di contesto ad alto livello per identificare i macro-obiettivi (User Goals) e un diagramma dettagliato per l'analisi tecnica.
 
 Il sistema prevede le seguenti figure:
 \begin{itemize}
@@ -10,63 +9,222 @@ Il sistema prevede le seguenti figure:
     \item \textbf{Admin:} Amministratore di sistema incaricato di definire il catalogo e le logiche commerciali.
 \end{itemize}
 
-La Figura \ref{fig:usecase} illustra il diagramma globale dei casi d'uso, evidenziando i confini del sistema (Boundary) e le relazioni di inclusione ed estensione. Si noti come le operazioni critiche (prenotazioni e gestione interna) richiedano obbligatoriamente l'autenticazione tramite la relazione \texttt{<<include>>}, e come la gestione della lista d'attesa rappresenti una pura estensione (\texttt{<<extend>>}) del normale flusso di prenotazione.
+\section{Use Case Diagram (High-Level)}
+La Figura \ref{fig:usecase_ridotto} illustra il diagramma di contesto. Questo livello omette le dipendenze strutturali per evidenziare esclusivamente il macro-scopo di ciascun attore all'interno dell'ecosistema EscapeManager.
 
 \begin{figure}[H]
     \centering
-    % Assicurati di aver esportato il png da PlantUML dentro la cartella images
-    \includegraphics[width=0.85\textwidth]{images/usecase_diagram.png}
-    \caption{Diagramma dei Casi d'Uso (Use Case Diagram) di EscapeManager}
-    \label{fig:usecase}
+    \includegraphics[width=0.75\textwidth]{images/usecase_diagram_ridotto.png}
+    \caption{Diagramma di Contesto (Macro-obiettivi degli attori)}
+    \label{fig:usecase_ridotto}
+\end{figure}
+
+\section{Use Case Diagram (Dettagliato)}
+La Figura \ref{fig:usecase_dettagliato} espande i macro-obiettivi nei casi d'uso effettivi del sistema. In questa vista vengono esplicitate le relazioni di inclusione (\texttt{<<include>>}) necessarie per la sicurezza e l'autenticazione, e le relazioni di estensione (\texttt{<<extend>>}) che modellano flussi alternativi complessi, come la gestione delle liste d'attesa.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/usecase_diagram.png}
+    \caption{Diagramma dei Casi d'Uso Dettagliato}
+    \label{fig:usecase_dettagliato}
 \end{figure}
 
 \section{Use Case Templates}
-A corredo del diagramma, vengono definiti i template testuali per i casi d'uso primari. La formalizzazione di questi scenari descrive nel dettaglio il Flusso Base (Basic Flow) e i Flussi Alternativi (Alternative Flows), i quali costituiranno successivamente la base per la stesura dei test funzionali e di accettazione.
 
-\subsection{UC1: Prenotazione Stanza}
-Questo caso d'uso descrive il processo attraverso il quale un Cliente prenota una sessione di gioco in una specifica Escape Room, scegliendo data, ora e numero di partecipanti. Il sistema si occupa di verificare la disponibilità e calcolare la tariffa applicabile.
+Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, adottando un formato strutturato che esplicita le pre-condizioni, le post-condizioni, il flusso base (Main Success Scenario) e le possibili deviazioni (Alternative Flows). Questa formalizzazione costituisce il contratto per lo sviluppo e la base per la successiva stesura dei test funzionali.
+
+\subsection{UC1 - Autenticazione (Login)}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{|>{\columncolor{lightgray!30}\bfseries}l|X|}
+        \hline
+        Nome Use Case & UC1 - Autenticazione (Login) \\
+        \hline
+        Attori Principali & Cliente, Game Master, Admin \\
+        \hline
+        Scopo & Verificare l'identità dell'utente e garantirgli l'accesso alle funzionalità di propria competenza. \\
+        \hline
+        Pre-condizioni & L'utente non è autenticato nel sistema. \\
+        \hline
+        Post-condizioni & L'utente è autenticato e la sua sessione è attiva con i privilegi corretti. \\
+        \hline
+        \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flusso Base (Basic Flow)}} \\
+        \hline
+        \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
+            \begin{enumerate}
+                \item L'utente accede alla schermata di Login del sistema.
+                \item L'utente inserisce le proprie credenziali (Email e Password) e richiede l'accesso.
+                \item Il Sistema interroga il database per validare la corrispondenza delle credenziali.
+                \item Il Sistema identifica il ruolo associato all'account (Cliente, Game Master o Admin).
+                \item Il Sistema inizializza la sessione e reindirizza l'utente alla View/Dashboard specifica per il suo ruolo.
+            \end{enumerate}
+        } \\
+        \hline
+        \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flussi Alternativi (Alternative Flows)}} \\
+        \hline
+        \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
+            \textbf{3a. Credenziali errate o account inesistente:}
+            \begin{itemize}
+                \item[3a.1] Se la combinazione di Email e Password non trova riscontro nel database, il Sistema nega l'accesso.
+                \item[3a.2] Il Sistema mostra un messaggio di errore ("Credenziali non valide") e pulisce il campo password.
+                \item[3a.3] L'utente viene mantenuto alla schermata di Login (torna al passo 2).
+            \end{itemize}
+        } \\
+        \hline
+    \end{tabularx}
+    \caption{Template del Caso d'Uso: Autenticazione}
+    \label{tab:uc1_login}
+\end{table}
+
+\subsection{UC2 - Prenotazione Stanza}
 
 \begin{table}[H]
     \centering
     \renewcommand{\arraystretch}{1.3} % Aumenta lo spazio tra le righe
-    \begin{tabularx}{\textwidth}{|l|X|}
+    \begin{tabularx}{\textwidth}{|>{\columncolor{lightgray!30}\bfseries}l|X|}
         \hline
-        \textbf{ID Caso d'Uso} & \textbf{UC1} \\
+        Nome Use Case & UC2 - Prenotazione Stanza \\
         \hline
-        \textbf{Nome} & Prenotazione Stanza \\
+        Attore Principale & Cliente \\
         \hline
-        \textbf{Attore Principale} & Cliente \\
+        Scopo & Permettere al cliente di riservare una stanza in uno specifico slot temporale, calcolando la tariffa appropriata. \\
         \hline
-        \textbf{Pre-condizioni} & Il Cliente ha effettuato il login al sistema ed è autenticato. \\
+        Pre-condizioni & Il Cliente è autenticato nel sistema. Il sistema ha caricato il catalogo delle stanze. \\
         \hline
-        \textbf{Post-condizioni} & Una nuova Prenotazione è registrata nel database, lo slot orario selezionato risulta occupato e il prezzo totale è stato calcolato e confermato. \\
+        Post-condizioni & Una nuova Prenotazione viene registrata nel sistema con stato "Confermata". Lo slot orario della stanza risulta occupato. \\
         \hline
-        \textbf{Flusso Base} & 
-        \begin{minipage}[t]{\linewidth}
+        \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flusso Base (Basic Flow)}} \\
+        \hline
+        \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
             \begin{enumerate}
-                \item Il Cliente richiede di effettuare una nuova prenotazione.
-                \item Il sistema mostra l'elenco delle filiali (Franchise) disponibili.
-                \item Il Cliente seleziona una filiale.
-                \item Il sistema mostra l'elenco delle Stanze associate alla filiale, indicando tema, difficoltà e capienza.
-                \item Il Cliente seleziona una Stanza.
-                \item Il sistema mostra il calendario con gli slot orari disponibili per i giorni futuri.
-                \item Il Cliente seleziona una data, uno slot orario e inserisce il numero di giocatori previsti.
-                \item Il sistema calcola il prezzo preventivato (applicando la \textit{PricingStrategy} attiva per quel giorno/stanza) e mostra il riepilogo.
+                \item Il Cliente seleziona una Stanza dal catalogo e richiede di visualizzare le disponibilità.
+                \item Il Sistema mostra il calendario con le date e gli slot orari disponibili per la Stanza scelta.
+                \item Il Cliente seleziona una data, uno slot orario libero e inserisce il numero di giocatori.
+                \item Il Sistema calcola il prezzo totale basandosi sulla strategia di prezzo corrente (es. base, weekend) e mostra il riepilogo.
                 \item Il Cliente conferma la prenotazione.
-                \item Il sistema registra la prenotazione, segna lo slot come non più disponibile e notifica al Cliente il successo dell'operazione.
+                \item Il Sistema registra la prenotazione, aggiorna lo stato dello slot orario e mostra un messaggio di successo.
             \end{enumerate}
-        \end{minipage} \\
+        } \\
         \hline
-        \textbf{Flussi Alternativi} & 
-        \begin{minipage}[t]{\linewidth}
+        \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flussi Alternativi (Alternative Flows)}} \\
+        \hline
+        \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
+            \textbf{3a. Slot orario non più disponibile (Race condition):}
             \begin{itemize}
-                \item \textbf{4a. Nessuna stanza disponibile:} Se la filiale non ha stanze attive, il sistema mostra un messaggio informativo e riporta il Cliente al passo 2.
-                \item \textbf{7a. Violazione capienza:} Se il numero di giocatori inserito è inferiore al minimo o superiore alla capienza massima della stanza, il sistema mostra un messaggio di errore e richiede un nuovo inserimento (ritorno al passo 7).
-                \item \textbf{9a. Slot occupato (Race Condition) / Estensione UC3:} Se nel lasso di tempo tra il passo 6 e il passo 9 un altro utente ha prenotato lo stesso slot, la conferma fallisce. Il sistema avvisa il Cliente e gli propone di iscriversi alla Lista d'Attesa (\textit{<<extend>> UC3}). Il flusso riprende dal passo 6.
+                \item[3a.1] Se nel momento della conferma lo slot è stato appena prenotato da un altro utente, il Sistema notifica l'errore.
+                \item[3a.2] Il Sistema propone al Cliente di tornare al passo 2 o di iscriversi alla Lista d'Attesa (UC3 - \textit{Extend}).
             \end{itemize}
-        \end{minipage} \\
+            \vspace{0.2cm}
+            \textbf{4a. Numero di giocatori non valido:}
+            \begin{itemize}
+                \item[4a.1] Se il numero di giocatori inserito supera la capienza massima (o è inferiore alla minima) della Stanza, il Sistema segnala l'errore.
+                \item[4a.2] Il Cliente è riportato al passo 3 per correggere il dato.
+            \end{itemize}
+        } \\
         \hline
     \end{tabularx}
-    \caption{Template descrittivo per UC1 - Prenotazione Stanza}
-    \label{tab:uc1_prenotazione}
+    \caption{Template del Caso d'Uso: Prenotazione Stanza}
+    \label{tab:uc2_prenotazione}
+\end{table}
+
+\subsection{UC3 - Iscrizione Lista d'Attesa (Extend)}
+
+Questo caso d'uso rappresenta un'estensione del normale flusso di prenotazione (UC2) e si attiva esclusivamente quando il Cliente tenta di prenotare uno slot orario che ha già raggiunto la capienza massima.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{|>{\columncolor{lightgray!30}\bfseries}l|X|}
+        \hline
+        Nome Use Case & UC3 - Iscrizione Lista d'Attesa \\
+        \hline
+        Attore Principale & Cliente \\
+        \hline
+        Scopo & Iscrivere l'utente a un sistema di notifiche per uno slot occupato, avvisandolo in caso di disdetta. \\
+        \hline
+        Pre-condizioni & Il Cliente è autenticato. Lo slot orario desiderato per la Stanza risulta "Occupato" (condizione di estensione dal passo 3a dell'UC2). \\
+        \hline
+        Post-condizioni & Il Cliente è inserito nella lista d'attesa per quello specifico slot. Nessuna prenotazione è ancora confermata. \\
+        \hline
+        \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flusso Base (Basic Flow)}} \\
+        \hline
+        \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
+            \begin{enumerate}
+                \item Il Cliente seleziona l'opzione "Avvisami se si libera".
+                \item Il Sistema registra l'iscrizione del Cliente come "Osservatore" per quello specifico slot e Stanza.
+                \item Il Sistema mostra un messaggio di conferma e riporta l'utente alla dashboard principale.
+            \end{enumerate}
+        } \\
+        \hline
+        \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flusso Asincrono (Asynchronous Flow)}} \\
+        \hline
+        \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
+            \textbf{Notifica di disponibilità:}
+            \begin{itemize}
+                \item[A.1] Un altro utente cancella la sua prenotazione per quello slot.
+                \item[A.2] Il Sistema rileva il cambio di stato dello slot (da Occupato a Libero).
+                \item[A.3] Il Sistema notifica automaticamente e in tempo reale tutti i Clienti iscritti alla lista d'attesa per quello slot.
+                \item[A.4] La lista d'attesa per quello slot viene svuotata o i clienti vengono rimossi man mano che uno di loro effettua la prenotazione.
+            \end{itemize}
+        } \\
+        \hline
+    \end{tabularx}
+    \caption{Template del Caso d'Uso: Iscrizione Lista d'Attesa}
+    \label{tab:uc3_attesa}
+\end{table}
+
+\subsection{UC4 - Controllo Sessione di Gioco}
+
+Questo caso d'uso è il cuore operativo della filiale e modella il modo in cui il Game Master interagisce con il ciclo di vita della Stanza fisica.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{|>{\columncolor{lightgray!30}\bfseries}l|X|}
+        \hline
+        Nome Use Case & UC4 - Controllo Sessione di Gioco \\
+        \hline
+        Attore Principale & Game Master \\
+        \hline
+        Scopo & Gestire lo svolgimento di una partita, alterando lo stato della stanza e registrando l'esito finale. \\
+        \hline
+        Pre-condizioni & Il Game Master è autenticato. Esiste una prenotazione per l'orario corrente. La Stanza è in stato "Disponibile". \\
+        \hline
+        Post-condizioni & La partita è conclusa, l'esito è salvato a database e la Stanza passa in stato "In Pulizia". \\
+        \hline
+        \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flusso Base (Basic Flow)}} \\
+        \hline
+        \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
+            \begin{enumerate}
+                \item Il Game Master seleziona la prenotazione in partenza dal tabellone giornaliero.
+                \item Il Game Master preme il comando "Avvia Sessione".
+                \item Il Sistema transita lo stato della Stanza da "Disponibile" a "In Corso" e fa partire il timer interno.
+                \item I giocatori terminano la partita (risolvono l'ultimo enigma o scade il tempo massimo).
+                \item Il Game Master preme il comando "Termina Sessione" e inserisce l'esito (Vittoria/Sconfitta) e il tempo impiegato.
+                \item Il Sistema salva le statistiche nel database e transita lo stato della Stanza da "In Corso" a "In Pulizia".
+            \end{enumerate}
+        } \\
+        \hline
+        \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flussi Alternativi (Alternative Flows)}} \\
+        \hline
+        \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
+            \textbf{2a. Stanza non disponibile (Manutenzione):}
+            \begin{itemize}
+                \item[2a.1] Se la Stanza si trova in stato "In Manutenzione", il Sistema blocca l'avvio della sessione e mostra un avviso.
+                \item[2a.2] Il flusso termina o il GM modifica lo stato della stanza (tramite altro UC).
+            \end{itemize}
+            \vspace{0.2cm}
+            \textbf{4a. Guasto tecnico durante la partita:}
+            \begin{itemize}
+                \item[4a.1] Un elemento della stanza si rompe impedendo il proseguimento del gioco.
+                \item[4a.2] Il Game Master forza l'interruzione della sessione.
+                \item[4a.3] Il Sistema chiede di specificare la motivazione, annulla la sessione corrente e transita la Stanza direttamente nello stato "In Manutenzione".
+            \end{itemize}
+        } \\
+        \hline
+    \end{tabularx}
+    \caption{Template del Caso d'Uso: Controllo Sessione di Gioco}
+    \label{tab:uc4_sessione}
 \end{table}
