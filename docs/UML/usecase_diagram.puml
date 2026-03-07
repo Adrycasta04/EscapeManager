@@ -17,9 +17,6 @@ actor "Admin" as A
 
 rectangle "EscapeManager System" {
     
-    ' --- Casi d'uso condivisi/inclusi ---
-    usecase "Autenticazione (Login)" as UC_Login
-    
     ' --- Casi d'uso Cliente ---
     usecase "Ricerca Stanze" as UC_C1
     usecase "Prenotazione Stanza" as UC_C2
@@ -33,7 +30,7 @@ rectangle "EscapeManager System" {
     
     ' --- Casi d'uso Admin ---
     usecase "Gestione Filiali e Stanze" as UC_A1
-    usecase "Configurazione Politiche di Prezzo" as UC_A2
+    usecase "Configurazione Politiche Prezzo" as UC_A2
 }
 
 ' --- Relazioni Attori -> Casi d'uso ---
@@ -48,17 +45,8 @@ GM --> UC_GM3
 A --> UC_A1
 A --> UC_A2
 
-' --- Relazioni <<include>> (Dipendenze obbligatorie) ---
-UC_C2 ..> UC_Login : <<include>>
-UC_C4 ..> UC_Login : <<include>>
-UC_GM1 ..> UC_Login : <<include>>
-UC_GM2 ..> UC_Login : <<include>>
-UC_GM3 ..> UC_Login : <<include>>
-UC_A1 ..> UC_Login : <<include>>
-UC_A2 ..> UC_Login : <<include>>
-
 ' --- Relazioni <<extend>> (Flussi alternativi/opzionali) ---
 ' L'iscrizione alla lista d'attesa è un'estensione del tentativo di prenotazione se lo slot è pieno
-UC_C3 .up.> UC_C2 : <<extend>>\n(condizione: slot occupato)
+UC_C3 .up.> UC_C2 : <<extend>>\n(se slot occupato)
 
 @enduml
