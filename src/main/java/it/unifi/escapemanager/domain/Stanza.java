@@ -10,6 +10,7 @@ public class Stanza {
     // Pattern references
     private RoomState statoCorrente;
     private PricingStrategy pricingStrategy; // L'interfaccia per lo Strategy Pattern
+    private final WaitingList listaAttesa = new WaitingList(); // Observer Pattern
 
     public Stanza(String id, String sedeId, String tema, int capienzaMax, double prezzoBase) {
         this.id = id;
@@ -43,6 +44,10 @@ public class Stanza {
         this.statoCorrente.setManutenzione(this);
     }
 
+    public void impostaDisponibile() {
+        this.statoCorrente.setDisponibile(this);
+    }
+
     // --- Metodo delegato allo Strategy Pattern ---
     
     public double calcolaPrezzo(int numeroGiocatori) {
@@ -66,5 +71,6 @@ public class Stanza {
     public String getSedeId() { return sedeId; }
     public int getCapienzaMax() { return capienzaMax; }
     public double getPrezzoBase() { return prezzoBase; }
+    public WaitingList getListaAttesa() { return listaAttesa; }
     
 }

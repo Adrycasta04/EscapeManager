@@ -22,6 +22,11 @@ public class InManutenzioneState implements RoomState {
     }
 
     @Override
+    public void setDisponibile(Stanza stanza) {
+        stanza.setStato(new DisponibileState());
+    }
+
+    @Override
     public String getStatusString() {
         return "IN_MANUTENZIONE";
     }

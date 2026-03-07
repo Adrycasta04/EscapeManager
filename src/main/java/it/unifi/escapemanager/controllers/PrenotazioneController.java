@@ -22,7 +22,7 @@ public class PrenotazioneController {
     }
 
     /**
-     * Implementa il Caso d'Uso: UC2 - Prenotazione Stanza
+     * Implementa il Caso d'Uso: UC1 - Prenotazione Stanza
      */
     public Prenotazione effettuaPrenotazione(String clienteId, String stanzaId, LocalDateTime dataOra, int numeroGiocatori) 
             throws SQLException, SlotNonDisponibileException {
@@ -33,7 +33,7 @@ public class PrenotazioneController {
             throw new IllegalArgumentException("Errore: Stanza non trovata nel catalogo.");
         }
 
-        // 2. Validazione di Business (Capienza) - UC2 Flusso Alternativo 4a
+        // 2. Validazione di Business (Capienza) - UC1 Flusso Alternativo 4a
         if (numeroGiocatori <= 0 || numeroGiocatori > stanza.getCapienzaMax()) {
             throw new IllegalArgumentException("Numero giocatori non valido. La stanza " 
                 + stanza.getTema() + " ospita massimo " + stanza.getCapienzaMax() + " persone.");
@@ -44,7 +44,7 @@ public class PrenotazioneController {
         // una IllegalStateException! Nessun "if" necessario.
         stanza.prenota();
 
-        // 3. Controllo della Race Condition sul Database - UC2 Flusso Alternativo 3a
+        // 3. Controllo della Race Condition sul Database - UC1 Flusso Alternativo 3a
         if (prenotazioneDAO.isSlotOccupato(stanzaId, dataOra)) {
             // Lanciamo l'eccezione custom creata apposta per questo dominio!
             throw new SlotNonDisponibileException("Lo slot orario selezionato non e' piu' disponibile.");
