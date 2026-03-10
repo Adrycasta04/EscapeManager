@@ -5,6 +5,9 @@
 *.war
 *.ear
 
+# Maven Wrapper (keep .properties, ignore downloaded jar)
+.mvn/wrapper/maven-wrapper.jar
+
 # IDE / OS
 /.idea/
 /.vscode/

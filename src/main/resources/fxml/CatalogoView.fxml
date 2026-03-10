@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="it.unifi.escapemanager.mockup.controllers.CatalogoController"
+      spacing="0">
+
+    <!-- Header -->
+    <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+        <Label text="EscapeManager" styleClass="header-title"/>
+        <Label text="—  Portale Prenotazioni" styleClass="header-subtitle"/>
+    </HBox>
+
+    <!-- Content -->
+    <HBox VBox.vgrow="ALWAYS" spacing="15">
+        <padding>
+            <Insets top="15" right="15" bottom="15" left="15"/>
+        </padding>
+
+        <!-- Left: Catalogo Stanze -->
+        <VBox styleClass="card" spacing="12" HBox.hgrow="ALWAYS" maxWidth="530">
+            <Label text="Catalogo Stanze" styleClass="section-title"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Sede:" styleClass="form-label"/>
+                <ComboBox fx:id="sedeCombo" prefWidth="200"/>
+            </HBox>
+            <Separator/>
+            <ListView fx:id="roomListView" VBox.vgrow="ALWAYS"/>
+        </VBox>
+
+        <!-- Right: Form Prenotazione -->
+        <VBox styleClass="card" spacing="12" HBox.hgrow="ALWAYS" maxWidth="380">
+            <Label text="Dettagli Prenotazione" styleClass="section-title"/>
+            <Separator/>
+
+            <Label text="Data" styleClass="form-label"/>
+            <DatePicker fx:id="datePicker" maxWidth="Infinity"/>
+
+            <Label text="Slot Orario" styleClass="form-label"/>
+            <ComboBox fx:id="slotCombo" maxWidth="Infinity"/>
+
+            <Label text="Numero Giocatori" styleClass="form-label"/>
+            <Spinner fx:id="playerSpinner" maxWidth="Infinity"/>
+
+            <Separator/>
+            <Label text="Totale Stimato" styleClass="form-label"/>
+            <Label fx:id="priceLabel" text="€ 0.00" styleClass="price-label"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="Prenota Ora" styleClass="btn-primary" maxWidth="Infinity"/>
+        </VBox>
+    </HBox>
+</VBox>

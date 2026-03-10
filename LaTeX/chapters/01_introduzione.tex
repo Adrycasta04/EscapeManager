@@ -1,15 +1,42 @@
 \chapter{Introduzione}
 
 \section{Statement}
-Il progetto \textbf{EscapeManager} modella un sistema software centralizzato per la gestione operativa e commerciale di un franchise di Escape Room. L'obiettivo principale dell'applicativo è fornire un'infrastruttura unificata che permetta ai clienti di esplorare le stanze tematiche disponibili ed effettuare prenotazioni e, allo stesso tempo, mette a disposizione del personale strumenti avanzati per il controllo delle sessioni di gioco e la gestione commerciale.
+Il progetto \textbf{EscapeManager} modella un sistema software centralizzato per la gestione operativa e commerciale di una catena in \textit{franchising} di Escape Room. L'obiettivo principale dell'applicativo è fornire un'infrastruttura unificata che permetta ai clienti di esplorare le stanze tematiche disponibili ed effettuare prenotazioni e, allo stesso tempo, metta a disposizione del personale strumenti avanzati per il controllo delle sessioni di gioco e la gestione commerciale.
 
-Le sedi del franchise ospitano diverse stanze fisiche (Room), ciascuna caratterizzata da un tema specifico, un livello di difficoltà, una capienza massima di giocatori e un ciclo di vita operativo ben definito (es. \textit{Disponibile, In Corso, In Manutenzione, In Pulizia}). 
+Le sedi della catena ospitano diverse stanze fisiche (Room), ciascuna caratterizzata da un tema specifico, un livello di difficoltà, una capienza massima di giocatori e un ciclo di vita operativo ben definito (es. \textit{Disponibile, In Corso, In Manutenzione, In Pulizia}). 
 
 Il sistema è progettato per supportare tre tipologie principali di utenti:
 \begin{itemize}
     \item \textbf{Cliente:} può visualizzare il catalogo globale delle stanze filtrando per sede o difficoltà, prenotare una sessione di gioco per la propria squadra in uno slot temporale libero, e iscriversi a un sistema di avvisi per ricevere notifiche in tempo reale qualora si liberasse un orario precedentemente al completo.
-    \item \textbf{Game Master (Operatore):} assegnato a una specifica filiale, gestisce il flusso operativo quotidiano. Può monitorare le prenotazioni del giorno, avviare o terminare le sessioni di gioco, aggiornare dinamicamente lo stato delle stanze (es. bloccando una stanza per un guasto tecnico a un enigma) e registrare l'esito della partita (vittoria/sconfitta e tempo di fuga).
-    \item \textbf{Admin (Amministratore):} possiede una visione d'insieme sull'intero franchise. Ha i privilegi per aggiungere nuove filiali, inserire nuovi temi per le stanze e configurare politiche di prezzo dinamiche (es. tariffe maggiorate nei giorni festivi o sconti last-minute per riempire gli slot invenduti).
+    \item \textbf{Game Master (Operatore):} assegnato a una specifica filiale, gestisce il flusso operativo quotidiano. Può monitorare le prenotazioni del giorno, avviare o terminare le sessioni di gioco, aggiornare dinamicamente lo stato delle stanze (es. bloccando una stanza per un guasto tecnico a un enigma) e registrare l'esito della partita.
+    \item \textbf{Admin (Amministratore):} possiede una visione d'insieme sull'intera catena. Ha i privilegi per aggiungere nuove filiali, inserire nuovi temi per le stanze e configurare politiche di prezzo dinamiche (es. tariffe base o maggiorate).
 \end{itemize}
 
-Per garantire manutenibilità e scalabilità, l'architettura fa uso di principi di Object-Oriented Design e di Design Pattern strutturali e comportamentali per risolvere problemi specifici del dominio, come la gestione delle variazioni di stato delle stanze, l'applicazione delle tariffe e il sistema di notifiche. La persistenza dei dati, fondamentale per evitare sovrapposizioni nelle prenotazioni e mantenere lo storico delle partite, è gestita tramite un database relazionale connesso al sistema.
+Per garantire manutenibilità e scalabilità, l'architettura segue il pattern BCE (Boundary-Control-Entity, approfondito nel Capitolo 3) e fa uso di principi di Object-Oriented Design e di Design Pattern strutturali e comportamentali per risolvere problemi specifici del dominio, come la gestione delle variazioni di stato delle stanze, l'applicazione delle tariffe e il sistema di notifiche. La persistenza dei dati, fondamentale per evitare sovrapposizioni nelle prenotazioni e mantenere lo storico delle partite, è gestita tramite un database relazionale connesso al sistema.
+
+\section{Stack Tecnologico e Strumenti}
+Per la realizzazione del sistema sono state adottate tecnologie standard in ambito enterprise, al fine di garantire robustezza e manutenibilità:
+\begin{itemize}
+    \item \textbf{Linguaggio di Programmazione:} Java (JDK 17+), scelto per il forte supporto al paradigma Object-Oriented e l'ampia disponibilità di librerie.
+    \item \textbf{Persistenza (RDBMS):} PostgreSQL. L'interazione con il database avviene tramite connettore JDBC, con un layer DAO (Data Access Object) che si occupa del mapping manuale delle entità di dominio sulle tabelle relazionali.
+    \item \textbf{Build Automation:} Maven, utilizzato per la gestione del ciclo di vita del software e delle dipendenze.
+    \item \textbf{Testing Framework:} JUnit 5 (Jupiter), impiegato per la stesura di test unitari (strutturali) e test di integrazione (funzionali).
+    \item \textbf{Versioning e IDE:} Git con hosting repository su GitHub. L'ambiente di sviluppo integrato utilizzato è Visual Studio Code (VS Code).
+    \item \textbf{Modellazione UML:} PlantUML, integrato direttamente nell'IDE per generare diagrammi come codice (\textit{diagrams-as-code}), facilitando il tracciamento delle modifiche nel versioning.
+\end{itemize}
+
+\section{Note metodologiche e Uso dell'Intelligenza Artificiale}
+In linea con le moderne pratiche di Ingegneria del Software e con le direttive del corso, lo sviluppo di \textit{EscapeManager} è stato coadiuvato dall'uso consapevole di strumenti di Intelligenza Artificiale Generativa (GitHub Copilot e Google Gemini). 
+
+L'approccio adottato non è stato di delega totale, ma di \textit{AI-Assisted Pair Programming}:
+\begin{itemize}
+    \item \textbf{Architettura e Design:} Le scelte architetturali (pattern BCE, identificazione dei Design Pattern GoF come State, Strategy e Observer) e la modellazione concettuale sono state guidate da ragionamento umano basato sui principi del corso.
+    \item \textbf{Generazione del Codice:} L'IA è stata impiegata come "agente" per la stesura del codice boilerplate (es. implementazione dei DAO, getter/setter, refactoring di massa), per l'impalcatura dei test JUnit e per l'isolamento del database nei test di integrazione, sempre previa fornitura di \textit{prompt} ingegnerizzati e rigorosa code review umana.
+    \item \textbf{Documentazione:} L'IA è stata utilizzata come supporto per la formattazione tipografica in \LaTeX\ e per la revisione lessicale del presente documento.
+\end{itemize}
+
+\section{Struttura del documento}
+Il presente documento è organizzato come segue: il Capitolo 2 presenta l'analisi dei requisiti funzionali e non funzionali; il Capitolo 3 descrive la progettazione architetturale e di dominio; il Capitolo 4 illustra i dettagli implementativi e l'architettura del codice; infine, il Capitolo 5 è dedicato al collaudo e al testing del sistema.
+
+\section{Limiti del prototipo e sviluppi futuri}
+Allo stato attuale, \textit{EscapeManager} è un \textit{proof of concept} pienamente funzionale a livello di Business Logic e persistenza dati. L'interazione utente è simulata per semplicità attraverso una Command Line Interface (CLI) o casi di test diretti. Sviluppi futuri prevedono l'esposizione di API REST per un frontend Web/Mobile o, in alternativa, l'implementazione di un'interfaccia grafica desktop tramite JavaFX, mantenendo intatto l'attuale Domain Model grazie al rigoroso disaccoppiamento garantito dall'architettura BCE.

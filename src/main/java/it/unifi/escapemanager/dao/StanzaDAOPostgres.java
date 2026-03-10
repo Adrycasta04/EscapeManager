@@ -1,6 +1,7 @@
 package it.unifi.escapemanager.dao;
 
 import it.unifi.escapemanager.domain.*;
+import it.unifi.escapemanager.exceptions.DatabaseException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,23 +13,24 @@ public class StanzaDAOPostgres implements StanzaDAO {
     }
 
     @Override
-    public void save(Stanza stanza) throws SQLException {
+    public void save(Stanza stanza) {
         String query = "INSERT INTO STANZA (id, sede_id, tema, capienza_max, prezzo_base, stato_corrente, pricing_strategy) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
             stmt.setString(1, stanza.getId());
-            stmt.setString(2, stanza.getSedeId()); // Assumendo che tu aggiunga getSedeId() in Stanza
+            stmt.setString(2, stanza.getSedeId());
             stmt.setString(3, stanza.getTema());
-            stmt.setInt(4, stanza.getCapienzaMax()); // Assumendo che tu aggiunga getCapienzaMax()
-            stmt.setDouble(5, stanza.getPrezzoBase()); // Assumendo che tu aggiunga getPrezzoBase()
+            stmt.setInt(4, stanza.getCapienzaMax());
+            stmt.setDouble(5, stanza.getPrezzoBase());
             stmt.setString(6, stanza.getStatoString());
-            // Per ora salviamo una stringa fissa per la strategy, poi la miglioreremo
             stmt.setString(7, "BASE"); 
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore di accesso ai dati: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public Stanza findById(String id) throws SQLException {
+    public Stanza findById(String id) {
         String query = "SELECT * FROM STANZA WHERE id = ?";
         try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
             stmt.setString(1, id);
@@ -37,12 +39,14 @@ public class StanzaDAOPostgres implements StanzaDAO {
                     return mapResultSetToStanza(rs);
                 }
             }
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore di accesso ai dati: " + e.getMessage(), e);
         }
         return null;
     }
 
     @Override
-    public List<Stanza> findAll() throws SQLException {
+    public List<Stanza> findAll() {
         List<Stanza> stanze = new ArrayList<>();
         String query = "SELECT * FROM STANZA";
         try (Statement stmt = getConnection().createStatement();
@@ -50,12 +54,14 @@ public class StanzaDAOPostgres implements StanzaDAO {
             while (rs.next()) {
                 stanze.add(mapResultSetToStanza(rs));
             }
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore di accesso ai dati: " + e.getMessage(), e);
         }
         return stanze;
     }
 
     @Override
-    public void update(Stanza stanza) throws SQLException {
+    public void update(Stanza stanza) {
         String query = "UPDATE STANZA SET tema = ?, capienza_max = ?, prezzo_base = ?, stato_corrente = ? WHERE id = ?";
         try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
             stmt.setString(1, stanza.getTema());
@@ -64,20 +70,24 @@ public class StanzaDAOPostgres implements StanzaDAO {
             stmt.setString(4, stanza.getStatoString());
             stmt.setString(5, stanza.getId());
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore di accesso ai dati: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public void delete(String id) throws SQLException {
+    public void delete(String id) {
         String query = "DELETE FROM STANZA WHERE id = ?";
         try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
             stmt.setString(1, id);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore di accesso ai dati: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public List<Stanza> findBySedeAndStato(String sedeId, String statoCorrente) throws SQLException {
+    public List<Stanza> findBySedeAndStato(String sedeId, String statoCorrente) {
         List<Stanza> stanze = new ArrayList<>();
         String query = "SELECT * FROM STANZA WHERE sede_id = ? AND stato_corrente = ?";
         try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
@@ -88,6 +98,8 @@ public class StanzaDAOPostgres implements StanzaDAO {
                     stanze.add(mapResultSetToStanza(rs));
                 }
             }
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore di accesso ai dati: " + e.getMessage(), e);
         }
         return stanze;
     }

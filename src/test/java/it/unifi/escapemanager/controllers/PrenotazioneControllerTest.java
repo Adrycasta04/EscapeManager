@@ -1,7 +1,8 @@
 package it.unifi.escapemanager.controllers;
 
-import it.unifi.escapemanager.dao.PrenotazioneDAOPostgres;
-import it.unifi.escapemanager.dao.StanzaDAOPostgres;
+import it.unifi.escapemanager.dao.DAOFactory;
+import it.unifi.escapemanager.dao.PrenotazioneDAO;
+import it.unifi.escapemanager.dao.StanzaDAO;
 import it.unifi.escapemanager.domain.Prenotazione;
 import it.unifi.escapemanager.exceptions.SlotNonDisponibileException;
 import it.unifi.escapemanager.utils.DatabaseHelper;
@@ -9,7 +10,6 @@ import it.unifi.escapemanager.utils.DatabaseHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -19,18 +19,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class PrenotazioneControllerTest {
 
     private PrenotazioneController controller;
-    private PrenotazioneDAOPostgres prenotazioneDAO;
+    private PrenotazioneDAO prenotazioneDAO;
 
     @BeforeEach
     void setUp() {
         DatabaseHelper.resetTestDatabase();
-        prenotazioneDAO = new PrenotazioneDAOPostgres();
-        StanzaDAOPostgres stanzaDAO = new StanzaDAOPostgres();
+        DAOFactory factory = DAOFactory.getDAOFactory();
+        prenotazioneDAO = factory.getPrenotazioneDAO();
+        StanzaDAO stanzaDAO = factory.getStanzaDAO();
         controller = new PrenotazioneController(prenotazioneDAO, stanzaDAO);
     }
 
     @Test
-    void testPrenotazioneNegataPerSlotOccupato_UC1_Alt3a() throws SQLException {
+    void testPrenotazioneNegataPerSlotOccupato_UC1_Alt3a() {
         String stanzaId = "R01";
         LocalDateTime slotRichiesto = LocalDateTime.of(2026, 10, 31, 21, 0);
 

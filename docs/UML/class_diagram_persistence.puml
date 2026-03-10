@@ -1,0 +1,45 @@
+@startuml class_diagram_persistence
+skinparam classAttributeIconSize 0
+
+package "it.unifi.escapemanager.exceptions" #E3F2FD {
+    class EscapeManagerException extends RuntimeException
+    
+    class DatabaseException extends EscapeManagerException
+    
+    class ValidationException extends EscapeManagerException
+    
+    class SlotNonDisponibileException extends ValidationException
+}
+
+package "it.unifi.escapemanager.dao" #F0F4C3 {
+    interface DAOFactory <<interface>> {
+        + {static} getDAOFactory() : DAOFactory
+        + getStanzaDAO() : StanzaDAO
+        + getPrenotazioneDAO() : PrenotazioneDAO
+    }
+    
+    class PostgresDAOFactory implements DAOFactory {
+        + getStanzaDAO() : StanzaDAO
+        + getPrenotazioneDAO() : PrenotazioneDAO
+    }
+
+    interface StanzaDAO <<interface>>
+    interface PrenotazioneDAO <<interface>>
+
+    class StanzaDAOPostgres implements StanzaDAO {
+        + save(stanza: Stanza) : void
+        + findById(id: String) : Stanza
+        - wrapException(e: SQLException) : DatabaseException
+    }
+    
+    class PrenotazioneDAOPostgres implements PrenotazioneDAO
+
+    DAOFactory .down.> StanzaDAO : <<creates>>
+    DAOFactory .down.> PrenotazioneDAO : <<creates>>
+    
+    PostgresDAOFactory .down.> StanzaDAOPostgres : <<creates>>
+    PostgresDAOFactory .down.> PrenotazioneDAOPostgres : <<creates>>
+    
+    StanzaDAOPostgres .up.> DatabaseException : <<throws>>
+}
+@enduml

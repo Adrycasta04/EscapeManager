@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="it.unifi.escapemanager.mockup.controllers.DashboardGMController"
+      spacing="0">
+
+    <!-- Header -->
+    <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+        <Label text="EscapeManager" styleClass="header-title"/>
+        <Label text="—  Pannello Operativo Game Master" styleClass="header-subtitle"/>
+    </HBox>
+
+    <!-- Info Bar -->
+    <HBox styleClass="info-bar" spacing="20" alignment="CENTER_LEFT">
+        <Label text="Sede: Firenze" styleClass="form-label"/>
+        <Separator orientation="VERTICAL" prefHeight="20"/>
+        <Label text="Operatore: GM_Rossi" styleClass="form-label"/>
+    </HBox>
+
+    <!-- Room Cards -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background-color: transparent; -fx-background: transparent;">
+        <FlowPane fx:id="roomContainer" hgap="15" vgap="15" alignment="TOP_LEFT">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+        </FlowPane>
+    </ScrollPane>
+</VBox>

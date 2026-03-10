@@ -45,26 +45,27 @@ public interface RoomState {
     void prenota(Stanza stanza);
     void iniziaSessione(Stanza stanza);
     void terminaSessione(Stanza stanza);
+    void setManutenzione(Stanza stanza);
+    void setDisponibile(Stanza stanza);
     String getStatusString();
 }
 
 public class DisponibileState implements RoomState {
     @Override
     public void iniziaSessione(Stanza stanza) {
-        // Logica di avvio...
         stanza.setStato(new InCorsoState()); // Transizione di stato
     }
     
     @Override
     public void terminaSessione(Stanza stanza) {
-        throw new IllegalStateException("Impossibile terminare una sessione non avviata.");
+        throw new IllegalStateException("Impossibile terminare una sessione per una stanza DISPONIBILE.");
     }
     // ... altri metodi
 }
 \end{lstlisting}
 
 \subsection{Strategy Pattern}
-Il calcolo del prezzo della prenotazione (UC2) è demandato alla \texttt{PricingStrategy}. Il Controller, in base alla data della prenotazione, inietta la strategia corretta all'interno dell'entità.
+Il calcolo del prezzo della prenotazione (UC1) è demandato alla \texttt{PricingStrategy}. Il Controller, in base alla data della prenotazione, inietta la strategia corretta all'interno dell'entità.
 
 \begin{lstlisting}[caption={Implementazione dello Strategy Pattern}, label={lst:strategy_pattern}]
 public interface PricingStrategy {
@@ -82,7 +83,7 @@ public class TariffaWeekend implements PricingStrategy {
 \end{lstlisting}
 
 \subsection{Observer Pattern}
-La lista d'attesa (UC3) implementa un sistema Publisher-Subscriber puro in Java, disaccoppiando l'evento di cancellazione di una prenotazione dall'invio effettivo delle notifiche.
+La lista d'attesa (UC2) implementa un sistema Publisher-Subscriber puro in Java, disaccoppiando l'evento di cancellazione di una prenotazione dall'invio effettivo delle notifiche.
 
 \begin{lstlisting}[caption={Implementazione dell'Observer Pattern}, label={lst:observer_pattern}]
 public interface WaitingListObserver {
@@ -98,8 +99,35 @@ public class WaitingList {
 
     public void notifyObservers(Stanza stanza, LocalDateTime slot) {
         for (WaitingListObserver obs : observers) {
-            obs.update(stanza, slot); // Notifica asincrona
+            obs.update(stanza, slot);
         }
     }
+}
+\end{lstlisting}
+
+\section{Gestione Centralizzata delle Eccezioni (Information Hiding)}
+Un aspetto cruciale dell'implementazione strutturata ha riguardato la gestione dei flussi alternativi e degli errori. Invece di affidarsi alle generiche eccezioni standard di Java (es. \texttt{RuntimeException}), è stata disegnata una gerarchia di eccezioni custom radicata nella classe \texttt{EscapeManagerException}.
+
+Come illustrato nella Figura \ref{fig:class_diagram_persistence}, la gerarchia divide formalmente gli errori in base al layer architetturale in cui si verificano:
+\begin{itemize}
+    \item \textbf{\texttt{ValidationException}:} utilizzata dal dominio per segnalare violazioni delle invarianti di business (es. la sottoclasse \texttt{SlotNonDisponibileException}).
+    \item \textbf{\texttt{DatabaseException}:} utilizzata dal layer DAO per incapsulare problemi di persistenza.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/class_diagram_persistence.png}
+    \caption{Diagramma delle Classi: Pattern DAO Factory e Gerarchia Eccezioni}
+    \label{fig:class_diagram_persistence}
+\end{figure}
+
+Questa struttura risponde in modo rigoroso al principio dell'\textbf{Information Hiding}. Nel livello DAO, le \texttt{SQLException} lanciate dal driver JDBC vengono intercettate, incapsulate in una \texttt{DatabaseException} e rilanciate. In questo modo, eventuali stack trace legati a driver SQL o dettagli implementativi del database non inquinano mai i livelli superiori (Boundary e Control).
+
+\begin{lstlisting}[language=Java, caption=Incapsulamento delle eccezioni SQL nel layer DAO]
+try (PreparedStatement stmt = conn.prepareStatement(query)) {
+    // Esecuzione query...
+} catch (SQLException e) {
+    // La SQLException originaria viene nascosta ai livelli superiori
+    throw new DatabaseException("Errore di accesso ai dati durante il salvataggio.", e);
 }
 \end{lstlisting}

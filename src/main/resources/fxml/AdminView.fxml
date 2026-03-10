@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="it.unifi.escapemanager.mockup.controllers.AdminController"
+      spacing="0">
+
+    <!-- Header -->
+    <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+        <Label text="EscapeManager" styleClass="header-title"/>
+        <Label text="—  Amministrazione Tariffe" styleClass="header-subtitle"/>
+    </HBox>
+
+    <!-- Content -->
+    <VBox spacing="15" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets top="15" right="15" bottom="15" left="15"/>
+        </padding>
+
+        <!-- Tabella Stanze -->
+        <TableView fx:id="roomTable" VBox.vgrow="ALWAYS"/>
+
+        <!-- Form Dettaglio -->
+        <HBox styleClass="card" spacing="20" alignment="CENTER_LEFT">
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Stanza Selezionata" styleClass="section-title"/>
+                <Label fx:id="selectedRoomLabel" text="Nessuna selezione"
+                       styleClass="form-label"/>
+            </VBox>
+            <Separator orientation="VERTICAL"/>
+            <VBox spacing="6">
+                <Label text="Strategia di Prezzo" styleClass="form-label"/>
+                <ComboBox fx:id="strategyCombo" prefWidth="220"/>
+            </VBox>
+            <Separator orientation="VERTICAL"/>
+            <VBox spacing="6">
+                <Label text="Prezzo Base (€)" styleClass="form-label"/>
+                <TextField fx:id="priceField" prefWidth="100"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Salva Tariffe" styleClass="btn-primary"/>
+        </HBox>
+    </VBox>
+</VBox>

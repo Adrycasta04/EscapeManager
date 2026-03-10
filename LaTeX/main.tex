@@ -5,28 +5,46 @@
 \usepackage[T1]{fontenc}     % Per una migliore gestione dei font
 \usepackage[italian]{babel}  % Per la lingua italiana
 \usepackage{graphicx}        % Per le immagini
-\usepackage[table]{xcolor}          % Per i colori
+\usepackage[table]{xcolor}   % Per i colori
 \usepackage{geometry}        % Per i margini
 \usepackage{titlesec}        % Per i titoli
 \usepackage{float}           % Per il posizionamento delle figure
 \usepackage{fancyhdr}        % Per intestazioni e piè di pagina personalizzati
 \usepackage{listings}        % Per il codice
+\usepackage{caption}         % Per le didascalie
+\usepackage{subcaption}      % Per le figure multiple
+\usepackage{enumitem}        % Per le liste personalizzate
 \usepackage{tabularx}        % Per tabelle che si adattano alla larghezza
-\usepackage{times}           % Font stile Times come nel template di riferimento
+\usepackage[normalem]{ulem}  % Per il testo barrato (es. per evidenziare modifiche)
+\usepackage{pdflscape}       % Per eventuali diagrammi UML in orizzontale (landscape)
+\usepackage{newtxtext,newtxmath} % Per un font più professionale (Times New Roman)
 \usepackage{hyperref}        % Per i link ipertestuali
-\usepackage[normalem]{ulem}  % Per i link ipertestuali
 
 % --- CONFIGURAZIONE LINK E COLORI ---
 \definecolor{linkblue}{RGB}{0, 0, 238}
 \definecolor{darkblue}{RGB}{0, 0, 139}
 
+% --- CONFIGURAZIONE TITOLI ---
+\titleformat{\chapter}[hang]
+  {\normalfont\huge\bfseries}{\thechapter.}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+
 \hypersetup{
     colorlinks=true,
-    linkcolor=linkblue,
+    linkcolor=darkblue,
     filecolor=magenta,
     urlcolor=blue,
     pdftitle={EscapeManager - Relazione Progetto},
     pdfauthor={Adriano Luca Castaldo},
+}
+
+% Aggiungi questo sotto il blocco hypersetup
+\addto\extrasitalian{
+  \def\chapterautorefname{Capitolo}
+  \def\sectionautorefname{Sezione}
+  \def\subsectionautorefname{Sottosezione}
+  \def\figureautorefname{Figura}
+  \def\tableautorefname{Tabella}
 }
 
 % --- CONFIGURAZIONE MARGINI ---
@@ -135,13 +153,15 @@
 \end{titlepage}
 
 % --- INDICE ---
+\pagenumbering{roman}
 {
-  \hypersetup{linkcolor=blue}
+  \hypersetup{linkcolor=darkblue}
   \tableofcontents
 }
-\newpage
+\clearpage
 
 % --- CAPITOLI ---
+\pagenumbering{arabic}
 
 \input{chapters/01_introduzione}
 \input{chapters/02_requisiti}

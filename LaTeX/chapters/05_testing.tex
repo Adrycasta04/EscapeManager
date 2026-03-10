@@ -12,18 +12,16 @@ Particolare attenzione è stata dedicata al collaudo dei Design Pattern. Il List
 class PricingStrategyTest {
 
     @Test
-    void testTariffaWeekendSovrapprezzo() {
+    void testTariffaBaseCalcoloCorretto() {
         // Setup
-        Stanza stanza = new Stanza("R01", "Horror Asylum", 6, 20.0);
-        PricingStrategy weekendStrategy = new TariffaWeekend();
-        stanza.setPricingStrategy(weekendStrategy);
+        Stanza stanza = new Stanza("R01", "FI01", "Horror Asylum", 6, 20.0);
+        stanza.setPricingStrategy(new TariffaBase());
         
-        // Execution: 4 giocatori a 20 euro base = 80 euro. +20% weekend = 96.0 euro
+        // Execution: 4 giocatori a 20 euro base = 80 euro
         double prezzoCalcolato = stanza.calcolaPrezzo(4);
         
         // Assertion
-        assertEquals(96.0, prezzoCalcolato, 0.01, 
-            "Il calcolo della tariffa weekend non applica correttamente il sovrapprezzo del 20%");
+        assertEquals(80.0, prezzoCalcolato);
     }
 }
 \end{lstlisting}
@@ -39,19 +37,20 @@ class StanzaDAOTest {
 
     @BeforeEach
     void setUpDatabase() throws Exception {
-        // Esegue reset.sql e default.sql per riportare il DB a uno stato noto
+        // Esegue il reset e la re-inizializzazione del DB a uno stato noto
         DatabaseHelper.resetTestDatabase();
         stanzaDAO = new StanzaDAOPostgres();
     }
 
     @Test
     void testFindStanzeDisponibiliBySede() throws SQLException {
-        // La sede "FI01" nel db di test ha 2 stanze DISPONIBILI e 1 IN_MANUTENZIONE
+        // La sede "FI01" nel db di test ha 1 stanza DISPONIBILE
         List<Stanza> disponibili = stanzaDAO.findBySedeAndStato("FI01", "DISPONIBILE");
         
         assertNotNull(disponibili);
-        assertEquals(2, disponibili.size());
-        assertTrue(disponibili.stream().allMatch(s -> s.getStato().equals("DISPONIBILE")));
+        assertEquals(1, disponibili.size());
+        assertTrue(disponibili.stream()
+            .allMatch(s -> s.getStatoString().equals("DISPONIBILE")));
     }
 }
 \end{lstlisting}
@@ -62,22 +61,34 @@ Il livello più alto di collaudo ha riguardato i \texttt{Controllers}. In questa
 
 Per garantire la massima \textbf{tracciabilità}, ogni test funzionale è stato mappato direttamente su uno specifico \textit{Use Case Template} (Sezione 2.2). Sono stati collaudati sia i \textit{Flussi Base} che i \textit{Flussi Alternativi} (le eccezioni).
 
-Il Listing \ref{lst:test_funzionale} dimostra come il sistema gestisce fluidamente la \textit{Race Condition} descritta nell'UC2 (Alternativa 3a), negando la prenotazione se lo slot risulta già occupato a database.
+Il Listing \ref{lst:test_funzionale} dimostra come il sistema gestisce fluidamente la \textit{Race Condition} descritta nell'UC1 (Alternativa 3a), negando la prenotazione se lo slot risulta già occupato a database.
 
-\begin{lstlisting}[caption={Functional Test tracciato sull'UC2 (Flusso Alternativo 3a)}, label={lst:test_funzionale}]
+\begin{lstlisting}[caption={Functional Test tracciato sull'UC1 (Flusso Alternativo 3a)}, label={lst:test_funzionale}]
 class PrenotazioneControllerTest {
+    private PrenotazioneController controller;
+    private PrenotazioneDAOPostgres prenotazioneDAO;
+
+    @BeforeEach
+    void setUp() {
+        DatabaseHelper.resetTestDatabase();
+        prenotazioneDAO = new PrenotazioneDAOPostgres();
+        StanzaDAOPostgres stanzaDAO = new StanzaDAOPostgres();
+        controller = new PrenotazioneController(prenotazioneDAO, stanzaDAO);
+    }
 
     @Test
-    void testPrenotazioneNegataPerSlotOccupato_UC2_Alt3a() {
+    void testPrenotazioneNegataPerSlotOccupato_UC1_Alt3a() throws SQLException {
         // Setup: Il Cliente 2 tenta di prenotare uno slot appena occupato dal Cliente 1
-        PrenotazioneController controller = new PrenotazioneController();
         String stanzaId = "R01";
-        LocalDateTime slotRichiesto = LocalDateTime.of(2026, 10, 31, 21, 0); // Halloween, ore 21
+        LocalDateTime slotRichiesto = LocalDateTime.of(2026, 10, 31, 21, 0);
         
-        // Simulo la race condition pre-occupando lo slot
-        controller.forzaOccupazioneSlot(stanzaId, slotRichiesto, "CLIENTE_01");
+        // Simulo la race condition pre-occupando lo slot via DAO
+        Prenotazione esistente = new Prenotazione(
+            UUID.randomUUID().toString(), "CLIENTE_01", stanzaId,
+            slotRichiesto, 3, 60.0, "CONFERMATA");
+        prenotazioneDAO.save(esistente);
 
-        // Execution & Assertion (Mi aspetto un'eccezione custom di business logic)
+        // Execution & Assertion
         SlotNonDisponibileException eccezione = assertThrows(
             SlotNonDisponibileException.class, 
             () -> controller.effettuaPrenotazione("CLIENTE_02", stanzaId, slotRichiesto, 4)

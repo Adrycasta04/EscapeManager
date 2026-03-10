@@ -4,9 +4,9 @@ import it.unifi.escapemanager.controllers.PrenotazioneController;
 import it.unifi.escapemanager.dao.StanzaDAO;
 import it.unifi.escapemanager.domain.Prenotazione;
 import it.unifi.escapemanager.domain.Stanza;
+import it.unifi.escapemanager.exceptions.DatabaseException;
 import it.unifi.escapemanager.exceptions.SlotNonDisponibileException;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -70,7 +70,7 @@ public class ConsoleMenu {
                 System.out.printf("[%s] %s - Max %d giocatori - Stato: %s%n", 
                     s.getId(), s.getTema(), s.getCapienzaMax(), s.getStatoString());
             }
-        } catch (SQLException e) {
+        } catch (DatabaseException e) {
             System.err.println("Errore di lettura dal database: " + e.getMessage());
         }
     }

@@ -1,0 +1,63 @@
+@startuml sequence_prenotazione
+skinparam style strictuml
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 150
+
+actor "Cliente" as C
+boundary "ui : ConsoleMenu" as UI
+control "ctrl : PrenotazioneController" as CTRL
+entity "<<factory>>\nDAOFactory" as FACTORY
+database "sDao : StanzaDAO" as SDAO
+database "pDao : PrenotazioneDAO" as PDAO
+entity "stanza : Stanza" as S
+
+C -> UI : Seleziona "Prenota Stanza" e inserisce dati
+activate UI
+
+UI -> CTRL : effettuaPrenotazione(clienteId, stanzaId, slot, numGiocatori)
+activate CTRL
+
+' Recupero dei DAO tramite Factory
+CTRL -> FACTORY : <<static>> getDAOFactory()
+activate FACTORY
+FACTORY --> CTRL : factoryInstance
+deactivate FACTORY
+
+CTRL -> FACTORY : getStanzaDAO()
+activate FACTORY
+FACTORY --> CTRL : sDao
+deactivate FACTORY
+
+CTRL -> FACTORY : getPrenotazioneDAO()
+activate FACTORY
+FACTORY --> CTRL : pDao
+deactivate FACTORY
+
+' Esecuzione logica
+CTRL -> SDAO : findById(stanzaId)
+activate SDAO
+SDAO --> CTRL : stanza
+deactivate SDAO
+
+CTRL -> PDAO : isSlotOccupato(stanzaId, slot)
+activate PDAO
+PDAO --> CTRL : false
+deactivate PDAO
+
+CTRL -> S : calcolaPrezzo(numGiocatori)
+activate S
+S --> CTRL : prezzoTotale
+deactivate S
+
+' Salvataggio
+CTRL -> PDAO : save(nuovaPrenotazione)
+activate PDAO
+PDAO --> CTRL : true (Successo)
+deactivate PDAO
+
+CTRL --> UI : Prenotazione(Confermata)
+deactivate CTRL
+
+UI --> C : Mostra riepilogo e successo
+deactivate UI
+@enduml

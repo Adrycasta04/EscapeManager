@@ -21,32 +21,27 @@ rectangle "EscapeManager System" {
     usecase "Ricerca Stanze" as UC_C1
     usecase "Prenotazione Stanza" as UC_C2
     usecase "Iscrizione Lista d'Attesa" as UC_C3
-    usecase "Gestione Prenotazioni" as UC_C4
     
     ' --- Casi d'uso Game Master ---
     usecase "Visualizza Tabellone" as UC_GM1
-    usecase "Controllo Sessione di Gioco" as UC_GM2
-    usecase "Modifica Stato Stanza" as UC_GM3
+    usecase "Aggiornamento Stato Stanza" as UC_GM3
     
     ' --- Casi d'uso Admin ---
     usecase "Gestione Filiali e Stanze" as UC_A1
-    usecase "Configurazione Politiche Prezzo" as UC_A2
+    usecase "Configurazione Tariffe Stanza" as UC_A2
 }
 
 ' --- Relazioni Attori -> Casi d'uso ---
 C --> UC_C1
 C --> UC_C2
-C --> UC_C4
 
 GM --> UC_GM1
-GM --> UC_GM2
 GM --> UC_GM3
 
 A --> UC_A1
 A --> UC_A2
 
 ' --- Relazioni <<extend>> (Flussi alternativi/opzionali) ---
-' L'iscrizione alla lista d'attesa è un'estensione del tentativo di prenotazione se lo slot è pieno
 UC_C3 .up.> UC_C2 : <<extend>>\n(se slot occupato)
 
 @enduml

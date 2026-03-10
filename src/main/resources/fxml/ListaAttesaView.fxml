@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="it.unifi.escapemanager.mockup.controllers.ListaAttesaController"
+      alignment="CENTER"
+      style="-fx-background-color: rgba(0,0,0,0.35);">
+
+    <VBox styleClass="dialog-root" alignment="CENTER" spacing="12"
+          maxWidth="520" maxHeight="340">
+
+        <Label text="⚠" styleClass="dialog-warning"/>
+        <Label text="Slot Non Disponibile" styleClass="dialog-title"/>
+        <Separator/>
+        <Label styleClass="dialog-message" wrapText="true" textAlignment="CENTER"
+               text="Lo slot 21:00 del 31/10/2026 per la stanza &quot;Horror Asylum&quot; è stato appena prenotato da un altro utente."/>
+        <Label styleClass="dialog-message" wrapText="true" textAlignment="CENTER"
+               text="Vuoi iscriverti alla Lista d'Attesa per essere avvisato se si libera un posto?"/>
+
+        <HBox spacing="15" alignment="CENTER">
+            <padding>
+                <Insets top="10"/>
+            </padding>
+            <Button text="Annulla" styleClass="btn-secondary" prefWidth="140"/>
+            <Button text="Iscriviti alla Lista" styleClass="btn-primary" prefWidth="180"/>
+        </HBox>
+    </VBox>
+</VBox>

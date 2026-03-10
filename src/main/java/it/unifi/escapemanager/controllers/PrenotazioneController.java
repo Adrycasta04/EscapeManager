@@ -6,7 +6,6 @@ import it.unifi.escapemanager.domain.Prenotazione;
 import it.unifi.escapemanager.domain.Stanza;
 import it.unifi.escapemanager.exceptions.SlotNonDisponibileException;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -24,8 +23,7 @@ public class PrenotazioneController {
     /**
      * Implementa il Caso d'Uso: UC1 - Prenotazione Stanza
      */
-    public Prenotazione effettuaPrenotazione(String clienteId, String stanzaId, LocalDateTime dataOra, int numeroGiocatori) 
-            throws SQLException, SlotNonDisponibileException {
+    public Prenotazione effettuaPrenotazione(String clienteId, String stanzaId, LocalDateTime dataOra, int numeroGiocatori) {
         
         // 1. Recupero dei dati (DAO Pattern)
         Stanza stanza = stanzaDAO.findById(stanzaId);
