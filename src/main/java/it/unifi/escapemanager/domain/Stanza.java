@@ -66,6 +66,7 @@ public class Stanza {
 
     public String getId() { return id; }
     public String getTema() { return tema; }
+    public RoomState getStato() { return statoCorrente; }
     public String getStatoString() { return statoCorrente.getStatusString(); }
     
     public String getSedeId() { return sedeId; }

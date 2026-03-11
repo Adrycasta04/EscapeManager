@@ -35,6 +35,6 @@ public class GestioneStatoController {
                 throw new IllegalArgumentException("Comando non riconosciuto: " + comando);
         }
 
-        stanzaDao.save(stanza);
+        stanzaDao.update(stanza);
     }
 }

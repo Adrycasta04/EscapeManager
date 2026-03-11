@@ -10,12 +10,14 @@ set WRAPPER_PROPERTIES="%MAVEN_PROJECTBASEDIR%.mvn\wrapper\maven-wrapper.propert
 
 if not exist %WRAPPER_JAR% (
     echo Downloading Maven Wrapper...
-    powershell -Command "Invoke-WebRequest -Uri %WRAPPER_URL% -OutFile %WRAPPER_JAR%"
+    powershell -Command "Invoke-WebRequest -Uri '%WRAPPER_URL:"=%' -OutFile '%WRAPPER_JAR:"=%'"
 )
 
-"%JAVA_HOME%\bin\java.exe" -jar %WRAPPER_JAR% %* 2>NUL
+set MAVEN_OPTS=-Dmaven.multiModuleProjectDirectory="%MAVEN_PROJECTBASEDIR%"
+
+"%JAVA_HOME%\bin\java.exe" -cp %WRAPPER_JAR% org.apache.maven.wrapper.MavenWrapperMain %* 2>NUL
 if ERRORLEVEL 1 (
-    java -jar %WRAPPER_JAR% %*
+    java -cp %WRAPPER_JAR% org.apache.maven.wrapper.MavenWrapperMain %*
 )
 
 endlocal
