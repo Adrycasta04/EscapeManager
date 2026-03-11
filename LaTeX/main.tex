@@ -17,6 +17,7 @@
 \usepackage{tabularx}        % Per tabelle che si adattano alla larghezza
 \usepackage[normalem]{ulem}  % Per il testo barrato (es. per evidenziare modifiche)
 \usepackage{pdflscape}       % Per eventuali diagrammi UML in orizzontale (landscape)
+\usepackage[most]{tcolorbox}  % Per box con angoli arrotondati
 \usepackage{newtxtext,newtxmath} % Per un font più professionale (Times New Roman)
 \usepackage{hyperref}        % Per i link ipertestuali
 
@@ -148,7 +149,17 @@
 
     \vfill
 
+    % --- GitHub Repository Panel ---
     \centering
+    \begin{tcolorbox}[colback=darkblue!8, colframe=darkblue!60,
+      arc=12pt, boxrule=0.6pt, width=0.65\textwidth,
+      halign=center, valign=center, boxsep=6pt]
+      \includegraphics[height=1.4em]{images/github_logo.png}\hspace{6pt}%
+      {\hypersetup{hidelinks}%
+      \href{https://github.com/Adrycasta04/EscapeManager.git}%
+           {\textcolor{darkblue}{\large\textbf{GitHub Repository}}}}
+    \end{tcolorbox}\vspace{1.2cm}
+
     {\large Anno Accademico 2025/2026}
 \end{titlepage}
 

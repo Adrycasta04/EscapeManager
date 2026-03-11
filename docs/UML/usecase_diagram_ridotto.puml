@@ -6,6 +6,9 @@ skinparam usecase {
     BorderColor DarkCyan
     ArrowColor DarkCyan
 }
+skinparam usecase<<summary>> {
+    StereotypeFontSize 11
+}
 skinparam actor {
     BackgroundColor Khaki
     BorderColor DarkGoldenRod
@@ -17,9 +20,9 @@ actor "Admin" as A
 
 rectangle "EscapeManager System" {
     
-    usecase "Fruire del Catalogo\ne Prenotare Esperienze" as UC_Macro1
-    usecase "Gestione Operativa\ndella Filiale" as UC_Macro2
-    usecase "Amministrazione Centrale\ne Politiche Commerciali" as UC_Macro3
+    usecase "<<summary>>\nFruire del Catalogo\ne Prenotare Esperienze" as UC_Macro1
+    usecase "<<summary>>\nGestione Operativa\ndella Filiale" as UC_Macro2
+    usecase "<<summary>>\nAmministrazione Centrale\ne Politiche Commerciali" as UC_Macro3
 
 }
 
