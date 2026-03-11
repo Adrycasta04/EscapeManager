@@ -32,6 +32,6 @@ public class TariffeController {
                 throw new ValidationException("Tipo tariffa non valido");
         }
 
-        stanzaDao.save(stanza);
+        stanzaDao.update(stanza);
     }
 }
