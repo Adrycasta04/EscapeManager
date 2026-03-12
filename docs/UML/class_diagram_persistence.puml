@@ -16,30 +16,46 @@ package "it.unifi.escapemanager.dao" #F0F4C3 {
         + {static} getDAOFactory() : DAOFactory
         + getStanzaDAO() : StanzaDAO
         + getPrenotazioneDAO() : PrenotazioneDAO
+        + getWaitingListDAO() : WaitingListDAO
     }
     
     class PostgresDAOFactory implements DAOFactory {
         + getStanzaDAO() : StanzaDAO
         + getPrenotazioneDAO() : PrenotazioneDAO
+        + getWaitingListDAO() : WaitingListDAO
     }
 
+    interface GenericDAO <<interface>>
     interface StanzaDAO <<interface>>
     interface PrenotazioneDAO <<interface>>
+    interface WaitingListDAO <<interface>>
+    class ConnectionManager <<Singleton>>
 
     class StanzaDAOPostgres implements StanzaDAO {
         + save(stanza: Stanza) : void
         + findById(id: String) : Stanza
-        - wrapException(e: SQLException) : DatabaseException
+        + update(stanza: Stanza) : void
     }
     
     class PrenotazioneDAOPostgres implements PrenotazioneDAO
+    class WaitingListDAOPostgres implements WaitingListDAO
 
     DAOFactory .down.> StanzaDAO : <<creates>>
     DAOFactory .down.> PrenotazioneDAO : <<creates>>
+    DAOFactory .down.> WaitingListDAO : <<creates>>
     
     PostgresDAOFactory .down.> StanzaDAOPostgres : <<creates>>
     PostgresDAOFactory .down.> PrenotazioneDAOPostgres : <<creates>>
+    PostgresDAOFactory .down.> WaitingListDAOPostgres : <<creates>>
     
     StanzaDAOPostgres .up.> DatabaseException : <<throws>>
+    WaitingListDAOPostgres .up.> DatabaseException : <<throws>>
+
+    StanzaDAO --|> GenericDAO
+    PrenotazioneDAO --|> GenericDAO
+
+    StanzaDAOPostgres ..> ConnectionManager : <<usa>>
+    PrenotazioneDAOPostgres ..> ConnectionManager : <<usa>>
+    WaitingListDAOPostgres ..> ConnectionManager : <<usa>>
 }
 @enduml

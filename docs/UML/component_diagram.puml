@@ -1,0 +1,17 @@
+@startuml component_diagram
+skinparam componentStyle rectangle
+skinparam linetype ortho
+
+component "CLI\n(Boundary)" as CLI
+component "Controllers\n(Control)" as CTRL
+component "Domain Model\n(Entity)" as DOM
+component "DAO / Persistence" as DAO
+
+database "PostgreSQL" as DB
+
+CLI --> CTRL
+CTRL --> DOM
+CTRL --> DAO
+DAO --> DB
+
+@enduml

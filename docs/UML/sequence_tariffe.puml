@@ -1,0 +1,21 @@
+@startuml sequence_tariffe
+actor "Admin" as Admin
+participant "ConsoleMenu\n(Boundary)" as UI
+participant "TariffeController\n(Control)" as CTRL
+participant "StanzaDAO" as DAO
+participant "PostgreSQL" as DB
+
+Admin -> UI : seleziona stanza e tariffa
+UI -> CTRL : cambiaTariffa(stanzaId, tipo)
+CTRL -> DAO : findById(stanzaId)
+DAO -> DB : SELECT STANZA
+DB --> DAO : Stanza
+DAO --> CTRL : Stanza
+CTRL -> DAO : update(stanza con nuova strategy)
+DAO -> DB : UPDATE STANZA
+DB --> DAO : OK
+DAO --> CTRL : OK
+CTRL --> UI : conferma
+UI --> Admin : messaggio di successo
+
+@enduml

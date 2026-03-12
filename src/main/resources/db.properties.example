@@ -1,0 +1,13 @@
+# Configurazione database EscapeManager
+# Crea un file db.properties con questo formato e inserisci le credenziali reali,
+# oppure imposta le variabili d'ambiente EM_DB_URL, EM_DB_USER, EM_DB_PASSWORD.
+
+# JDBC URL
+# esempio: jdbc:postgresql://localhost:5432/escapemanager
+
+db.url=jdbc:postgresql://localhost:5432/escapemanager
+
+# Utente e password
+
+db.user=postgres
+# db.password=PASSWORD_QUI

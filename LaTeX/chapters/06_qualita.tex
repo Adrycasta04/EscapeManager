@@ -1,0 +1,29 @@
+﻿\chapter{Qualità del Software}
+
+\section{Aderenza ai Principi SOLID}
+L'architettura di \textit{EscapeManager} segue i principi SOLID come guida pratica:
+\begin{itemize}
+    \item \textbf{SRP:} i Controller coordinano i casi d'uso, i DAO gestiscono la persistenza e il Domain Model incapsula la logica di business.
+    \item \textbf{OCP:} nuovi stati o nuove strategie di prezzo possono essere aggiunti senza modificare il codice esistente (State/Strategy).
+    \item \textbf{LSP:} le sottoclassi di \texttt{Utente} possono essere sostituite senza alterare il comportamento atteso.
+    \item \textbf{ISP:} le interfacce DAO sono specifiche e minimali per il loro dominio.
+    \item \textbf{DIP:} i Controller dipendono da interfacce DAO, non da implementazioni concrete.
+\end{itemize}
+
+\section{Affidabilità e Coerenza dei Dati}
+La coerenza del sistema è garantita da validazioni nel layer di controllo e da vincoli nel database (PK/FK). Le eccezioni applicative sono propagate in modo controllato, evitando stati intermedi non consistenti.
+
+\section{Manutenibilità ed Estendibilità}
+La combinazione di architettura a strati, DAO Factory e pattern comportamentali consente di introdurre nuove funzionalità con impatto minimo. Ad esempio, una nuova strategia tariffaria richiede solo una nuova classe che implementa \texttt{PricingStrategy} e un mapping nel DAO.
+
+\section{Prestazioni}
+Le operazioni principali sono supportate da query mirate sui DAO e da un dataset contenuto. La struttura dati è progettata per scalare aggiungendo indici mirati (es. su \texttt{stanza\_id} e \texttt{data\_ora}) qualora il volume di prenotazioni crescesse.
+
+\section{Portabilità e Configurazione}
+L'applicazione è basata su Java e JDBC, quindi eseguibile su Windows, macOS e Linux. La configurazione del database è esterna al codice tramite \texttt{db.properties} o variabili d'ambiente, aumentando la portabilità e la sicurezza della configurazione.
+
+\section{Sicurezza e Privacy (Baseline)}
+Il modello dati prevede il campo \texttt{password\_hash} per le credenziali. La gestione completa dell'autenticazione e autorizzazione non fa parte del prototipo e viene trattata come estensione futura.
+
+\section{Limiti del Prototipo}
+Il sistema è pensato come proof-of-concept focalizzato sui casi d'uso principali. Alcuni aspetti sono volutamente semplificati: autenticazione reale, gestione avanzata degli slot, notifiche automatiche della lista d'attesa e amministrazione completa delle sedi.

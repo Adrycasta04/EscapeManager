@@ -8,7 +8,8 @@ import it.unifi.escapemanager.utils.DatabaseHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GestioneStatoControllerTest {
 
@@ -28,5 +29,13 @@ class GestioneStatoControllerTest {
 
         Stanza stanza = stanzaDao.findById("R01");
         assertEquals("IN_CORSO", stanza.getStatoString());
+    }
+
+    @Test
+    void testTransizioneNonValida_TerminaSuDisponibile_UC3_Alt4a() {
+        assertThrows(IllegalStateException.class, () -> controller.eseguiTransizione("R01", "TERMINA"));
+
+        Stanza stanza = stanzaDao.findById("R01");
+        assertEquals("DISPONIBILE", stanza.getStatoString());
     }
 }

@@ -1,0 +1,1048 @@
+Enrico Vicario - AA 20/21
+SW Engineering
+
+Software Engineering - A.A. 20/21
+
+UML diagrams for the the implementation perspective:
+Class, Object, Sequence and Collaboration Diagrams
+(with emphasis on notation more than method)
+
+Enrico Vicario
+Dipartimento di Ingegneria dell'Informazione
+Laboratorio Tecnologia del Software – stlab.dinfo.unifi.it
+Università di Firenze
+enrico.vicario@unifi.it, stlab.dinfo.unifi.it/vicario
+
+1/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+
+
+
+
+
+Class diagram
+Object diagram
+UML profiles
+Sequence and Collaboration diagrams
+Tools
+Implementation, specification and conceptual perspectives
+
+2/42
+
+1
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+UML class diagrams
+
+UML: Unified Modeling Language
+ Language: a notation, later accompanied by a method of use
+ Modeling: suitable for abstraction, mainly Object Oriented
+ Unified: a suite of diagrams from different approaches,
+some with more prominent role (core diagrams)
+
+
+
+Class diagram
+ a core diagram in the UML suite
+ natively intended as a way to capture an OO implementation,
+but equally relevant in other levels of abstraction and for different intents
+
+
+
+We start here with the implementation perspective
+ not necessarily the most relevant, but the easiest one at this point
+
+3/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+UML Class Diagram
+
+Class Diagrams serve to capture the organization of "classes"
+ allocation and partition of responsibilities among classes (object types)
+ relations of use, creation, association, aggregation, composition,
+specialization/generalization,
+ TBD: apologies for naming, often not in Java style in these slides!
+
+
+4/42
+
+Provides a static view
+ open to several potential instantiations and behaviors
+ (more answers later with object diagrams and sequence diagrams)
+
+2
+
+Class
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Name + attributes + methods of a class
+ intended as a construct of some OO language
+
+Stack
+TOS
+Size
+init()
+push()
+pop()
+isEmpty()
+isFull()
+
+
+
+Visibility (access modifiers) of attributes and methods
+ + public: in any class
+ # protected: within the package and in sub-classes
+ ~ package-private: within the package
+ - private: within the class
+
+5/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Types of signature and returned values
+
+Types of attributes, signature of parameters and returned value
+ Pascal-like notation (sigh!)
+
+
+
+virtual methods (in Java, abstract methods)
+ operation()
+ <<abstract>> operation()
+ operation()=0
+ operation();
+
+6/42
+
+3
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Class stereotypes
+
+Stereotypes
+ add specialized semantics
+according to some profile
+ can be represented by <<…>>,
+or by some graphical notation
+ (more later)
+
+
+
+To be used with judice (and incompleteness)
+ the final goal is to communicate among developers
+ within some context: a lab, an enterprise,
+a set of enterprises involved in a common project, …
+
+7/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Association
+
+Documents a structural relation between two classes
+ the objects of one class
+maintain a reference to some object in the other class
+
+
+
+Navigation: which class has a reference to the other one
+ no arrows means that the association is bi-directional !
+
+
+
+Multiplicity
+ all variants, but most useful to distinguish between one and many (*)
+
+8/42
+
+4
+
+Association
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Roles
+ document the role played by an association end
+basically, the name of the reference in the source class
+
+
+
+Association name
+ less useful than the role
+
+9/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+
+
+
+Associations of subtype <<uses>> and <<creates>>
+
+Creates
+ documents the situation where methods of one class
+create instances of objects in another class
+
+Uses
+ documents the situation where methods of one class
+refer to methods or attributes of another class
+ different meaning wrt an association:
+uses does not correspond to a class variable,
+but rather to some parameter passed in some method invocation
+ is about dependence
+
+Dashed line
+ stereotypes <<uses>> and <<creates>>
+ <<creates>> usually suppressed
+ (yet, supressing <<creates>>
+may be more convenient)
+
+
+
+uses and creates
+ convey key information in the
+architectural perspective
+
+10/42
+
+5
+
+Associazione e uso
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+L’associazione documenta una relazione strutturale tra due tipi
+ il source object ha nel suo stato un field che referenzia il target
+ il field esiste in tutto il lifecycle del source
+ (il field che realizza l’associazione non si rappresenta nella source class)
+
+
+
+la relazione d’uso documenta una associazione temporanea
+ un metodo nel source object usa il target object,
+attraverso un riferimento che esiste nel lifetime del metodo,
+e.g. utilizzando un parametro attuale
+ spesso omessa nel modello per il bene della semplicità
+
+
+
+e.g. il link tra un medico e i suoi assistiti è una associazione
+ il link tra un medico e gli assistiti che si sono iscritti per le visite oggi
+è probabile che sia una relazione di uso
+
+11/42
+
+Aggregation and composition
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Aggregation and composition specialize the semantics of association
+ sterotypes provided with graphical appearance
+ emphasizing the concept of inclusion of a part within a whole
+Libretto
+
+
+
+Studente
+
+CorsoDiLaurea
+
+Scuola
+
+Aggregation documents a relation “Is part of”
+ the same part can be aggregated within multiple contexts
+ e.g. a School aggregates multiple Courses,
+and each Course can be shared by multiple Students
+
+
+
+Composition has the stronger meaning of inclusion
+ the composed objects exists only in the context
+ E.g. the RegistryOfExams belongs to a Student
+
+
+
+In the implementation persective, this is about
+ objects that derive identity from their embedding context,
+and calls into play concepts of sharing and defesive copy)
+ more firm semantics in Object Relational Mapping
+(embedded type, shared references, …)
+
+12/42
+
+6
+
+Generalization
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+The relation of generalization documents subtyping
+ a class extends some other class (inheritance)
+or implements some interface (substitutability)
+ extends drawn with continuous line, implements drawn with dotted line
+
+
+
+About substitutability:
+ a Rectangle can be passed whenever a Shape is expected,
+viceversa may not hold (Liskov substitution pinciple)
+
+
+
+Shape
+
+(almost) equal notation for different concepts
+
++getArea()
+
+ specialization and generalization
+ inheritance and substitutability
+ (Java) extends and implements
+ (dotted vs continuous lines are relevant!)
+
+Rectangle
+
+Circle
+
++getArea()
++getHeight()
+
++area()
++getRadius()
+
+13/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+Generalization
+
+
+
+ TBD: aplogies for notation, these slides were for c++ years ago
+Multiple inheritance
+
+
+
+Class extension and interface implementation
+
+14/42
+
+7
+
+Package
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Classes in a package
+
+15/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+UML Object diagram
+
+Documents organization of class instances
+in some significant or exemplificative stage of execution
+ represents objects, with their valued attributes,
+and relations between objects
+
+
+
+Not a core diagram
+ Useful to understand the consequences of a class diagram
+… and to document complex relations in the conceptual perspective
+ e.g. un medico è in relazione con i suoi assistiti,
+ma egli stesso e’ un assistito a cui è attribuito un altro medico (?!);
+ e.g. defensive copies, bi-directional associations in mappedBy form,
+Decorator, Composite, ...
+
+
+
+Is a static diagram
+ but reflects an actual case that may occur in a transient stage of execution
+
+
+
+16/42
+
+The topology of dynamic objects
+can be quite different than that of static classes
+ E.g. the Composite or Decorator design patterns
+ cycles in the class diag vs unbounded configurations in the object diag
+ multiplicity in the class diag (Decorator vs Composite)
+
+8
+
+Object diagram
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+On the different perspectives of types and instances
+ when writing code you see classes
+ … but run-time execution is made by instances
+Client
+
+Component
++component
++Operation()
+
+ConcreateComponent
+
+Decorator
+
+ConcreteDecorator1
+
+Object2 : Client
+
+Object3 : ConcreteDecorator2
+
+ConcreteDecorator2
+
+Object4 : ConcreteDecorator1
+
+Object5 : ConcreteComponent
+
+17/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Class instances – object diagram
+
+class instances (objects) can be represented within a class diagram
+
+18/42
+
+9
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+More on stereotypes and profiles
+
+Stereotypes
+ Specializes the semantics of some construct of the UML diagram
+ Denoted by << >> brackets
+
+
+
+Sometimes associated with a graphical notation
+ E.g. the signs for composition, aggregation, use or creation, interface, …
+
+19/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+Profile
+
+
+
+
+Defines a reference conceptual model for some domain
+Specializes UML through stereotypes capturing domain specific concepts
+
+
+
+Shared and agreed within some context of development
+or standardized by the Object Management Group
+ SysML: System Modeling language (Relevant)
+ MARTE: Modeling and Analysis of Real Time and Embedded Systems
+ …and many more
+ see profiles at http://www.omg.org/spec/
+
+20/42
+
+10
+
+Profile
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+A UML profile is a specification
+that does one or more of the following:
+ Identifies a subset of the UML metamodel.
+ Specifies “well-formedness rules” beyond those specified by the identified
+subset of the UML metamodel.
+“Well-formedness rule” is a term used in the normative UML metamodel
+specification to describe a set of constraints written in UML’s Object
+Constraint Language (OCL) that contributes to the definition of a metamodel
+element.
+ Specifies “standard elements” beyond those specified by the identified subset
+of the UML metamodel.
+“Standard element” is a term used in the UML metamodel specification to
+describe a standard instance of a UML stereotype, tagged value or constraint.
+ Specifies semantics, expressed in natural language, beyond those specified
+by the identified subset of the UML metamodel.
+ Specifies common model elements, expressed in terms of the profile.
+
+
+
+Used not only in the implementation perspective
+
+21/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+SysML
+
+
+
+MARTE
+
+Some standardized Profiles 1/3
+
+22/42
+
+11
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+Some standardized Profiles 2/3
+
+23/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+Some standardized Profiles 3/3
+
+…
+
+24/42
+
+12
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+Can all this be used to write classes? 1/2
+
+25/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+26/42
+
+Can all this be used to write classes? 2/2
+
+Is this convenient ?
+ possibly for round-trip engineering
+in Model Driven Development
+ not for abstraction code is the best complete representation of itself
+ … not a practice for "real" SW developers
+ (Model Driven Engineering is relevant, not for this aim)
+
+13
+
+on details and abstraction perspective
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+In principle an implementation model could be 1:1 wrt the code
+ Javadoc, Doxygen, …
+ round trip engineering
+
+
+
+… but in this case it would loose much of its "modeling" aim
+ hide details such as local classes, private and methodes and attributes, …
+ avoid definition of unessential or undetermined choices
+
+
+
+The right way: provide a “close enough” representation
+
+27/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+on details and abstraction perspective: the Observer pattern
+ TBD: redraw this scheme, possibly for hand-on experience
+
+Close enough representation
+
+28/42
+
+14
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Dynamic view diagrams
+
+Vista statica
+ Class diagram: tipi e relazioni tra gli oggetti nei tipi
+ Object diagram: una particolare istanza dei tipi
+
+
+
+Interfaccia tra il sistema e il suo ambiente
+ Use case diagrams
+ (very relevant, but discussed later for requirements analysis)
+
+
+
+Vista dinamica (Interaction diagrams)
+ Collaboration diagram e Sequence diagram
+ Documentano la sequenza dei messaggi
+scambiati tra un insieme di oggetti in uno scenario di esecuzione
+ Activity diagram: Aggiunge concetti di parallelismo e concorrenza
+
+29/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Sequence diagram
+
+Tipicamente per documentare la dinamica su un class diagram
+
+30/42
+
+15
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Sequence diagram
+
+Oggetti attivati in uno scenario di esecuzione
+ Tempo di vita e tempo di attivazione
+
+
+
+Messaggi scambiati
+ Creazione
+ invocazione di metodi
+ self-reference
+
+
+
+
+La direzione verticale
+è il tempo
+Quella orizzontale
+sono gli oggetti
+
+
+
+E’ una vista dinamica
+
+31/42
+
+ Utile per descrivere la dinamica associata a schemi statici
+ pericolosissimo nella progettazione, anche peggio nell’analisi
+ Applicabile a class diagrams ma anche a use cases
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+Collaboration diagram
+
+
+
+Rappresenta l’ordine degli eventi numerandoli esplicitamente
+
+
+
+Equivale ad un sequence diagram
+
+ numerazione strutturata: 1 ->2 ->3.1->3.2->3.3->4
+ I due tradotti in modo automatico
+ viste di uno stesso “interaction diagram”
+ Privilegia la rappresentazione dell’organizzazione degli oggetti
+
+32/42
+
+16
+
+tools
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Star UML
+ https://staruml.io/
+ current (Oct.20) version: 3.2.2
+ multiplatform (Windows, MacOS, Linux)
+ free evaluation without time limits
+
+33/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+3 abstraction levels
+
+class diagrams in the
+implementation, specification, and conceptual perspectives
+
+ TBD: skip this now, and discuss it later,
+after design patterns and before requirements analysis
+
+34/42
+
+17
+
+Class diagrams can serve for
+different abstractions and different intents
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+3 levels of abstraction (perhaps 2+1)
+ Implementation perspective
+• rappresenta il modo con cui è realizzato un sistema SW
+• Un oggetto nella rappresentazione
+corrisponde a un oggetto in un linguaggio OO (Java, c++, …)
+ Specification perspective
+• Rappresenta le astrazioni che saranno realizzate in un sistema SW
+• Un oggetto della specifica è tipicamente realizzato
+attraverso più oggetti dell’implementazione
+• Non necessariamente viene realizzata con un linguaggio OO
+ Conceptual perspective
+• Descrive le entità di un domino applicativo
+• Non necessariamente rappresentate in una realizzazione SW
+
+
+
+2 representation intents
+ Specification: of something that shall be implemented
+ Description: of something that already exists
+
+
+
+Different combinations of 3x2 along the lifecycle of a SW system
+
+35/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Class diagrams in the specification perspective
+
+Classes capture abstractions implemented within an information system
+ E.g. internal and external interfaces implemented within a package,
+allocation of responsibilities
+
+
+
+May abstract from constructs (or idioms)
+of the specific language or framework used for the implementation
+
+
+
+Essential for "high-level" design
+ Enable discussion on SW architecture, at different levels of granularity
+ Document the organization of an existing component
+ Plan integration or maintenance
+
+36/42
+
+TBD: aggiungere la rappresentazione con Collaboration, e usarla per
+mostrare differenza tra cosa disegni nello specification e cosa
+nell’implementation (esempio ContoCorrente e MEF)
+
+18
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Some more constructs: association classes
+
+Association classes
+ Provide attributes and also methods for associations
+ Used in the specification (and concpetual) perspective
+to drive implementation
+
+
+
+useful also in the conceptual perspective
+
+37/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Some more constructs: independent generalizations
+
+Generalization may refer to multiple orthogonal directions,
+with a discriminator for each direction
+ E.g. medici pediatri o di base / convenzionati o esterni
+ Requires design in the step to implementation
+
+
+
+Much useful also in the conceptual perspective
+
+38/42
+
+19
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Some more constructs: constraints, comments, annotations
+
+Constraints
+ Within curly brackets {}
+
+
+
+Comments
+ Callouts boxes with free text
+
+
+
+Annotations
+ Supported by the editing tool
+
+
+
+Much useful to avoid over-specification and detail clutter
+ Also in the conceptual perspective
+
+39/42
+
+Class diagrams in the conceptual perspective
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Classes capture the concepts of some domain
+ includes concept in the material process
+ independently from their possible implementation
+within an information system
+
+
+
+Primarily intended for analysis and requirements definition
+ E.g. concepts involved in the process of examinations
+Facoltà
+
+Triennale
+
+PersonaleStrutturato
+
+1
+
+nome
+email
+telefono
+matricola
+
+CorsoDiLaurea
+
+Insegnamento
+
+codice
+
+nome
+CFU
+
+Magistrale
+
++titolare
+
+Docente
+
+1
+
+SettoreScientifico
+
++afferenza Dipartimento
+1..*
+
+2
+
+1
+
++commissario
+{1 dei 2 Docenti commissari
+è il titolare dell'Insegnamento}
+
+Studente
+matricola
+nome
+cognome
+email
+
+EsameSostenuto
+Libretto
+1
+
+0..*
+
+data
+voto
+argomentiDiscussi
+
+40/42
+
+20
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Class diagrams in the conceptual perspective
+
+A class diagram in conceptual perspective:
+medical guidelines and protocols
+
+41/42
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+
+
+Which are the right modeling artifacts to produce?
+
+Different artifacts
+ suited for different stages of the SW lifecycle,
+ with different responsibility for parties (developer, customer, …)
+ Enable incremental refinement and natural transition,
+possibly supported by some methodology (e.g. Iconix)
+
+
+
+The choice depends on process characteristics
+ duration of development process, number of involved roles and people,
+contractual relation among parties, …
+ Cost of documentation maintenance, reverse engineering and
+Model Driven Development
+ expected lifecycle of the product, duration, maintenance and evolution
+
+
+
+… which in turn should depend on the charateristics of the product
+ complexity of functions, size of implementation structure, quality attributes
+
+
+
+Much about agility vs discipline
+ I.e. about the trade-off between lightness and robustness
+ Well represented in eXtreme Programming vs Unified Process
+ (More answers later, when dealing with SW lifecycle)
+
+42/42
+
+21
+
+Enrico Vicario - AA 20/21
+SW Engineering
+
+References
+
+
+
+Martin Fowler, “UML Distilled: Guida rapida al linguaggio di modellazione
+standard” - terza edizione, Pearson Education Italia, Febbraio 2004 .
+
+
+
+Martin Fowler, “UML Distilled: a brief guide to the standard object
+modeling language”, third edition (Addison Wesley).
+
+43/42
+
+22
+
+

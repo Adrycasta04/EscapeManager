@@ -1,0 +1,34 @@
+@startuml class_diagram_controllers
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package "cli" {
+    class Main
+    class ConsoleMenu
+}
+
+package "controllers" {
+    class PrenotazioneController
+    class GestioneStatoController
+    class TariffeController
+    class ListaAttesaController
+}
+
+package "dao" {
+    interface StanzaDAO
+    interface PrenotazioneDAO
+    interface WaitingListDAO
+}
+
+ConsoleMenu --> PrenotazioneController : usa
+ConsoleMenu --> GestioneStatoController : usa
+ConsoleMenu --> TariffeController : usa
+ConsoleMenu --> ListaAttesaController : usa
+
+PrenotazioneController --> PrenotazioneDAO : dipende
+PrenotazioneController --> StanzaDAO : dipende
+GestioneStatoController --> StanzaDAO : dipende
+TariffeController --> StanzaDAO : dipende
+ListaAttesaController --> WaitingListDAO : dipende
+
+@enduml

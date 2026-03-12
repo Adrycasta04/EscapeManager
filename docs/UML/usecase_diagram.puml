@@ -18,14 +18,14 @@ actor "Admin" as A
 rectangle "EscapeManager System" {
     
     ' --- Casi d'uso Cliente ---
-    usecase "UC1\nPrenotazione Stanza" as UC_C1
-    usecase "UC2\nIscrizione Lista d'Attesa" as UC_C2
+    usecase "UC1\nPrenotazione Stanza" <<user goal>> as UC_C1
+    usecase "UC2\nIscrizione Lista d'Attesa" <<user goal>> as UC_C2
     
     ' --- Casi d'uso Game Master ---
-    usecase "UC3\nAggiornamento Stato Stanza" as UC_GM3
+    usecase "UC3\nAggiornamento Stato Stanza" <<user goal>> as UC_GM3
     
     ' --- Casi d'uso Admin ---
-    usecase "UC4\nConfigurazione Tariffe Stanza" as UC_A2
+    usecase "UC4\nConfigurazione Tariffe Stanza" <<user goal>> as UC_A2
 }
 
 ' --- Relazioni Attori -> Casi d'uso ---

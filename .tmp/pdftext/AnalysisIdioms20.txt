@@ -1,0 +1,223 @@
+SW Architectures and
+Methodologies
+AA 20/21 - Enrico Vicario
+
+Software Engineering - A.A. 20/21
+
+Analysis Idioms in the creation of a Domain Model
+Reflections from experience in OO Analysis and Design
+mainly oriented to an implementation/specification perspective
+
+Enrico Vicario
+
+Dipartimento di Ingegneria dell'Informazione
+Laboratorio Tecnologie del Software
+Università di Firenze
+enrico.vicario@unifi.it, stlab.dinfo.unifi.it/vicario
+1/29
+
+SW Architectures and
+Methodologies
+AA 20/21 - Enrico Vicario
+
+
+
+Remarks on Analysis idioms – 1/10
+
+Association classes
+ a kind of shortcut in the analysis, later translated in the implementation
+ e.g. Client, Product, Order
+ e.g. Student, Course, Exam
+ a kind of reification
+
+2/97
+
+1
+
+SW Architectures and
+Methodologies
+AA 20/21 - Enrico Vicario
+
+
+
+Remarks on Analysis idioms – 2/10
+
+Orthogonal classification
+ again, a shortcut in conceptual analysis
+ more complex to be translated in the implementation transition
+ (Bridge Pattern)
+
+
+
+Comments and constraints
+ avoid complexity and stiffness
+ often preparing deployment of some design pattern
+
+
+
+it is often said that: design patterns emerge
+in the transition form specification to implementation
+ whereas, often Design Patterns disappear in that transition
+ e.g. Composite Pattern
+
+3/97
+
+SW Architectures and
+Methodologies
+AA 20/21 - Enrico Vicario
+
+
+
+Remarks on Analysis idioms - 3/10
+
+Roles are lighter than Types
+ e.g. a Committee has a President and 2 Members,
+and all of them are Professors
+ ... unless the President has specific Responsibilities to be captured
+in the Digital representation (a PEC address, a nomination decree, ...)
+
+4/97
+
+2
+
+SW Architectures and
+Methodologies
+AA 20/21 - Enrico Vicario
+
+
+
+Remarks on Analysis idioms - 4/10
+
+Attributes and Types
+ an object shall have State, Behaviour, and Identity ... what if Identity is
+resolved on the database?
+ e.g. Student and ExamRegistry
+ ... embeddable, UML composition,
+offloaded to simplify, but without adding identity, affected by the architecture
+
+5/97
+
+SW Architectures and
+Methodologies
+AA 20/21 - Enrico Vicario
+
+
+
+Remarks on Analysis idioms - 5/10
+
+the same term may subtend different abstractions
+ each responsible for different attributes and operations,
+and references to associated types
+ e.g. a MasterPiece, an Edition, a Volume (title, author, year, year, size,
+location on the scaffold, )
+ e.g. a Course and its concrete implementation (CFU, SSD, room, timetable...)
+ e.g. a ProductionProcess and a ProductionProcessInstance
+(the recipe, nominal and actual parameters, position in the store, ...)
+
+6/97
+
+3
+
+SW Architectures and
+Methodologies
+AA 20/21 - Enrico Vicario
+
+
+
+Generalization (over Specialization) – 6/10
+
+create a common abstraction
+for types that are not distinguished in some use
+ proceeds bottom-up, as an abstraction refactoring
+not, top-down, as a specialization
+ e.g. MasterPiece and Edition are not initially sibling subtype,
+the interface Commentable is created later
+to accommodate Comment referred to a Masterpiece or an Edition
+
+7/29
+
+SW Architectures and
+Methodologies
+AA 20/21 - Enrico Vicario
+
+
+
+Remarks on Analysis idioms - 7/10
+
+Mapper
+ a kind of reification of abstract actions, relations, ...
+ avoids charging a type with marginal responsibilities
+ permitting multiple areas of business be implemented around a common type
+ e.g. Student, Course, Exam, Commission;
+ may break navigation direction suggested by use cases
+(but, this may be not a problem; cmp remark on Navigation Direction
+TBD: should this be related to the Bounded Context Pattern
+in Domain Driven Design (DDD) ?
+
+8/97
+
+4
+
+SW Architectures and
+Methodologies
+AA 20/21 - Enrico Vicario
+
+
+
+Remarks on Analysis idioms - 8/10
+
+the anti-pattern of target and agent
+ operations shall be assigned to the class whose state is used (def/use)
+ ... or they shall be captured in a use case rather than in the class diagram
+ unless you need to log operations
+ e.g. the Professor assigns a Rank to the Student
+ e.g. the Physician administrates a Drug to the Patient
+ much related to the architecture,
+and the difference between domain model
+and business logic (or service layer)
+
+9/97
+
+SW Architectures and
+Methodologies
+AA 20/21 - Enrico Vicario
+
+
+
+Remarks on Analysis idioms – 9/10
+
+Navigation direction
+ bidirectional in the conceptual model,
+but better restricted in the implementation to reduce the effort
+in Java code, Tests, and Object Relational Mapping
+ in principle, determined by expected Use Cases for the sake of efficiency
+ e.g. identify all the exams registered by a Professor
+ in the scope of a containing architecture can be inverted:
+ORMapping ensures that only “relevant” objects will be alive,
+reducing the issue of efficiency,
+and delegating to proper queries and database indexing the possible
+optimization
+
+10/97
+
+5
+
+SW Architectures and
+Methodologies
+AA 20/21 - Enrico Vicario
+
+
+
+Remarks on Analysis idioms – 10/10
+
+Composing types
+ avoids subclassing (which is complex for mapping)
+ may enable type mapping that makes the type processable as an instance
+(much developed later, in reflection architectures)
+ ... may require correction, as specialized ops or fields may be required
+
+11/97
+
+6
+
+

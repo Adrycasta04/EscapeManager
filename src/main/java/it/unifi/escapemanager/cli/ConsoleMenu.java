@@ -14,6 +14,7 @@ import it.unifi.escapemanager.exceptions.SlotNonDisponibileException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -72,7 +73,7 @@ public class ConsoleMenu {
     // ---------- Caso 1: Prenotazione (UC1) ----------
 
     private void gestisciPrenotazione() {
-        System.out.println("\n--- NUOVA PRENOTAZIONE (UC2) ---");
+        System.out.println("\n--- NUOVA PRENOTAZIONE (UC1) ---");
         mostraCatalogo();
 
         System.out.print("ID Cliente: ");
@@ -90,8 +91,22 @@ public class ConsoleMenu {
             return;
         }
 
-        // Slot simulato: oggi alle 21:00
-        LocalDateTime slot = LocalDateTime.of(LocalDate.now(), LocalTime.of(21, 0));
+        LocalDate dataSelezionata;
+        LocalTime oraSelezionata;
+        try {
+            System.out.print("Data (YYYY-MM-DD, vuoto = oggi): ");
+            String dataInput = scanner.nextLine().trim();
+            dataSelezionata = dataInput.isEmpty() ? LocalDate.now() : LocalDate.parse(dataInput);
+
+            System.out.print("Ora (HH:MM, vuoto = 21:00): ");
+            String oraInput = scanner.nextLine().trim();
+            oraSelezionata = oraInput.isEmpty() ? LocalTime.of(21, 0) : LocalTime.parse(oraInput);
+        } catch (DateTimeParseException e) {
+            System.out.println("[ERRORE] Formato data/ora non valido.");
+            return;
+        }
+
+        LocalDateTime slot = LocalDateTime.of(dataSelezionata, oraSelezionata);
 
         try {
             Prenotazione p = prenotazioneController.effettuaPrenotazione(clienteId, stanzaId, slot, numeroGiocatori);

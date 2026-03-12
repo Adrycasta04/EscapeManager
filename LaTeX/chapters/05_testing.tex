@@ -1,12 +1,23 @@
 ﻿\chapter{Collaudo e Testing}
 
-La fase di verifica e validazione del sistema \textbf{EscapeManager} Ã¨ stata condotta seguendo un approccio multilivello, utilizzando il framework \textbf{JUnit 5}. L'obiettivo del collaudo non Ã¨ stato solo quello di garantire l'assenza di difetti evidenti (bug), ma soprattutto di dimostrare la robustezza dell'architettura e la perfetta aderenza ai requisiti funzionali delineati nel Capitolo 2.
+La fase di verifica e validazione del sistema \textbf{EscapeManager} è stata condotta seguendo un approccio multilivello, utilizzando il framework \textbf{JUnit 5}. L'obiettivo del collaudo non è stato solo quello di garantire l'assenza di difetti evidenti (bug), ma soprattutto di dimostrare la robustezza dell'architettura e la perfetta aderenza ai requisiti funzionali delineati nel Capitolo 2.
+
+\section{Strategia di Verifica}
+La strategia di test è organizzata su tre livelli:
+\begin{itemize}
+    \item \textbf{Unit Test (White-Box):} verificano le logiche pure del Domain Model e dei Design Pattern.
+    \item \textbf{Integration Test (DAO/DB):} verificano il mapping ORM e la correttezza delle query principali.
+    \item \textbf{Functional Test (Black-Box):} esercitano i Controller come surrogati della UI, in linea con i template UC.
+\end{itemize}
+
+\section{Setup e Dati di Test}
+Per garantire test ripetibili, prima di ogni test di integrazione o funzionale il database viene riportato ad uno stato noto tramite \texttt{DatabaseHelper.resetTestDatabase()}, che esegue TRUNCATE e reinserisce dati minimi consistenti (una stanza e due clienti).
 
 \section{Testing Strutturale (White-Box)}
 
 I test strutturali (o Unit Test) si sono concentrati sulle classi del \texttt{Domain Model}, con l'obiettivo di massimizzare la copertura (Code Coverage) dei rami condizionali e verificare la correttezza algoritmica, in totale isolamento dalle dipendenze esterne.
 
-Particolare attenzione Ã¨ stata dedicata al collaudo dei Design Pattern. Il Listing \ref{lst:test_strategy} mostra un test parametrizzato per la verifica delle politiche di prezzo dinamiche (\textit{Strategy Pattern}).
+Particolare attenzione è stata dedicata al collaudo dei Design Pattern. Il Listing \ref{lst:test_strategy} mostra un test parametrizzato per la verifica delle politiche di prezzo dinamiche (\textit{Strategy Pattern}).
 
 \begin{lstlisting}[caption={Unit Test per la logica di calcolo del prezzo (Strategy Pattern)}, label={lst:test_strategy}]
 class PricingStrategyTest {
@@ -26,58 +37,56 @@ class PricingStrategyTest {
 }
 \end{lstlisting}
 
+Oltre al calcolo del prezzo, i test unitari verificano anche le transizioni di stato della \texttt{Stanza} (State Pattern) e la corretta gestione delle eccezioni in caso di transizioni non valide.
+
 \section{Testing di Integrazione (DAO e Database)}
 
-Per verificare il corretto interfacciamento tra l'applicazione Java e il database PostgreSQL (livello ORM), sono stati implementati dei test di integrazione sulle classi DAO.
-Per garantire la \textbf{ripetibilitÃ } e l'isolamento dei test (evitando che l'esecuzione di un test sporchi i dati del successivo), Ã¨ stato sfruttato il costrutto \texttt{@BeforeEach} di JUnit per lanciare uno script SQL di \textit{reset e re-inizializzazione} del database prima di ogni metodo di test.
+Per verificare il corretto interfacciamento tra l'applicazione Java e il database PostgreSQL (livello ORM), sono stati implementati test di integrazione sulle classi DAO.
+Per garantire la \textbf{ripetibilità} e l'isolamento, il costrutto \texttt{@BeforeEach} invoca \texttt{DatabaseHelper.resetTestDatabase()}, che esegue TRUNCATE e reinserisce un dataset minimo prima di ogni metodo di test.
 
-\begin{lstlisting}[caption={Integration Test per StanzaDAO con reset dello stato}, label={lst:test_dao}]
-class StanzaDAOTest {
-    private StanzaDAO stanzaDAO;
-
-    @BeforeEach
-    void setUpDatabase() throws Exception {
-        // Esegue il reset e la re-inizializzazione del DB a uno stato noto
-        DatabaseHelper.resetTestDatabase();
-        stanzaDAO = new StanzaDAOPostgres();
-    }
-
-    @Test
-    void testFindStanzeDisponibiliBySede() throws SQLException {
-        // La sede "FI01" nel db di test ha 1 stanza DISPONIBILE
-        List<Stanza> disponibili = stanzaDAO.findBySedeAndStato("FI01", "DISPONIBILE");
-        
-        assertNotNull(disponibili);
-        assertEquals(1, disponibili.size());
-        assertTrue(disponibili.stream()
-            .allMatch(s -> s.getStatoString().equals("DISPONIBILE")));
-    }
-}
-\end{lstlisting}
-
-\section{Testing Funzionale (Black-Box e TracciabilitÃ )}
-
-Il livello piÃ¹ alto di collaudo ha riguardato i \texttt{Controllers}. In questa fase (Black-Box Testing) la logica interna viene ignorata e il sistema viene testato esclusivamente in base agli input e agli output attesi.
-
-Per garantire la massima \textbf{tracciabilitÃ }, ogni test funzionale Ã¨ stato mappato direttamente su uno specifico \textit{Use Case Template} (Sezione 2.2). Sono stati collaudati sia i \textit{Flussi Base} che i \textit{Flussi Alternativi} (le eccezioni).
-
-Il Listing \ref{lst:test_funzionale} dimostra come il sistema gestisce fluidamente la \textit{Race Condition} descritta nell'UC1 (Alternativa 3a), negando la prenotazione se lo slot risulta giÃ  occupato a database.
-
-\begin{lstlisting}[caption={Functional Test tracciato sull'UC1 (Flusso Alternativo 3a)}, label={lst:test_funzionale}]
-class PrenotazioneControllerTest {
-    private PrenotazioneController controller;
-    private PrenotazioneDAOPostgres prenotazioneDAO;
+\begin{lstlisting}[caption={Integration Test per StanzaDAOPostgres con reset dello stato}, label={lst:test_dao}]
+class StanzaDAOPostgresTest {
+    private StanzaDAO stanzaDao;
 
     @BeforeEach
     void setUp() {
         DatabaseHelper.resetTestDatabase();
-        prenotazioneDAO = new PrenotazioneDAOPostgres();
-        StanzaDAOPostgres stanzaDAO = new StanzaDAOPostgres();
+        stanzaDao = DAOFactory.getDAOFactory().getStanzaDAO();
+    }
+
+    @Test
+    void testSaveAndFindById() {
+        Stanza stanza = stanzaDao.findById("R01");
+        assertNotNull(stanza);
+        assertEquals("Horror Asylum", stanza.getTema());
+    }
+}
+\end{lstlisting}
+
+\section{Testing Funzionale (Black-Box e Tracciabilità)}
+
+Il livello più alto di collaudo ha riguardato i \texttt{Controllers}. In questa fase (Black-Box Testing) la logica interna viene ignorata e il sistema viene testato esclusivamente in base agli input e agli output attesi.
+
+Per garantire la massima \textbf{tracciabilità}, ogni test funzionale è stato mappato direttamente su uno specifico \textit{Use Case Template} (Sezione 2.2). Sono stati collaudati sia i \textit{Flussi Base} che i \textit{Flussi Alternativi} (le eccezioni).
+
+Il Listing \ref{lst:test_funzionale} dimostra come il sistema gestisce fluidamente la \textit{Race Condition} descritta nell'UC1 (Alternativa 3a), negando la prenotazione se lo slot risulta già occupato a database.
+
+\begin{lstlisting}[caption={Functional Test tracciato sull'UC1 (Flusso Alternativo 3a)}, label={lst:test_funzionale}]
+class PrenotazioneControllerTest {
+    private PrenotazioneController controller;
+    private PrenotazioneDAO prenotazioneDAO;
+
+    @BeforeEach
+    void setUp() {
+        DatabaseHelper.resetTestDatabase();
+        DAOFactory factory = DAOFactory.getDAOFactory();
+        prenotazioneDAO = factory.getPrenotazioneDAO();
+        StanzaDAO stanzaDAO = factory.getStanzaDAO();
         controller = new PrenotazioneController(prenotazioneDAO, stanzaDAO);
     }
 
     @Test
-    void testPrenotazioneNegataPerSlotOccupato_UC1_Alt3a() throws SQLException {
+    void testPrenotazioneNegataPerSlotOccupato_UC1_Alt3a() {
         // Setup: Il Cliente 2 tenta di prenotare uno slot appena occupato dal Cliente 1
         String stanzaId = "R01";
         LocalDateTime slotRichiesto = LocalDateTime.of(2026, 10, 31, 21, 0);
@@ -99,7 +108,58 @@ class PrenotazioneControllerTest {
 }
 \end{lstlisting}
 
+\subsection{Catalogo dei Test}
+La Tabella \ref{tab:test_catalog} riassume l'intera suite di test, indicando tipo e identificativo.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|>{\bfseries}l|X|}
+        \hline
+        ID & Tipo & Test \\ \hline
+        U1 & Unit & \texttt{PricingStrategyTest.testTariffaBaseCalcoloCorretto} \\ \hline
+        U2 & Unit & \texttt{StanzaTest.testTransizioneCorretta} \\ \hline
+        U3 & Unit & \texttt{StanzaTest.testEccezioneStatoNonValido} \\ \hline
+        I1 & Integration & \texttt{StanzaDAOPostgresTest.testSaveAndFindById} \\ \hline
+        F1 & Functional & \texttt{PrenotazioneControllerTest.testPrenotazioneNegataPerSlotOccupato\_UC1\_Alt3a} \\ \hline
+        F2 & Functional & \texttt{ListaAttesaControllerTest.testIscrizioneListaAttesa\_OK} \\ \hline
+        F3 & Functional & \texttt{ListaAttesaControllerTest.testIscrizioneListaAttesa\_Duplicato} \\ \hline
+        F4 & Functional & \texttt{GestioneStatoControllerTest.testEseguiTransizioneAvvia} \\ \hline
+        F5 & Functional & \texttt{GestioneStatoControllerTest.testTransizioneNonValida\_TerminaSuDisponibile\_UC3\_Alt4a} \\ \hline
+        F6 & Functional & \texttt{TariffeControllerTest.testCambioTariffaWeekend\_UC4} \\ \hline
+    \end{tabularx}
+    \caption{Catalogo dei test (unit, integrazione, funzionali)}
+    \label{tab:test_catalog}
+\end{table}
+
+\subsection{Tracciabilità Use Case \textrightarrow{} Test}
+I test funzionali F1--F6 sono tracciati direttamente sui template del Capitolo 2. La Tabella \ref{tab:traceability} sintetizza la copertura dei flussi base e alternativi.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|}
+        \hline
+        Use Case / Flusso & Test ID \\ \hline
+        UC1 - Flusso alternativo 3a (slot occupato) & F1 \\ \hline
+        UC2 - Flusso base (iscrizione) & F2 \\ \hline
+        UC2 - Alternativa 5a (duplicato) & F3 \\ \hline
+        UC3 - Flusso base (avvio sessione) & F4 \\ \hline
+        UC3 - Alternativa 4a (transizione non valida) & F5 \\ \hline
+        UC4 - Flusso base (cambio tariffa) & F6 \\ \hline
+    \end{tabularx}
+    \caption{Matrice di tracciabilità Use Case \textrightarrow{} Test}
+    \label{tab:traceability}
+\end{table}
+
+\section{Risultati}
+La suite di test è composta da \textbf{7 classi} e \textbf{10 test cases}, distribuiti tra unit, integrazione e test funzionali. Non è stata eseguita una misura formale di coverage, ma i test coprono i principali rami decisionali dei pattern e i flussi alternativi più critici nei casi d'uso.
+
 \section{Conclusioni}
 
 L'approccio metodologico adottato, guidato dai principi dell'Object-Oriented Design e supportato dall'uso estensivo dei Design Pattern, ha permesso di sviluppare \textbf{EscapeManager} come un sistema robusto, altamente coeso e disaccoppiato. 
-La suite di collaudo ha confermato la soliditÃ  della logica di business e la corretta integrazione con il layer relazionale, soddisfacendo integralmente i requisiti posti in fase di analisi e fornendo un'architettura facilmente estensibile per sviluppi futuri (es. integrazione di sensori fisici nelle stanze tramite \textit{Adapter Pattern} o implementazione di un'interfaccia grafica avanzata al posto dell'attuale CLI).
+La suite di collaudo ha confermato la solidità della logica di business e la corretta integrazione con il layer relazionale, soddisfacendo integralmente i requisiti posti in fase di analisi e fornendo un'architettura facilmente estensibile per sviluppi futuri (es. integrazione di sensori fisici nelle stanze tramite \textit{Adapter Pattern} o implementazione di un'interfaccia grafica avanzata al posto dell'attuale CLI).
+
+

@@ -1,23 +1,28 @@
 ﻿\chapter{Implementazione e Architettura del Codice}
 
-Questo capitolo descrive la traduzione del Domain Model e dello Schema Logico in codice sorgente Java. L'architettura software Ã¨ stata strutturata seguendo il pattern architetturale \textit{Layered} (a strati), che ricalca logicamente il paradigma BCE (Boundary-Control-Entity), garantendo un elevato disaccoppiamento e facilitando il testing isolato dei componenti.
+Questo capitolo descrive la traduzione del Domain Model e dello Schema Logico in codice sorgente Java. L'architettura software è stata strutturata seguendo il pattern architetturale \textit{Layered} (a strati), che ricalca logicamente il paradigma BCE (Boundary-Control-Entity), garantendo un elevato disaccoppiamento e facilitando il testing isolato dei componenti.
 
 \section{Architettura dei Package}
 
-L'applicazione Ã¨ organizzata in quattro package principali, illustrati nel Package Diagram in Figura \ref{fig:package_diagram}. Le dipendenze tra i package sono rigorosamente direzionali: lo strato di presentazione (\texttt{cli}) non accede mai direttamente al database, ma passa per i \texttt{controllers}, che a loro volta orchestrano il \texttt{domain} e si interfacciano con i \texttt{dao}.
+L'applicazione è organizzata in quattro package principali (Figura \ref{fig:package_diagram}). Le dipendenze tra i package sono rigorosamente direzionali: lo strato di presentazione (\texttt{cli}) non accede mai direttamente al database, ma passa per i \texttt{controllers}, che a loro volta orchestrano il \texttt{domain} e si interfacciano con i \texttt{dao}.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{images/package_diagram.png}
-    \caption{Package Diagram dell'architettura di sistema}
-    \label{fig:package_diagram}
-\end{figure}
+\subsection{cli (Boundary)}
+Contiene il punto di ingresso dell'applicazione e la CLI. La classe \texttt{ConsoleMenu} gestisce l'interazione con l'utente, la validazione di input di base e la delega delle operazioni ai Controller.
+
+\subsection{controllers (Control)}
+Raccoglie i Controller che implementano i flussi dei casi d'uso. Ogni Controller incapsula la logica di coordinamento, chiama i DAO e applica le regole di business esposte dal Domain Model.
+
+\subsection{domain (Entity)}
+Include le entità di dominio (\texttt{Stanza}, \texttt{Prenotazione}, \texttt{Utente} e sottoclassi) e l'implementazione dei Design Pattern principali (State, Strategy, Observer).
+
+\subsection{dao (Persistence)}
+Contiene le interfacce DAO, le implementazioni PostgreSQL e l'oggetto \texttt{ConnectionManager}. L'obiettivo è isolare la persistenza e mantenere il dominio indipendente dalla tecnologia di storage.
 
 \section{Livello di Persistenza (Pattern DAO)}
 
-Per soddisfare i requisiti del modulo di Laboratorio di Informatica, l'accesso al database PostgreSQL Ã¨ stato isolato tramite il pattern \textbf{Data Access Object (DAO)}. Questo garantisce che la logica di business rimanga del tutto agnostica rispetto alla tecnologia di persistenza.
+Per soddisfare i requisiti del modulo di Laboratorio di Informatica, l'accesso al database PostgreSQL è stato isolato tramite il pattern \textbf{Data Access Object (DAO)}. Questo garantisce che la logica di business rimanga del tutto agnostica rispetto alla tecnologia di persistenza.
 
-La connessione al database Ã¨ gestita tramite un \textbf{Singleton Pattern} (\texttt{ConnectionManager}), che assicura l'esistenza di un'unica istanza di connessione (o di un connection pool) condivisa per tutta l'applicazione, evitando l'overhead di connessioni multiple.
+La connessione al database è gestita tramite un \textbf{Singleton Pattern} (\texttt{ConnectionManager}), che assicura l'esistenza di un'unica istanza di connessione (o di un connection pool) condivisa per tutta l'applicazione, evitando l'overhead di connessioni multiple.
 
 \begin{lstlisting}[caption={Interfaccia DAO e uso dei Generics}, label={lst:dao_interface}]
 public interface GenericDAO<T, ID> {
@@ -33,12 +38,30 @@ public interface StanzaDAO extends GenericDAO<Stanza, String> {
 }
 \end{lstlisting}
 
+In modo analogo, \texttt{PrenotazioneDAO} e \texttt{WaitingListDAO} incapsulano le operazioni di persistenza per prenotazioni e liste d'attesa.
+
+\section{Configurazione della Connessione al Database}
+Le credenziali di accesso al database non sono hardcoded: vengono lette da \texttt{db.properties} (in \texttt{src/main/resources}) o da variabili d'ambiente, separando configurazione e codice ed evitando la pubblicazione accidentale di segreti.
+
+\begin{lstlisting}[caption={Caricamento della configurazione DB dal classpath}]
+Properties props = loadProperties();
+String url = firstNonBlank(
+    System.getenv("EM_DB_URL"),
+    System.getProperty("db.url"),
+    props.getProperty("db.url"),
+    "jdbc:postgresql://localhost:5432/escapemanager"
+);
+\end{lstlisting}
+
+\section{Validazione Input e Gestione Errori}
+La CLI valida i formati di input (numeri, date e orari) prima di invocare i Controller. Le eccezioni di business (\texttt{ValidationException} e sottoclassi) propagano errori gestibili dalla UI, mantenendo la logica di validazione separata dalla presentazione.
+
 \section{Implementazione dei Design Pattern}
 
-Di seguito vengono riportati i frammenti di codice piÃ¹ significativi che mostrano l'implementazione pratica dei Design Pattern progettati nel Capitolo 3.
+Di seguito vengono riportati i frammenti di codice più significativi che mostrano l'implementazione pratica dei Design Pattern progettati nel Capitolo 3.
 
 \subsection{State Pattern}
-Lo State Pattern elimina la necessitÃ  di costrutti condizionali complessi per la gestione del ciclo di vita della \texttt{Stanza}. Ogni stato concreto implementa il comportamento specifico e gestisce, ove necessario, la transizione allo stato successivo.
+Lo State Pattern elimina la necessità di costrutti condizionali complessi per la gestione del ciclo di vita della \texttt{Stanza}. Ogni stato concreto implementa il comportamento specifico e gestisce, ove necessario, la transizione allo stato successivo.
 
 \begin{lstlisting}[caption={Implementazione dello State Pattern}, label={lst:state_pattern}]
 public interface RoomState {
@@ -65,7 +88,7 @@ public class DisponibileState implements RoomState {
 \end{lstlisting}
 
 \subsection{Strategy Pattern}
-Il calcolo del prezzo della prenotazione (UC1) Ã¨ demandato alla \texttt{PricingStrategy}. Il Controller, in base alla data della prenotazione, inietta la strategia corretta all'interno dell'entitÃ .
+Il calcolo del prezzo della prenotazione (UC1) è demandato alla \texttt{PricingStrategy}. L'Admin, tramite il \texttt{TariffeController}, seleziona la strategia appropriata e la imposta sulla stanza.
 
 \begin{lstlisting}[caption={Implementazione dello Strategy Pattern}, label={lst:strategy_pattern}]
 public interface PricingStrategy {
@@ -105,8 +128,17 @@ public class WaitingList {
 }
 \end{lstlisting}
 
+\section{Dependency Injection e Testabilità}
+I Controller ricevono i DAO tramite costruttore, facilitando la sostituzione delle dipendenze in fase di test. La CLI si limita a comporre l'oggetto e a delegare, mantenendo separati input/output e logica di business.
+
+\begin{lstlisting}[language=Java, caption=Iniezione delle dipendenze nel controller]
+PrenotazioneDAO prenotazioneDAO = factory.getPrenotazioneDAO();
+StanzaDAO stanzaDAO = factory.getStanzaDAO();
+PrenotazioneController controller = new PrenotazioneController(prenotazioneDAO, stanzaDAO);
+\end{lstlisting}
+
 \section{Gestione Centralizzata delle Eccezioni (Information Hiding)}
-Un aspetto cruciale dell'implementazione strutturata ha riguardato la gestione dei flussi alternativi e degli errori. Invece di affidarsi alle generiche eccezioni standard di Java (es. \texttt{RuntimeException}), Ã¨ stata disegnata una gerarchia di eccezioni custom radicata nella classe \texttt{EscapeManagerException}.
+Un aspetto cruciale dell'implementazione strutturata ha riguardato la gestione dei flussi alternativi e degli errori. Invece di affidarsi alle generiche eccezioni standard di Java (es. \texttt{RuntimeException}), è stata disegnata una gerarchia di eccezioni custom radicata nella classe \texttt{EscapeManagerException}.
 
 Come illustrato nella Figura \ref{fig:class_diagram_persistence}, la gerarchia divide formalmente gli errori in base al layer architetturale in cui si verificano:
 \begin{itemize}
@@ -131,3 +163,5 @@ try (PreparedStatement stmt = conn.prepareStatement(query)) {
     throw new DatabaseException("Errore di accesso ai dati durante il salvataggio.", e);
 }
 \end{lstlisting}
+
+

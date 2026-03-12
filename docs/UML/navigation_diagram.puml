@@ -1,0 +1,37 @@
+﻿@startuml navigation_diagram
+left to right direction
+skinparam state {
+  BackgroundColor LightCyan
+  BorderColor DarkCyan
+}
+
+[*] --> MainMenu
+
+state "N0 Menu Principale" as MainMenu {
+}
+
+MainMenu --> Catalogo : UC1 (catalogo)
+MainMenu --> Prenotazione : UC1 (prenota)
+MainMenu --> StatoStanza : UC3
+MainMenu --> Tariffe : UC4
+MainMenu --> [*] : Esci
+
+Catalogo --> MainMenu : indietro
+Prenotazione --> MainMenu : fine
+StatoStanza --> MainMenu : fine
+Tariffe --> MainMenu : fine
+
+Prenotazione --> ListaAttesa : slot occupato (UC2)
+ListaAttesa --> MainMenu : fine
+
+state "N1 Catalogo Stanze" as Catalogo
+state "N2 Prenotazione" as Prenotazione
+state "N3 Lista d'Attesa" as ListaAttesa
+state "N4 Aggiorna Stato Stanza" as StatoStanza
+state "N5 Configura Tariffe" as Tariffe
+
+note right of MainMenu
+  N0..N5 = nodi usati nei template
+end note
+
+@enduml

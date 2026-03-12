@@ -1,6 +1,6 @@
-\chapter{Analisi dei Requisiti}
+﻿\chapter{Analisi dei Requisiti}
 
-Per definire i requisiti funzionali del sistema in ottica Object-Oriented, si è proceduto all'identificazione degli attori principali e dei relativi casi d'uso. La modellazione è stata divisa in due livelli di astrazione: un diagramma di contesto ad alto livello per identificare i macro-obiettivi (User Goals) e un diagramma dettagliato per l'analisi tecnica.
+Per definire i requisiti funzionali del sistema in ottica Object-Oriented, si è proceduto all'identificazione degli attori principali e dei relativi casi d'uso. La modellazione è stata condotta tramite un diagramma dettagliato per l'analisi tecnica.
 
 Il sistema prevede le seguenti figure:
 \begin{itemize}
@@ -9,29 +9,37 @@ Il sistema prevede le seguenti figure:
     \item \textbf{Admin:} Amministratore di sistema incaricato di definire il catalogo e le logiche commerciali.
 \end{itemize}
 
-\section{Use Case Diagram (High-Level)}
-La Figura \ref{fig:usecase_ridotto} illustra il diagramma di contesto. Questo livello omette le dipendenze strutturali per evidenziare esclusivamente il macro-scopo di ciascun attore all'interno dell'ecosistema EscapeManager.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{images/usecase_diagram_ridotto.png}
-    \caption{Diagramma di Contesto (Macro-obiettivi degli attori)}
-    \label{fig:usecase_ridotto}
-\end{figure}
-
-\section{Use Case Diagram (Dettagliato)}
-La Figura \ref{fig:usecase_dettagliato} espande i macro-obiettivi nei casi d'uso effettivi del sistema. Per mantenere il diagramma ad un alto livello di coesione ed evitare l'anti-pattern della decomposizione funzionale, le operazioni di CRUD standard e l'autenticazione di base sono state omesse o raggruppate. In questa vista viene invece evidenziata la relazione di estensione (\texttt{<<extend>>}) che modella un flusso alternativo cruciale per il dominio aziendale: la gestione opzionale delle liste d'attesa in caso di esaurimento degli slot disponibili.
+\section{Use Case Diagram}
+La Figura \ref{fig:usecase_dettagliato} rappresenta i casi d'uso effettivi del sistema. Tutti i casi d'uso sono di livello \texttt{<<user goal>>} e sono numerati per mantenere la consistenza con i template. Per mantenere il diagramma ad un alto livello di coesione ed evitare l'anti-pattern della decomposizione funzionale, le operazioni di CRUD standard e l'autenticazione di base sono state omesse o raggruppate. In questa vista viene evidenziata la relazione di estensione (\texttt{<<extend>>}) che modella un flusso alternativo cruciale per il dominio aziendale: la gestione opzionale delle liste d'attesa in caso di esaurimento degli slot disponibili.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{images/usecase_diagram.png}
-    \caption{Diagramma dei Casi d'Uso Dettagliato}
+    \caption{Diagramma dei Casi d'Uso}
     \label{fig:usecase_dettagliato}
 \end{figure}
 
+\subsection{Legenda riferimenti a Mockup e Navigazione}
+Nei template dei casi d'uso, ogni passo include tra parentesi il riferimento al mockup (\textbf{M1..M4}) e al nodo del diagramma di navigazione (\textbf{N0..N5}, Figura \ref{fig:navigation_diagram}).
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|X|}
+        \hline
+        ID & Mockup associato & Nodo di navigazione \\ \hline
+        M1 & Figura \ref{fig:mockup_uc1} (Catalogo e Prenotazione) & N1 Catalogo Stanze, N2 Prenotazione \\ \hline
+        M2 & Figura \ref{fig:mockup_uc2} (Lista d'Attesa) & N3 Lista d'Attesa \\ \hline
+        M3 & Figura \ref{fig:mockup_uc3} (Stato Stanze) & N4 Aggiorna Stato Stanza \\ \hline
+        M4 & Figura \ref{fig:mockup_uc4} (Tariffe) & N5 Configura Tariffe \\ \hline
+    \end{tabularx}
+    \caption{Mappatura dei riferimenti ai mockup e ai nodi di navigazione}
+    \label{tab:map_mockup_nav}
+\end{table}
+
 \section{Use Case Templates}
 
-Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, adottando un formato strutturato che esplicita le pre-condizioni, le post-condizioni, il flusso base (Main Success Scenario) e le possibili deviazioni (Alternative Flows). Questa formalizzazione costituisce il contratto per lo sviluppo e la base per la successiva stesura dei test funzionali.
+Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, adottando un formato strutturato che esplicita le pre-condizioni, le post-condizioni, il flusso base (Main Success Scenario) e le possibili deviazioni (Alternative Flows). Ogni passo riporta, tra parentesi, i riferimenti a mockup e navigazione (M1..M4, N0..N5). Questa formalizzazione costituisce il contratto per lo sviluppo e la base per la successiva stesura dei test funzionali.
 
 \subsection{UC1 - Prenotazione Stanza}
 
@@ -56,12 +64,12 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
         \hline
         \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
             \begin{enumerate}
-                \item Il Cliente seleziona una Stanza dal catalogo e richiede di visualizzare le disponibilità.
-                \item Il Sistema mostra il calendario con le date e gli slot orari disponibili per la Stanza scelta.
-                \item Il Cliente seleziona una data, uno slot orario libero e inserisce il numero di giocatori.
-                \item Il Sistema calcola il prezzo totale basandosi sulla strategia di prezzo corrente (es. base, weekend) e mostra il riepilogo.
-                \item Il Cliente conferma la prenotazione.
-                \item Il Sistema registra la prenotazione, aggiorna lo stato dello slot orario e mostra un messaggio di successo.
+                \item Il Cliente seleziona una Stanza dal catalogo e richiede di visualizzare le disponibilità. (M1, N1)
+                \item Il Sistema mostra il calendario con le date e gli slot orari disponibili per la Stanza scelta. (M1, N1)
+                \item Il Cliente seleziona una data, uno slot orario libero e inserisce il numero di giocatori. (M1, N2)
+                \item Il Sistema calcola il prezzo totale basandosi sulla strategia di prezzo corrente (es. base, weekend) e mostra il riepilogo. (M1, N2)
+                \item Il Cliente conferma la prenotazione. (M1, N2)
+                \item Il Sistema registra la prenotazione, aggiorna lo stato dello slot orario e mostra un messaggio di successo. (M1, N2)
             \end{enumerate}
         } \\
         \hline
@@ -71,7 +79,7 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
             \textbf{3a. Slot orario non più disponibile (Race condition):}
             \begin{itemize}
                 \item[3a.1] Se nel momento della conferma lo slot è stato appena prenotato da un altro utente, il Sistema notifica l'errore.
-                \item[3a.2] Il Sistema propone al Cliente di tornare al passo 2 o di iscriversi alla Lista d'Attesa (UC2 - \textit{Extend}).
+                \item[3a.2] Il Sistema propone al Cliente di tornare al passo 2 o di iscriversi alla Lista d'Attesa (UC2 - \textit{Extend}). (M2, N3)
             \end{itemize}
             \vspace{0.2cm}
             \textbf{4a. Numero di giocatori non valido:}
@@ -101,33 +109,33 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
         \hline
         Scopo & Permettere a un cliente di iscriversi alla lista d'attesa per una stanza attualmente non disponibile, per essere notificato in caso di liberazione. \\
         \hline
-        Pre-condizioni & Il Cliente è autenticato. La Stanza selezionata non ha slot disponibili per la data richiesta. \\
+        Pre-condizioni & Il Cliente è autenticato. Lo slot richiesto per la stanza selezionata non è disponibile. \\
         \hline
-        Post-condizioni & Il Cliente è registrato come Observer nella WaitingList della Stanza. \\
+        Post-condizioni & Il Cliente è registrato nella tabella \texttt{LISTA\_ATTESA} per la stanza selezionata. \\
         \hline
         \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flusso Base (Basic Flow)}} \\
         \hline
         \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
             \begin{enumerate}
-                \item Il Cliente visualizza che la Stanza desiderata è completamente prenotata.
-                \item Il Cliente seleziona l'opzione "Iscriviti alla Lista d'Attesa".
-                \item Il Sistema richiede la conferma per l'attivazione delle notifiche.
-                \item Il Cliente conferma.
-                \item Il Sistema aggiunge il Cliente agli observer della stanza e mostra un messaggio di successo.
+                \item Il Cliente visualizza che lo slot desiderato è occupato. (M2, N3)
+                \item Il Cliente seleziona l'opzione "Iscriviti alla Lista d'Attesa". (M2, N3)
+                \item Il Sistema richiede la conferma per l'iscrizione alla lista d'attesa. (M2, N3)
+                \item Il Cliente conferma. (M2, N3)
+                \item Il Sistema registra il Cliente nella lista d'attesa e mostra un messaggio di successo. (M2, N3)
             \end{enumerate}
         } \\
         \hline
         \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flussi Alternativi (Alternative Flows)}} \\
         \hline
         \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
-            \textbf{4a. Il Cliente annulla l'iscrizione:}
+            \textbf{4a. Il Cliente annulla l'iscrizione (M2, N3):}
             \begin{itemize}
                 \item[4a.1] Il Cliente seleziona "Annulla" alla richiesta di conferma.
                 \item[4a.2] Il Sistema interrompe l'operazione e riporta il Cliente al catalogo.
             \end{itemize}
-            \textbf{5a. Cliente già in lista:}
+            \textbf{5a. Cliente già in lista (M2, N3):}
             \begin{itemize}
-                \item[5a.1] Il Sistema rileva che il Cliente è già registrato come observer per quella Stanza.
+                \item[5a.1] Il Sistema rileva che il Cliente è già iscritto alla lista d'attesa per quella Stanza.
                 \item[5a.2] Il Sistema notifica l'utente dell'iscrizione già attiva, senza duplicare la registrazione.
             \end{itemize}
         } \\
@@ -158,18 +166,18 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
         \hline
         \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
             \begin{enumerate}
-                \item Il Game Master accede alla dashboard di controllo delle stanze.
-                \item Il Sistema mostra l'elenco delle stanze della sede e il loro stato attuale.
-                \item Il Game Master seleziona una Stanza in stato "Disponibile" e clicca su "Avvia Sessione".
-                \item Il Sistema valida la transizione di stato.
-                \item Il Sistema aggiorna lo stato della stanza in "In Corso" e registra l'evento.
+                \item Il Game Master accede alla dashboard di controllo delle stanze. (M3, N4)
+                \item Il Sistema mostra l'elenco delle stanze della sede e il loro stato attuale. (M3, N4)
+                \item Il Game Master seleziona una Stanza in stato "Disponibile" e clicca su "Avvia Sessione". (M3, N4)
+                \item Il Sistema valida la transizione di stato. (M3, N4)
+                \item Il Sistema aggiorna lo stato della stanza in "In Corso" e registra l'evento. (M3, N4)
             \end{enumerate}
         } \\
         \hline
         \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flussi Alternativi (Alternative Flows)}} \\
         \hline
         \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
-            \textbf{4a. Transizione di stato non valida:}
+            \textbf{4a. Transizione di stato non valida (M3, N4):}
             \begin{itemize}
                 \item[4a.1] Il Sistema rileva che l'azione richiesta viola il pattern di stato (es. tentativo di avviare una stanza "In Manutenzione").
                 \item[4a.2] Il Sistema lancia un'eccezione interna e mostra al Game Master un messaggio di errore: "Transizione non consentita dallo stato attuale".
@@ -202,11 +210,11 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
         \hline
         \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
             \begin{enumerate}
-                \item L'Admin accede al pannello di amministrazione e seleziona una Stanza.
-                \item Il Sistema mostra i dettagli della stanza e l'attuale strategia di prezzo.
-                \item L'Admin seleziona l'opzione per modificare la tariffa e sceglie una nuova strategia dall'elenco (es. \textit{Tariffa Base}, \textit{Tariffa Dinamica}).
-                \item L'Admin salva la configurazione.
-                \item Il Sistema aggiorna i dati nel database e conferma il successo dell'operazione.
+                \item L'Admin accede al pannello di amministrazione e seleziona una Stanza. (M4, N5)
+                \item Il Sistema mostra i dettagli della stanza e l'attuale strategia di prezzo. (M4, N5)
+                \item L'Admin seleziona l'opzione per modificare la tariffa e sceglie una nuova strategia dall'elenco (es. \textit{Tariffa Base}, \textit{Tariffa Weekend}). (M4, N5)
+                \item L'Admin salva la configurazione. (M4, N5)
+                \item Il Sistema aggiorna i dati nel database e conferma il successo dell'operazione. (M4, N5)
             \end{enumerate}
         } \\
         \hline
@@ -214,33 +222,55 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
 \end{table}
 
 
+\section{Requisiti non funzionali}
+
+Oltre ai requisiti funzionali, il sistema deve rispettare i seguenti requisiti non funzionali:
+\begin{itemize}
+    \item \textbf{Prestazioni:} le operazioni principali (ricerca disponibilità, prenotazione, aggiornamento stato) devono completarsi entro 1 secondo su dataset di test (fino a 100 stanze e 1000 prenotazioni).
+    \item \textbf{Affidabilità:} le operazioni critiche (es. prenotazione) devono essere atomiche e non lasciare il sistema in stato inconsistente in caso di errore.
+    \item \textbf{Usabilità:} la CLI deve guidare l'utente con menu espliciti, validazioni dei dati e messaggi di errore chiari.
+    \item \textbf{Manutenibilità:} l'architettura a livelli (CLI, Controllers, DAO, DB) e l'uso di pattern riducono l'accoppiamento e facilitano l'estensione futura.
+    \item \textbf{Portabilità:} il sistema deve poter essere eseguito su Windows, macOS e Linux con JDK 25 e PostgreSQL, grazie all'uso di JDBC e configurazioni esterne.
+\end{itemize}
+
+\section{Diagramma di Navigazione (CLI)}
+La Figura \ref{fig:navigation_diagram} rappresenta il flusso di navigazione della CLI, evidenziando i menu principali e il collegamento diretto con i casi d'uso UC1--UC4. I nodi sono etichettati N0..N5 e sono richiamati nei template dei casi d'uso.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/navigation_diagram.png}
+    \caption{Diagramma di navigazione della CLI}
+    \label{fig:navigation_diagram}
+\end{figure}
+
 \section{Mockup e Interfaccia Utente (UI)}
-Al fine di concretizzare l'analisi dei requisiti e validare le interazioni previste nei casi d'uso principali, sono stati realizzati dei mockup per le schermate core del sistema. Questa fase di \textit{prototipazione low-fidelity} garantisce una mappatura visiva diretta tra le intenzioni dell'attore (User Goal) e le effettive funzionalità esposte dal sistema \textit{EscapeManager}.
+Al fine di concretizzare l'analisi dei requisiti e validare le interazioni previste nei casi d'uso principali, sono stati realizzati dei mockup per le schermate core del sistema. Questa fase di \textit{prototipazione low-fidelity} garantisce una mappatura visiva diretta tra le intenzioni dell'attore (User Goal) e le effettive funzionalità esposte dal sistema \textit{EscapeManager}. I mockup sono identificati come M1..M4 e richiamati nei template.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{images/mockup_uc1.png}
-    \caption{Interfaccia Cliente: Visualizzazione disponibilità e preventivo (UC1)}
+    \caption{[M1] Interfaccia Cliente: Visualizzazione disponibilità e preventivo (UC1)}
     \label{fig:mockup_uc1}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{images/mockup_uc2.png}
-    \caption{Interfaccia Cliente: Prompt di iscrizione alla Lista d'Attesa (UC2)}
+    \caption{[M2] Interfaccia Cliente: Prompt di iscrizione alla Lista d'Attesa (UC2)}
     \label{fig:mockup_uc2}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{images/mockup_uc3.png}
-    \caption{Interfaccia Game Master: Tabellone operativo e controllo stati (UC3)}
+    \caption{[M3] Interfaccia Game Master: Tabellone operativo e controllo stati (UC3)}
     \label{fig:mockup_uc3}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{images/mockup_uc4.png}
-    \caption{Interfaccia Admin: Configurazione delle strategie di prezzo (UC4)}
+    \caption{[M4] Interfaccia Admin: Configurazione delle strategie di prezzo (UC4)}
     \label{fig:mockup_uc4}
 \end{figure}
+
