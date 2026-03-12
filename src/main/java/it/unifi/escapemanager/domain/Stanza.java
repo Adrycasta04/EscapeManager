@@ -63,6 +63,10 @@ public class Stanza {
     public void setPricingStrategy(PricingStrategy strategy) {
         this.pricingStrategy = strategy;
     }
+    
+    public PricingStrategy getPricingStrategy() {
+        return pricingStrategy;
+    }
 
     public String getId() { return id; }
     public String getTema() { return tema; }

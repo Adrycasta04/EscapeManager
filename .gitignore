@@ -1,5 +1,7 @@
+Corso_Di_SWE/
 # Maven / Java build artifacts
 /target/
+.m2/
 *.class
 *.jar
 *.war

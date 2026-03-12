@@ -11,4 +11,9 @@ public class PostgresDAOFactory implements DAOFactory {
     public PrenotazioneDAO getPrenotazioneDAO() {
         return new PrenotazioneDAOPostgres();
     }
+
+    @Override
+    public WaitingListDAO getWaitingListDAO() {
+        return new WaitingListDAOPostgres();
+    }
 }

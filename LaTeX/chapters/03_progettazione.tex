@@ -1,6 +1,6 @@
-\chapter{Progettazione Architetturale e di Dominio}
+﻿\chapter{Progettazione Architetturale e di Dominio}
 
-Il processo di transizione dall'analisi dei requisiti alla progettazione ha seguito i principi dell'Object-Oriented Design (OOD) e l'approccio BCE (Boundary-Control-Entity). In questo capitolo viene dettagliata la struttura statica del Domain Model, ponendo particolare enfasi sull'applicazione dei Design Pattern fondamentali per garantire la manutenibilità, l'estensibilità e il disaccoppiamento del sistema.
+Il processo di transizione dall'analisi dei requisiti alla progettazione ha seguito i principi dell'Object-Oriented Design (OOD) e l'approccio BCE (Boundary-Control-Entity). In questo capitolo viene dettagliata la struttura statica del Domain Model, ponendo particolare enfasi sull'applicazione dei Design Pattern fondamentali per garantire la manutenibilitÃ , l'estensibilitÃ  e il disaccoppiamento del sistema.
 
 \section{Domain Model (Class Diagram)}
 
@@ -15,26 +15,26 @@ La Figura \ref{fig:domain_model} illustra il diagramma delle classi relativo al 
 
 \subsection{Scelte Architetturali e Design Pattern}
 
-L'architettura del dominio è stata concepita per risolvere nativamente le complessità emerse durante l'analisi dei casi d'uso (Capitolo 2), ricorrendo a tre Design Pattern della \textit{Gang of Four (GoF)}:
+L'architettura del dominio Ã¨ stata concepita per risolvere nativamente le complessitÃ  emerse durante l'analisi dei casi d'uso (Capitolo 2), ricorrendo a tre Design Pattern della \textit{Gang of Four (GoF)}:
 
 \begin{itemize}
-    \item \textbf{State Pattern (Gestione ciclo di vita):} Come emerso nell'UC3, la \texttt{Stanza} attraversa fasi operative rigide (Disponibile, In Corso, In Pulizia, In Manutenzione). Invece di delegare il controllo a complessi blocchi \texttt{switch/case} basati su stringhe o enumerazioni, lo stato è stato reificato nell'interfaccia \texttt{RoomState}. Questo garantisce il rispetto del principio \textit{Open-Closed}: l'aggiunta di un nuovo stato futuro non richiederà la modifica del codice della classe \texttt{Stanza}.
+    \item \textbf{State Pattern (Gestione ciclo di vita):} Come emerso nell'UC3, la \texttt{Stanza} attraversa fasi operative rigide (Disponibile, In Corso, In Pulizia, In Manutenzione). Invece di delegare il controllo a complessi blocchi \texttt{switch/case} basati su stringhe o enumerazioni, lo stato Ã¨ stato reificato nell'interfaccia \texttt{RoomState}. Questo garantisce il rispetto del principio \textit{Open-Closed}: l'aggiunta di un nuovo stato futuro non richiederÃ  la modifica del codice della classe \texttt{Stanza}.
     
-    \item \textbf{Strategy Pattern (Politiche di Prezzo):} Le regole di tariffazione dipendono da fattori esterni (giorno della settimana, festività, tipologia di clienti). La classe \texttt{Stanza} delega il calcolo del costo totale all'interfaccia \texttt{PricingStrategy}. L'amministratore (UC4) può così iniettare a runtime strategie diverse (es. \texttt{TariffaWeekend} o \texttt{ScontoStudenti}) variando l'algoritmo di calcolo in modo trasparente.
+    \item \textbf{Strategy Pattern (Politiche di Prezzo):} Le regole di tariffazione dipendono da fattori esterni (giorno della settimana, festivitÃ , tipologia di clienti). La classe \texttt{Stanza} delega il calcolo del costo totale all'interfaccia \texttt{PricingStrategy}. L'amministratore (UC4) puÃ² cosÃ¬ iniettare a runtime strategie diverse (es. \texttt{TariffaWeekend} o \texttt{ScontoStudenti}) variando l'algoritmo di calcolo in modo trasparente.
     
-    \item \textbf{Observer Pattern (Lista d'Attesa asincrona):} Per soddisfare il requisito di notifica asincrona dell'UC2 (Iscrizione Lista d'Attesa), è stato implementato un meccanismo di Publish-Subscribe. La classe \texttt{WaitingList} agisce da \textit{Subject}, mantenendo una lista di \texttt{WaitingListObserver} (interfaccia implementata dal \texttt{Cliente}). Quando una prenotazione viene cancellata, il subject invoca il metodo \texttt{update()}, disaccoppiando totalmente la logica di notifica dal flusso principale.
+    \item \textbf{Observer Pattern (Lista d'Attesa asincrona):} Per soddisfare il requisito di notifica asincrona dell'UC2 (Iscrizione Lista d'Attesa), Ã¨ stato implementato un meccanismo di Publish-Subscribe. La classe \texttt{WaitingList} agisce da \textit{Subject}, mantenendo una lista di \texttt{WaitingListObserver} (interfaccia implementata dal \texttt{Cliente}). Quando una prenotazione viene cancellata, il subject invoca il metodo \texttt{update()}, disaccoppiando totalmente la logica di notifica dal flusso principale.
 \end{itemize}
 
-Oltre ai pattern, si sottolinea l'uso dell'ereditarietà per la gestione degli attori (\texttt{Utente} come classe astratta generalizzata) e l'impiego della composizione forte (\texttt{*--}) tra \texttt{Sede} e \texttt{Stanza}, indicando che il ciclo di vita logico di una stanza è strettamente legato alla filiale fisica che la ospita.
+Oltre ai pattern, si sottolinea l'uso dell'ereditarietÃ  per la gestione degli attori (\texttt{Utente} come classe astratta generalizzata) e l'impiego della composizione forte (\texttt{*--}) tra \texttt{Sede} e \texttt{Stanza}, indicando che il ciclo di vita logico di una stanza Ã¨ strettamente legato alla filiale fisica che la ospita.
 
 
 \section{Progettazione del Database}
 
-Per garantire la persistenza dei dati e supportare l'infrastruttura di un sistema centralizzato, il Domain Model Object-Oriented è stato mappato su un database relazionale (PostgreSQL). La transizione dal modello concettuale allo schema logico ha richiesto l'applicazione di specifiche strategie di \textit{Object-Relational Mapping (ORM)}.
+Per garantire la persistenza dei dati e supportare l'infrastruttura di un sistema centralizzato, il Domain Model Object-Oriented Ã¨ stato mappato su un database relazionale (PostgreSQL). La transizione dal modello concettuale allo schema logico ha richiesto l'applicazione di specifiche strategie di \textit{Object-Relational Mapping (ORM)}.
 
 \subsection{Diagramma Entity-Relationship}
 
-La Figura \ref{fig:er_diagram} mostra il diagramma Entità-Relazione (ER) del database, illustrando le tabelle principali, le chiavi primarie (PK) e i vincoli di chiave esterna (FK).
+La Figura \ref{fig:er_diagram} mostra il diagramma EntitÃ -Relazione (ER) del database, illustrando le tabelle principali, le chiavi primarie (PK) e i vincoli di chiave esterna (FK).
 
 \begin{figure}[H]
     \centering
@@ -49,7 +49,7 @@ Il design relazionale affronta la dicotomia tra il paradigma a oggetti e quello 
 
 \begin{itemize}[leftmargin=*]
 \emergencystretch=3em
-    \item \textbf{Mapping dell'Ereditarietà (Single Table Strategy):} La gerarchia della classe astratta \texttt{Utente} (Cliente, GameMaster, Admin) è stata mappata utilizzando il pattern \textit{Single Table Inheritance}. È stata creata un'unica tabella \texttt{UTENTE} provvista di una colonna discriminante (\texttt{ruolo}). Gli attributi specifici delle sottoclassi (es. \texttt{matricola} per il Game Master o \texttt{telefono} per il Cliente) sono stati resi \textit{nullable}. Questa scelta ottimizza le query di autenticazione evitando costose operazioni di \texttt{JOIN}.
+    \item \textbf{Mapping dell'EreditarietÃ  (Single Table Strategy):} La gerarchia della classe astratta \texttt{Utente} (Cliente, GameMaster, Admin) Ã¨ stata mappata utilizzando il pattern \textit{Single Table Inheritance}. Ãˆ stata creata un'unica tabella \texttt{UTENTE} provvista di una colonna discriminante (\texttt{ruolo}). Gli attributi specifici delle sottoclassi (es. \texttt{matricola} per il Game Master o \texttt{telefono} per il Cliente) sono stati resi \textit{nullable}. Questa scelta ottimizza le query di autenticazione evitando costose operazioni di \texttt{JOIN}.
     
     \item \textbf{Mapping dei Design Pattern (State e Strategy):} Le interfacce \texttt{RoomState} e \texttt{PricingStrategy} non diventano tabelle separate. All'interno della tabella \texttt{STANZA}, esse sono persistite tramite stringhe (es.\ \texttt{stato\_corrente} = \texttt{'IN\_MANUTENZIONE'}). A livello di codice Java, i Data Access Object (DAO) utilizzeranno un meccanismo di \textit{Factory} per istanziare l'oggetto concreto corrispondente al valore testuale letto dal database.
     
@@ -71,7 +71,7 @@ Il design relazionale affronta la dicotomia tra il paradigma a oggetti e quello 
 \section{Dinamica del Sistema (Implementation Perspective)}
 Per illustrare le dinamiche di interazione a \textit{run-time} tra gli oggetti, si fa riferimento all'approccio descritto nello standard UML per la \textit{Implementation Perspective}. La Figura \ref{fig:sequence_prenotazione} mostra il Sequence Diagram relativo al caso d'uso principale (UC1 - Prenotazione Stanza). 
 
-Il diagramma evidenzia il rispetto del pattern architetturale BCE: l'interfaccia utente (Boundary) delega l'elaborazione al \texttt{PrenotazioneController} (Control), il quale orchestra il reperimento delle risorse persistenti e demanda la logica matematica di calcolo del prezzo all'entità \texttt{Stanza} (Entity). Particolare attenzione è stata posta nel disaccoppiamento del Controller dall'accesso ai dati, delegato interamente a un pattern creazionale.
+Il diagramma evidenzia il rispetto del pattern architetturale BCE: l'interfaccia utente (Boundary) delega l'elaborazione al \texttt{PrenotazioneController} (Control), il quale orchestra il reperimento delle risorse persistenti e demanda la logica matematica di calcolo del prezzo all'entitÃ  \texttt{Stanza} (Entity). Particolare attenzione Ã¨ stata posta nel disaccoppiamento del Controller dall'accesso ai dati, delegato interamente a un pattern creazionale.
 
 \begin{figure}[H]
     \centering
@@ -82,7 +82,7 @@ Il diagramma evidenzia il rispetto del pattern architetturale BCE: l'interfaccia
 
 \section{Pattern Creazionali: DAO Factory}
 Come evincibile dal diagramma di sequenza, il sistema adotta il pattern \textbf{Abstract Factory} (nella specifica accezione di \textit{DAO Factory}) per la generazione degli oggetti preposti all'accesso ai dati. 
-L'obiettivo di questa scelta progettuale è garantire il totale disaccoppiamento tra la Business Logic (Controller) e l'infrastruttura di persistenza (PostgreSQL). Il Controller non istanzia mai in modo diretto una classe concreta come \texttt{StanzaDAOPostgres}, ma si affida all'interfaccia esposta dalla Factory:
+L'obiettivo di questa scelta progettuale Ã¨ garantire il totale disaccoppiamento tra la Business Logic (Controller) e l'infrastruttura di persistenza (PostgreSQL). Il Controller non istanzia mai in modo diretto una classe concreta come \texttt{StanzaDAOPostgres}, ma si affida all'interfaccia esposta dalla Factory:
 
 \begin{lstlisting}[language=Java, caption=Utilizzo del pattern DAO Factory nel Controller]
 // Reperimento dinamico dei DAO indipendentemente dal DB sottostante

@@ -12,7 +12,9 @@ package "it.unifi.escapemanager" {
     
     package "controllers (Control)" as controllers {
         class PrenotazioneController
-        class GestioneStanzeController
+        class GestioneStatoController
+        class TariffeController
+        class ListaAttesaController
     }
     
     package "domain (Entity)" as domain {
@@ -24,7 +26,13 @@ package "it.unifi.escapemanager" {
     
     package "dao (Persistence)" as dao {
         interface StanzaDAO
+        interface PrenotazioneDAO
+        interface WaitingListDAO
         class StanzaDAOPostgres
+        class PrenotazioneDAOPostgres
+        class WaitingListDAOPostgres
+        interface DAOFactory
+        class PostgresDAOFactory
         class ConnectionManager <<Singleton>>
     }
 }

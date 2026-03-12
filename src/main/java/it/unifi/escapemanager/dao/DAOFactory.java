@@ -5,6 +5,8 @@ public interface DAOFactory {
     StanzaDAO getStanzaDAO();
 
     PrenotazioneDAO getPrenotazioneDAO();
+    
+    WaitingListDAO getWaitingListDAO();
 
     static DAOFactory getDAOFactory() {
         return new PostgresDAOFactory();

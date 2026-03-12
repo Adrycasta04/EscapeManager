@@ -9,7 +9,7 @@ package "Domain Model (Entities & Core Logic)" {
         - id: String
         - email: String
         - passwordHash: String
-        + login(email: String, psw: String): boolean
+        - ruolo: String
     }
     class Cliente {
         - nome: String
@@ -26,25 +26,15 @@ package "Domain Model (Entities & Core Logic)" {
     Utente <|-- GameMaster
     Utente <|-- Admin
 
-    ' --- STRUTTURA FRANCHISE ---
-    class Sede {
-        - id: String
-        - nome: String
-        - citta: String
-    }
-    
     class Stanza {
         - id: String
+        - sedeId: String
         - tema: String
         - capienzaMax: int
         - prezzoBase: double
-        + cambiaStato(nuovoStato: RoomState): void
-        + calcolaPrezzo(data: Date, giocatori: int): double
+        + setStato(nuovoStato: RoomState): void
+        + calcolaPrezzo(giocatori: int): double
     }
-
-    ' --- RELAZIONI PRINCIPALI ---
-    Sede "1" *-- "*" Stanza : ospita >
-    GameMaster "*" -- "1" Sede : lavora in >
 
     ' --- PRENOTAZIONE E OBSERVER PATTERN ---
     class Prenotazione {
@@ -76,6 +66,7 @@ package "Domain Model (Entities & Core Logic)" {
         + iniziaSessione(s: Stanza): void
         + terminaSessione(s: Stanza): void
         + setManutenzione(s: Stanza): void
+        + setDisponibile(s: Stanza): void
     }
     class Disponibile implements RoomState
     class InCorso implements RoomState
@@ -90,7 +81,6 @@ package "Domain Model (Entities & Core Logic)" {
     }
     class TariffaBase implements PricingStrategy
     class TariffaWeekend implements PricingStrategy
-    class ScontoStudenti implements PricingStrategy
 
     Stanza o-- "1" PricingStrategy : usa
 }

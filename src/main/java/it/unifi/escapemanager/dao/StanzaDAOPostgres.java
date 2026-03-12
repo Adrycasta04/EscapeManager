@@ -22,7 +22,7 @@ public class StanzaDAOPostgres implements StanzaDAO {
             stmt.setInt(4, stanza.getCapienzaMax());
             stmt.setDouble(5, stanza.getPrezzoBase());
             stmt.setString(6, stanza.getStatoString());
-            stmt.setString(7, "BASE"); 
+            stmt.setString(7, mapStrategyToDb(stanza.getPricingStrategy()));
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseException("Errore di accesso ai dati: " + e.getMessage(), e);
@@ -62,13 +62,14 @@ public class StanzaDAOPostgres implements StanzaDAO {
 
     @Override
     public void update(Stanza stanza) {
-        String query = "UPDATE STANZA SET tema = ?, capienza_max = ?, prezzo_base = ?, stato_corrente = ? WHERE id = ?";
+        String query = "UPDATE STANZA SET tema = ?, capienza_max = ?, prezzo_base = ?, stato_corrente = ?, pricing_strategy = ? WHERE id = ?";
         try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
             stmt.setString(1, stanza.getTema());
             stmt.setInt(2, stanza.getCapienzaMax());
             stmt.setDouble(3, stanza.getPrezzoBase());
             stmt.setString(4, stanza.getStatoString());
-            stmt.setString(5, stanza.getId());
+            stmt.setString(5, mapStrategyToDb(stanza.getPricingStrategy()));
+            stmt.setString(6, stanza.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseException("Errore di accesso ai dati: " + e.getMessage(), e);
@@ -126,6 +127,21 @@ public class StanzaDAOPostgres implements StanzaDAO {
             stanza.setStato(new DisponibileState());
         }
 
+        // Ricostruzione dello Strategy Pattern dal DB
+        String pricingDb = rs.getString("pricing_strategy");
+        if ("WEEKEND".equals(pricingDb)) {
+            stanza.setPricingStrategy(new TariffaWeekend());
+        } else {
+            stanza.setPricingStrategy(new TariffaBase());
+        }
+
         return stanza;
+    }
+
+    private String mapStrategyToDb(PricingStrategy strategy) {
+        if (strategy instanceof TariffaWeekend) {
+            return "WEEKEND";
+        }
+        return "BASE";
     }
 }

@@ -18,30 +18,24 @@ actor "Admin" as A
 rectangle "EscapeManager System" {
     
     ' --- Casi d'uso Cliente ---
-    usecase "Ricerca Stanze" as UC_C1
-    usecase "Prenotazione Stanza" as UC_C2
-    usecase "Iscrizione Lista d'Attesa" as UC_C3
+    usecase "UC1\nPrenotazione Stanza" as UC_C1
+    usecase "UC2\nIscrizione Lista d'Attesa" as UC_C2
     
     ' --- Casi d'uso Game Master ---
-    usecase "Visualizza Tabellone" as UC_GM1
-    usecase "Aggiornamento Stato Stanza" as UC_GM3
+    usecase "UC3\nAggiornamento Stato Stanza" as UC_GM3
     
     ' --- Casi d'uso Admin ---
-    usecase "Gestione Filiali e Stanze" as UC_A1
-    usecase "Configurazione Tariffe Stanza" as UC_A2
+    usecase "UC4\nConfigurazione Tariffe Stanza" as UC_A2
 }
 
 ' --- Relazioni Attori -> Casi d'uso ---
 C --> UC_C1
-C --> UC_C2
 
-GM --> UC_GM1
 GM --> UC_GM3
 
-A --> UC_A1
 A --> UC_A2
 
 ' --- Relazioni <<extend>> (Flussi alternativi/opzionali) ---
-UC_C3 .up.> UC_C2 : <<extend>>\n(se slot occupato)
+UC_C2 .up.> UC_C1 : <<extend>>\n(se slot occupato)
 
 @enduml
