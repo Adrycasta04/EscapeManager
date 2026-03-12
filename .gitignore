@@ -38,6 +38,13 @@ LaTeX/*.nav
 LaTeX/*.out
 LaTeX/*.run.xml
 LaTeX/*.snm
+# Mockup JavaFX (solo per prototipi)
+src/main/java/it/unifi/escapemanager/mockup/
+src/main/resources/fxml/AdminView.fxml
+src/main/resources/fxml/CatalogoView.fxml
+src/main/resources/fxml/DashboardGMView.fxml
+src/main/resources/fxml/ListaAttesaView.fxml
+src/main/resources/css/mockup.css
 LaTeX/*.synctex.gz
 LaTeX/*.toc
 LaTeX/*.xdv
