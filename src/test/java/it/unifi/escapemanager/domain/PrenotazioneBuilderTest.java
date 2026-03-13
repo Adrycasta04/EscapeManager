@@ -23,7 +23,7 @@ class PrenotazioneBuilderTest {
                 .dataOra(dataOra)
                 .numeroGiocatori(4)
                 .prezzoTotale(80.0)
-                .statoPartita("CONFERMATA")
+                .statoPartita(StatoPartita.CONFERMATA)
                 .build();
 
         assertEquals("P001", p.getId());
@@ -32,14 +32,14 @@ class PrenotazioneBuilderTest {
         assertEquals(dataOra, p.getDataOra());
         assertEquals(4, p.getNumeroGiocatori());
         assertEquals(80.0, p.getPrezzoTotale());
-        assertEquals("CONFERMATA", p.getStatoPartita());
+        assertEquals(StatoPartita.CONFERMATA, p.getStatoPartita());
     }
 
     @Test
     void testBuilderConfrontoConCostruttoreDiretto() {
         LocalDateTime dataOra = LocalDateTime.of(2026, 10, 31, 21, 0);
 
-        Prenotazione daDiretto = new Prenotazione("P001", "C01", "R01", dataOra, 4, 80.0, "CONFERMATA");
+        Prenotazione daDiretto = new Prenotazione("P001", "C01", "R01", dataOra, 4, 80.0, StatoPartita.CONFERMATA);
         Prenotazione daBuilder = new Prenotazione.Builder()
                 .id("P001")
                 .clienteId("C01")
@@ -47,7 +47,7 @@ class PrenotazioneBuilderTest {
                 .dataOra(dataOra)
                 .numeroGiocatori(4)
                 .prezzoTotale(80.0)
-                .statoPartita("CONFERMATA")
+                .statoPartita(StatoPartita.CONFERMATA)
                 .build();
 
         assertEquals(daDiretto.getId(), daBuilder.getId());

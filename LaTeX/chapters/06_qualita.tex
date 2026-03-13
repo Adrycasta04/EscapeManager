@@ -61,7 +61,7 @@ La coerenza del sistema è garantita da:
     \item \textbf{Validazioni nel layer di controllo:} ogni Controller verifica pre-condizioni e regole di business prima di operare sul DB.
     \item \textbf{Vincoli nel database:} chiavi primarie, chiavi esterne con \texttt{ON DELETE CASCADE}, constraint \texttt{NOT NULL} e \texttt{UNIQUE} su campi critici (es. email).
     \item \textbf{Eccezioni applicative:} la gerarchia \texttt{EscapeManagerException} propaga errori in modo controllato, evitando stati intermedi non consistenti.
-    \item \textbf{State Pattern:} le transizioni illegali sono bloccate a livello di dominio (\texttt{IllegalStateException}), impedendo operazioni incoerenti.
+    \item \textbf{State Pattern:} le transizioni illegali sono bloccate a livello di dominio (lanciando un'eccezione di stato), impedendo operazioni incoerenti.
 \end{itemize}
 
 \section{Manutenibilità ed Estendibilità}

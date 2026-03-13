@@ -3,6 +3,7 @@ package it.unifi.escapemanager.controllers;
 import it.unifi.escapemanager.dao.PrenotazioneDAO;
 import it.unifi.escapemanager.dao.StanzaDAO;
 import it.unifi.escapemanager.domain.Prenotazione;
+import it.unifi.escapemanager.domain.StatoPartita;
 import it.unifi.escapemanager.domain.Stanza;
 import it.unifi.escapemanager.exceptions.SlotNonDisponibileException;
 
@@ -55,7 +56,7 @@ class PrenotazioneControllerMockTest {
         assertEquals("C01", result.getClienteId());
         assertEquals("R01", result.getStanzaId());
         assertEquals(80.0, result.getPrezzoTotale()); // 20 * 4 = 80 con TariffaBase (default)
-        assertEquals("CONFERMATA", result.getStatoPartita());
+        assertEquals(StatoPartita.CONFERMATA, result.getStatoPartita());
 
         // Verify: il DAO di salvataggio è stato invocato esattamente 1 volta
         verify(prenotazioneDAO, times(1)).save(any(Prenotazione.class));

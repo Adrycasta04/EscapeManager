@@ -119,7 +119,7 @@ Il design relazionale affronta la dicotomia tra il paradigma a oggetti e quello 
 \end{itemize}
 
 \section{Dinamica del Sistema (Implementation Perspective)}
-Per illustrare le dinamiche di interazione a \textit{run-time} tra gli oggetti, si fa riferimento all'approccio descritto nello standard UML per la \textit{Implementation Perspective}. Di seguito vengono presentati due Sequence Diagram per i casi d'uso più rappresentativi.
+Per illustrare le dinamiche di interazione a \textit{run-time} tra gli oggetti, si fa riferimento all'approccio descritto nello standard UML per la \textit{Implementation Perspective}. Di seguito vengono presentati tre Sequence Diagram per i casi d'uso più rappresentativi.
 
 \subsection{UC1 - Prenotazione Stanza}
 La Figura \ref{fig:sequence_prenotazione} mostra il Sequence Diagram relativo al caso d'uso principale. Il diagramma evidenzia il rispetto del pattern architetturale BCE: l'interfaccia utente (Boundary) delega l'elaborazione al \texttt{PrenotazioneController} (Control), il quale orchestra il reperimento delle risorse persistenti e demanda la logica matematica di calcolo del prezzo all'entità \texttt{Stanza} (Entity). Particolare attenzione è stata posta nel disaccoppiamento del Controller dall'accesso ai dati, delegato interamente a un pattern creazionale.
@@ -139,6 +139,16 @@ La Figura \ref{fig:sequence_tariffe} descrive il flusso di configurazione delle 
     \includegraphics[width=0.95\textwidth]{images/sequence_tariffe.png}
     \caption{Sequence Diagram del caso d'uso UC4 (Configurazione Tariffe)}
     \label{fig:sequence_tariffe}
+\end{figure}
+
+\subsection{UC3 - Aggiornamento Stato Stanza}
+La Figura \ref{fig:sequence_gestione_stato_cap3} mostra il Sequence Diagram per l'UC3, evidenziando la delega al \textbf{State Pattern}. Il Controller non contiene logica di stato: invoca il metodo di transizione sulla \texttt{Stanza}, la quale delega l'esecuzione all'oggetto \texttt{RoomState} corrente. Il diagramma include anche il flusso alternativo 4a (transizione non valida).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/sequence_gestione_stato.png}
+    \caption{Sequence Diagram del caso d'uso UC3 (Aggiornamento Stato Stanza)}
+    \label{fig:sequence_gestione_stato_cap3}
 \end{figure}
 
 \section{Pattern Creazionali: DAO Factory}

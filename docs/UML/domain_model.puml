@@ -10,11 +10,15 @@ package "Domain Model (Entities & Core Logic)" {
         - email: String
         - passwordHash: String
         - ruolo: String
+        + equals(o: Object): boolean
+        + hashCode(): int
+        + toString(): String
     }
     class Cliente {
         - nome: String
         - telefono: String
-        + prenota(s: Stanza, data: Date): Prenotazione
+        - ultimaNotifica: String
+        + update(s: Stanza, d: Date): void
     }
     class GameMaster {
         - matricola: String
@@ -34,16 +38,31 @@ package "Domain Model (Entities & Core Logic)" {
         - prezzoBase: double
         + setStato(nuovoStato: RoomState): void
         + calcolaPrezzo(giocatori: int): double
+        + equals(o: Object): boolean
+        + hashCode(): int
+        + toString(): String
     }
 
-    ' --- PRENOTAZIONE E OBSERVER PATTERN ---
+    ' --- PRENOTAZIONE con Builder Pattern ---
     class Prenotazione {
         - id: String
         - dataOra: Date
         - numeroGiocatori: int
         - prezzoTotale: double
-        - stato: String
+        - statoPartita: StatoPartita
     }
+    class "Prenotazione.Builder" as PBuilder <<Builder>> {
+        + id(id: String): Builder
+        + clienteId(id: String): Builder
+        + stanzaId(id: String): Builder
+        + dataOra(dt: Date): Builder
+        + numeroGiocatori(n: int): Builder
+        + prezzoTotale(p: double): Builder
+        + statoPartita(s: StatoPartita): Builder
+        + build(): Prenotazione
+    }
+    PBuilder ..> Prenotazione : <<creates>>
+
     Cliente "1" -- "*" Prenotazione : effettua >
     Prenotazione "*" -- "1" Stanza : riservata per >
 
@@ -56,6 +75,8 @@ package "Domain Model (Entities & Core Logic)" {
         + attach(o: WaitingListObserver): void
         + detach(o: WaitingListObserver): void
         + notifyObservers(s: Stanza, d: Date): void
+        + getObservers(): List (copia difensiva)
+        + getObserverCount(): int
     }
     Cliente ..|> WaitingListObserver
     Stanza "1" -- "1" WaitingList : ha >
@@ -68,10 +89,10 @@ package "Domain Model (Entities & Core Logic)" {
         + setManutenzione(s: Stanza): void
         + setDisponibile(s: Stanza): void
     }
-    class Disponibile implements RoomState
-    class InCorso implements RoomState
-    class InPulizia implements RoomState
-    class InManutenzione implements RoomState
+    class DisponibileState implements RoomState
+    class InCorsoState implements RoomState
+    class InPuliziaState implements RoomState
+    class InManutenzioneState implements RoomState
 
     Stanza o-- "1" RoomState : statoCorrente
 
@@ -85,9 +106,42 @@ package "Domain Model (Entities & Core Logic)" {
     Stanza o-- "1" PricingStrategy : usa
 }
 
-' Note per evidenziare i pattern al professore
-note right of RoomState : **State Pattern**\nElimina gli if/else per\nla gestione del ciclo di vita
-note right of PricingStrategy : **Strategy Pattern**\nCalcolo dinamico delle\ntariffe intercambiabile a runtime
-note top of WaitingList : **Observer Pattern**\nNotifica asincrona dei clienti\nin lista d'attesa
+' --- Collaboration Annotations (Design Pattern Roles) ---
+note right of RoomState
+    **State Pattern — GoF Behavioral**
+    Elimina gli if/else per la gestione
+    del ciclo di vita della Stanza.
+    **Context:** Stanza
+    **State:** RoomState (interface)
+    **ConcreteState:** Disponibile, InCorso,
+    InPulizia, InManutenzione
+end note
+
+note right of PricingStrategy
+    **Strategy Pattern — GoF Behavioral**
+    Calcolo dinamico delle tariffe
+    intercambiabile a runtime.
+    **Context:** Stanza
+    **Strategy:** PricingStrategy (interface)
+    **ConcreteStrategy:** TariffaBase, TariffaWeekend
+end note
+
+note top of WaitingList
+    **Observer Pattern — GoF Behavioral**
+    Notifica asincrona dei clienti in lista d'attesa.
+    **Subject:** WaitingList
+    **Observer:** WaitingListObserver (interface)
+    **ConcreteObserver:** Cliente
+    getObservers() usa **copia difensiva**
+end note
+
+note bottom of PBuilder
+    **Builder Pattern — GoF Creational**
+    Costruzione fluente della Prenotazione
+    evitando costruttori con 7 parametri.
+    **Director:** PrenotazioneController
+    **Builder:** Prenotazione.Builder
+    **Product:** Prenotazione
+end note
 
 @enduml

@@ -4,6 +4,7 @@ import it.unifi.escapemanager.dao.DAOFactory;
 import it.unifi.escapemanager.dao.PrenotazioneDAO;
 import it.unifi.escapemanager.dao.StanzaDAO;
 import it.unifi.escapemanager.domain.Prenotazione;
+import it.unifi.escapemanager.domain.StatoPartita;
 import it.unifi.escapemanager.exceptions.SlotNonDisponibileException;
 import it.unifi.escapemanager.utils.DatabaseHelper;
 
@@ -43,7 +44,7 @@ class PrenotazioneControllerTest {
             slotRichiesto,
             3,
             60.0,
-            "CONFERMATA"
+            StatoPartita.CONFERMATA
         );
         prenotazioneDAO.save(esistente);
 

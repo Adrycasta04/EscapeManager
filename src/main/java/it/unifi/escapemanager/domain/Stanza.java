@@ -1,5 +1,7 @@
 package it.unifi.escapemanager.domain;
 
+import java.util.Objects;
+
 public class Stanza {
     private String id;
     private String sedeId;
@@ -77,5 +79,25 @@ public class Stanza {
     public int getCapienzaMax() { return capienzaMax; }
     public double getPrezzoBase() { return prezzoBase; }
     public WaitingList getListaAttesa() { return listaAttesa; }
-    
+
+    // --- Java Idioms: equals, hashCode, toString ---
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Stanza stanza = (Stanza) o;
+        return Objects.equals(id, stanza.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Stanza{id='" + id + "', tema='" + tema + "', stato=" + getStatoString() + 
+               ", prezzoBase=" + prezzoBase + "}";
+    }
 }

@@ -1,6 +1,7 @@
 package it.unifi.escapemanager.dao;
 
 import it.unifi.escapemanager.domain.Prenotazione;
+import it.unifi.escapemanager.domain.StatoPartita;
 import it.unifi.escapemanager.exceptions.DatabaseException;
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -23,7 +24,7 @@ public class PrenotazioneDAOPostgres implements PrenotazioneDAO {
             stmt.setTimestamp(4, Timestamp.valueOf(p.getDataOra()));
             stmt.setInt(5, p.getNumeroGiocatori());
             stmt.setDouble(6, p.getPrezzoTotale());
-            stmt.setString(7, p.getStatoPartita());
+            stmt.setString(7, p.getStatoPartita().name());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseException("Errore di accesso ai dati: " + e.getMessage(), e);
@@ -99,7 +100,7 @@ public class PrenotazioneDAOPostgres implements PrenotazioneDAO {
     public void update(Prenotazione p) {
         String query = "UPDATE PRENOTAZIONE SET stato_partita = ? WHERE id = ?";
         try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
-            stmt.setString(1, p.getStatoPartita());
+            stmt.setString(1, p.getStatoPartita().name());
             stmt.setString(2, p.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -127,7 +128,7 @@ public class PrenotazioneDAOPostgres implements PrenotazioneDAO {
             rs.getTimestamp("data_ora").toLocalDateTime(), // Conversione SQL -> Java
             rs.getInt("numero_giocatori"),
             rs.getDouble("prezzo_totale"),
-            rs.getString("stato_partita")
+            StatoPartita.valueOf(rs.getString("stato_partita"))
         );
     }
 }

@@ -4,6 +4,7 @@ import it.unifi.escapemanager.dao.PrenotazioneDAO;
 import it.unifi.escapemanager.dao.StanzaDAO;
 import it.unifi.escapemanager.domain.Prenotazione;
 import it.unifi.escapemanager.domain.Stanza;
+import it.unifi.escapemanager.domain.StatoPartita;
 import it.unifi.escapemanager.exceptions.SlotNonDisponibileException;
 
 import java.time.LocalDateTime;
@@ -62,7 +63,7 @@ public class PrenotazioneController {
             dataOra,
             numeroGiocatori,
             prezzoTotale,
-            "CONFERMATA"
+            StatoPartita.CONFERMATA
         );
 
         // 6. Salvataggio definitivo (Persistenza)

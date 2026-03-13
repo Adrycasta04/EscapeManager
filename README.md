@@ -1,9 +1,9 @@
-﻿# EscapeManager
+# EscapeManager
 
 Applicativo Java per la gestione operativa di una catena di Escape Room con CLI, persistenza PostgreSQL e documentazione LaTeX.
 
 ## Requisiti
-- JDK 25
+- JDK 17
 - PostgreSQL locale
 - Maven Wrapper (gia' incluso)
 - JavaFX (solo per i mockup UI)

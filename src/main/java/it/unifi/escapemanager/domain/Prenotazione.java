@@ -9,14 +9,14 @@ public class Prenotazione {
     private LocalDateTime dataOra;
     private int numeroGiocatori;
     private double prezzoTotale;
-    private String statoPartita; // Es: "CONFERMATA", "CONCLUSA", "ANNULLATA"
+    private StatoPartita statoPartita; // Es: CONFERMATA, CONCLUSA, ANNULLATA
 
     // Costruttore usato dal Builder
     private Prenotazione() {}
 
     // Costruttore diretto (backward-compatible)
     public Prenotazione(String id, String clienteId, String stanzaId, LocalDateTime dataOra, 
-                        int numeroGiocatori, double prezzoTotale, String statoPartita) {
+                        int numeroGiocatori, double prezzoTotale, StatoPartita statoPartita) {
         this.id = id;
         this.clienteId = clienteId;
         this.stanzaId = stanzaId;
@@ -35,7 +35,7 @@ public class Prenotazione {
         private LocalDateTime dataOra;
         private int numeroGiocatori;
         private double prezzoTotale;
-        private String statoPartita;
+        private StatoPartita statoPartita;
 
         public Builder id(String id) {
             this.id = id;
@@ -67,7 +67,7 @@ public class Prenotazione {
             return this;
         }
 
-        public Builder statoPartita(String statoPartita) {
+        public Builder statoPartita(StatoPartita statoPartita) {
             this.statoPartita = statoPartita;
             return this;
         }
@@ -92,10 +92,31 @@ public class Prenotazione {
     public LocalDateTime getDataOra() { return dataOra; }
     public int getNumeroGiocatori() { return numeroGiocatori; }
     public double getPrezzoTotale() { return prezzoTotale; }
-    public String getStatoPartita() { return statoPartita; }
+    public StatoPartita getStatoPartita() { return statoPartita; }
 
     // Setters
-    public void setStatoPartita(String statoPartita) {
+    public void setStatoPartita(StatoPartita statoPartita) {
         this.statoPartita = statoPartita;
+    }
+
+    // --- Java Idioms: equals, hashCode, toString ---
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Prenotazione that = (Prenotazione) o;
+        return java.util.Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Prenotazione{id='" + id + "', clienteId='" + clienteId + "', stanzaId='" + stanzaId +
+               "', dataOra=" + dataOra + ", stato='" + statoPartita + "'}";
     }
 }

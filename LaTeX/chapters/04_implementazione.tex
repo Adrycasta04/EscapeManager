@@ -179,4 +179,48 @@ try (PreparedStatement stmt = conn.prepareStatement(query)) {
 }
 \end{lstlisting}
 
+\section{Template Method Pattern (GenericDAO)}
+L'interfaccia \texttt{GenericDAO<T, ID>} definisce un ``contratto'' CRUD uniforme per tutte le entità. Sottointerfacce come \texttt{StanzaDAO} o \texttt{PrenotazioneDAO} aggiungono operazioni di dominio. Infine, le implementazioni concrete (es. \texttt{StanzaDAOPostgres}) forniscono le query SQL. Questo approccio ricalca il \textbf{Template Method Pattern} (GoF --- Comportamentale): l'interfaccia definisce lo ``scheletro algoritmico'', le classi implementano i passi specifici.
+
+\begin{lstlisting}[language=Java, caption=Template Method Pattern: GenericDAO e specializzazione]
+public interface GenericDAO<T, ID> {
+    void save(T entity);
+    T findById(ID id);
+    List<T> findAll();
+    void update(T entity);
+    void delete(ID id);
+}
+
+// Specializzazione per il dominio: aggiunge query domain-specific
+public interface StanzaDAO extends GenericDAO<Stanza, String> {
+    List<Stanza> findBySedeAndStato(String sedeId, String statoCorrente);
+}
+\end{lstlisting}
+
+\section{Copia Difensiva (Defensive Copy)}
+Un idiom di programmazione Java applicato nel progetto è la \textbf{copia difensiva}. La classe \texttt{WaitingList} mantiene internamente la lista degli Observer. Per rispettare il principio di \textit{Information Hiding} e prevenire la manipolazione esterna della struttura interna, il metodo \texttt{getObservers()} restituisce una vista non modificabile:
+
+\begin{lstlisting}[language=Java, caption=Copia difensiva nella WaitingList]
+public List<WaitingListObserver> getObservers() {
+    return Collections.unmodifiableList(observers);
+}
+\end{lstlisting}
+
+Qualsiasi tentativo di aggiungere o rimuovere elementi dalla lista restituita causerà una \texttt{UnsupportedOperationException}, proteggendo l'integrità dell'incapsulamento.
+
+\section{Diagrammi di Sequenza}
+Per illustrare l'interazione dinamica tra gli oggetti, sono stati prodotti tre diagrammi di sequenza:
+\begin{itemize}
+    \item \textbf{UC1:} mostra il flusso di prenotazione (Figura \ref{fig:sequence_prenotazione}), evidenziando la catena CLI $\rightarrow$ Controller $\rightarrow$ DAO $\rightarrow$ Strategy.
+    \item \textbf{UC3:} mostra il flusso di aggiornamento stato stanza (Figura \ref{fig:sequence_gestione_stato}), con delega allo State Pattern e il flusso alternativo per transizioni non valide.
+    \item \textbf{UC4:} mostra il cambio tariffa (Figura \ref{fig:sequence_tariffe}).
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/sequence_gestione_stato.png}
+    \caption{Diagramma di Sequenza: UC3 - Aggiornamento Stato Stanza (State Pattern)}
+    \label{fig:sequence_gestione_stato}
+\end{figure}
+
 

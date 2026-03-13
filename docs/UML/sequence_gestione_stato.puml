@@ -1,0 +1,82 @@
+@startuml sequence_gestione_stato
+
+skinparam style strictuml
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 150
+
+title Diagramma di Sequenza - UC3: Aggiornamento Stato Stanza
+
+actor "GameMaster" as GM
+boundary "ui : ConsoleMenu" as UI
+control "ctrl : GestioneStatoController" as CTRL
+database "sDao : StanzaDAO" as SDAO
+entity "stanza : Stanza" as S
+entity "<<State>>\nstatoCorrente : RoomState" as STATE
+
+GM -> UI : Seleziona "Aggiorna Stato Stanza"\ne inserisce ID stanza e comando "AVVIA"
+activate UI
+
+UI -> CTRL : eseguiTransizione("R01", "AVVIA")
+activate CTRL
+
+' Recupero della Stanza dal DAO
+CTRL -> SDAO : findById("R01")
+activate SDAO
+SDAO --> CTRL : stanza (stato = Disponibile)
+deactivate SDAO
+
+' Delega allo State Pattern
+note over CTRL, STATE : Il Controller non contiene\nlogica di stato: delega tutto\nallo State Pattern (OCP)
+CTRL -> S : iniziaSessione()
+activate S
+
+S -> STATE : iniziaSessione(this)
+activate STATE
+
+note right of STATE : DisponibileState\nesegue la transizione
+STATE -> S : setStato(new InCorsoState())
+STATE --> S
+deactivate STATE
+
+S --> CTRL
+deactivate S
+
+' Persistenza dell'aggiornamento
+CTRL -> SDAO : update(stanza)
+activate SDAO
+SDAO --> CTRL : void
+deactivate SDAO
+
+CTRL --> UI : (successo)
+deactivate CTRL
+
+UI --> GM : "Transizione eseguita con successo"
+deactivate UI
+
+== Flusso Alternativo 4a: Transizione non valida ==
+
+GM -> UI : Seleziona "Termina Sessione" su stanza\ngià in stato "Disponibile"
+activate UI
+
+UI -> CTRL : eseguiTransizione("R01", "TERMINA")
+activate CTRL
+
+CTRL -> SDAO : findById("R01")
+activate SDAO
+SDAO --> CTRL : stanza (stato = Disponibile)
+deactivate SDAO
+
+CTRL -> S : terminaSessione()
+activate S
+S -> STATE : terminaSessione(this)
+activate STATE
+STATE --> S : throw IllegalStateException
+deactivate STATE
+S --> CTRL : throw IllegalStateException
+deactivate S
+deactivate CTRL
+
+UI --> GM : "[ERRORE] Transizione non consentita\ndallo stato attuale"
+deactivate UI
+
+@enduml

@@ -1,4 +1,4 @@
-﻿\chapter{Analisi dei Requisiti}
+\chapter{Analisi dei Requisiti}
 
 Per definire i requisiti funzionali del sistema in ottica Object-Oriented, si è proceduto all'identificazione degli attori principali e dei relativi casi d'uso. La modellazione è stata condotta tramite un diagramma dettagliato per l'analisi tecnica.
 
@@ -92,6 +92,52 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
     \end{tabularx}
     \caption{Template del Caso d'Uso: Prenotazione Stanza}
     \label{tab:uc1_prenotazione}
+\end{table}
+\subsection{UC1.1 - Annullamento Prenotazione}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{|>{\columncolor{lightgray!30}\bfseries}l|X|}
+        \hline
+        Nome Use Case & UC1.1 - Annullamento Prenotazione \\
+        \hline
+        Attore Principale & Cliente \\
+        \hline
+        Livello & Sub-function \\
+        \hline
+        Scopo & Permettere al cliente di annullare una prenotazione confermata, liberando lo slot per altri utenti. \\
+        \hline
+        Pre-condizioni & Il Cliente è autenticato. Esiste almeno una prenotazione ``Confermata'' associata al Cliente. \\
+        \hline
+        Post-condizioni & La prenotazione ha stato ``Annullata''. Lo slot è nuovamente disponibile. Se la lista d'attesa contiene iscrizioni, il sistema ne notifica uno (Observer Pattern). \\
+        \hline
+        \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flusso Base (Basic Flow)}} \\
+        \hline
+        \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
+            \begin{enumerate}
+                \item Il Cliente visualizza le proprie prenotazioni attive. (M1, N2)
+                \item Il Cliente seleziona una prenotazione da annullare. (M1, N2)
+                \item Il Sistema chiede conferma dell'annullamento. (M1, N2)
+                \item Il Cliente conferma. (M1, N2)
+                \item Il Sistema aggiorna lo stato della prenotazione a ``Annullata'' e libera lo slot. (M1, N2)
+                \item Se la lista d'attesa per la stanza contiene iscrizioni, il sistema notifica il primo observer (UC2 --- Observer Pattern). (M2, N3)
+            \end{enumerate}
+        } \\
+        \hline
+        \multicolumn{2}{|c|}{\cellcolor{lightgray!50}\textbf{Flussi Alternativi (Alternative Flows)}} \\
+        \hline
+        \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{
+            \textbf{3a. Il Cliente rinuncia all'annullamento (M1, N2):}
+            \begin{itemize}
+                \item[3a.1] Il Cliente seleziona ``Annulla'' alla richiesta di conferma.
+                \item[3a.2] Il Sistema interrompe l'operazione.
+            \end{itemize}
+        } \\
+        \hline
+    \end{tabularx}
+    \caption{Sotto-caso d'uso: Annullamento Prenotazione (UC1.1)}
+    \label{tab:uc1_1_annullamento}
 \end{table}
 
 \subsection{UC2 - Iscrizione Lista d'Attesa}
@@ -230,7 +276,7 @@ Oltre ai requisiti funzionali, il sistema deve rispettare i seguenti requisiti n
     \item \textbf{Affidabilità:} le operazioni critiche (es. prenotazione) devono essere atomiche e non lasciare il sistema in stato inconsistente in caso di errore.
     \item \textbf{Usabilità:} la CLI deve guidare l'utente con menu espliciti, validazioni dei dati e messaggi di errore chiari.
     \item \textbf{Manutenibilità:} l'architettura a livelli (CLI, Controllers, DAO, DB) e l'uso di pattern riducono l'accoppiamento e facilitano l'estensione futura.
-    \item \textbf{Portabilità:} il sistema deve poter essere eseguito su Windows, macOS e Linux con JDK 25 e PostgreSQL, grazie all'uso di JDBC e configurazioni esterne.
+    \item \textbf{Portabilità:} il sistema deve poter essere eseguito su Windows, macOS e Linux con JDK 17 e PostgreSQL, grazie all'uso di JDBC e configurazioni esterne.
 \end{itemize}
 
 \section{Diagramma di Navigazione (CLI)}

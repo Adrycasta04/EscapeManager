@@ -106,9 +106,9 @@ Il livello più alto di collaudo ha riguardato i \texttt{Controllers}. In questa
 Per garantire la massima \textbf{tracciabilità}, ogni test funzionale è stato mappato direttamente su uno specifico \textit{Use Case Template} (Sezione 2.2). Sono stati collaudati sia i \textit{Flussi Base} che i \textit{Flussi Alternativi} (le eccezioni).
 
 \subsection{Catalogo dei Test}
-La Tabella \ref{tab:test_catalog} riassume l'intera suite di test, indicando tipo, classe e identificativo.
+La Tabella \ref{tab:test_catalog_1} e la Tabella \ref{tab:test_catalog_2} riassumono l'intera suite di test, indicando tipo, classe e identificativo.
 
-\begin{table}[H]
+\begin{table}[htbp]
     \centering
     \small
     \renewcommand{\arraystretch}{1.15}
@@ -135,6 +135,18 @@ La Tabella \ref{tab:test_catalog} riassume l'intera suite di test, indicando tip
         M6 & Mock & {\ttfamily\footnotesize ListaAttesaControllerMockTest.\newline testIscrizioneRiuscita\_UC2\_FlussoBase} \\ \hline
         M7 & Mock & {\ttfamily\footnotesize ListaAttesaControllerMockTest.\newline testIscrizioneDuplicata\_UC2\_Alt5a} \\ \hline
         M8 & Mock & {\ttfamily\footnotesize TariffeControllerMockTest.\newline testCambioTariffaWeekend\_UC4\_FlussoBase} \\ \hline
+    \end{tabularx}
+    \caption{Catalogo dei test (Parte 1: Unit e Mock Test)}
+    \label{tab:test_catalog_1}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|>{\bfseries}l|>{\raggedright\arraybackslash}X|}
+        \hline
+        ID & Tipo & Test \\ \hline
         I1 & Integration & {\ttfamily\footnotesize StanzaDAOPostgresTest.\newline testSaveAndFindById} \\ \hline
         F1 & Functional & {\ttfamily\footnotesize PrenotazioneControllerTest.\newline testPrenotazioneNegataPerSlotOccupato\_UC1\_Alt3a} \\ \hline
         F2 & Functional & {\ttfamily\footnotesize ListaAttesaControllerTest.\newline testIscrizioneListaAttesa\_OK} \\ \hline
@@ -143,8 +155,8 @@ La Tabella \ref{tab:test_catalog} riassume l'intera suite di test, indicando tip
         F5 & Functional & {\ttfamily\footnotesize GestioneStatoControllerTest.\newline testTransizioneNonValida\_UC3\_Alt4a} \\ \hline
         F6 & Functional & {\ttfamily\footnotesize TariffeControllerTest.\newline testCambioTariffaWeekend\_UC4} \\ \hline
     \end{tabularx}
-    \caption{Catalogo dei test (unit, mock, integrazione, funzionali)}
-    \label{tab:test_catalog}
+    \caption{Catalogo dei test (Parte 2: Integration e Functional Test)}
+    \label{tab:test_catalog_2}
 \end{table}
 
 \subsection{Tracciabilità Use Case \textrightarrow{} Test}
@@ -171,7 +183,7 @@ I test funzionali e con mock sono tracciati direttamente sui template del Capito
 \end{table}
 
 \section{Risultati}
-La suite di test è composta da \textbf{12 classi di test} e \textbf{37 test methods}, distribuiti su 4 livelli (unit, mock, integrazione, funzionale). La code coverage è misurabile tramite il report JaCoCo generato automaticamente in fase di build (\texttt{target/site/jacoco/}).
+La suite di test è composta da \textbf{14 classi di test} e \textbf{44 test methods}, distribuiti su 4 livelli (unit, mock, integrazione, funzionale). La code coverage è misurabile tramite il report JaCoCo generato automaticamente in fase di build (\texttt{target/site/jacoco/}).
 
 \section{Conclusioni}
 
