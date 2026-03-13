@@ -19,6 +19,7 @@ rectangle "EscapeManager System" {
     
     ' --- Casi d'uso Cliente ---
     usecase "UC1\nPrenotazione Stanza" <<user goal>> as UC_C1
+    usecase "UC1.1\nAnnullamento Prenotazione" <<sub-function>> as UC_C1_1
     usecase "UC2\nIscrizione Lista d'Attesa" <<user goal>> as UC_C2
     
     ' --- Casi d'uso Game Master ---

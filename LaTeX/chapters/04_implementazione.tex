@@ -179,10 +179,12 @@ try (PreparedStatement stmt = conn.prepareStatement(query)) {
 }
 \end{lstlisting}
 
-\section{Template Method Pattern (GenericDAO)}
-L'interfaccia \texttt{GenericDAO<T, ID>} definisce un ``contratto'' CRUD uniforme per tutte le entità. Sottointerfacce come \texttt{StanzaDAO} o \texttt{PrenotazioneDAO} aggiungono operazioni di dominio. Infine, le implementazioni concrete (es. \texttt{StanzaDAOPostgres}) forniscono le query SQL. Questo approccio ricalca il \textbf{Template Method Pattern} (GoF --- Comportamentale): l'interfaccia definisce lo ``scheletro algoritmico'', le classi implementano i passi specifici.
+\section{Gerarchia delle Interfacce e Liskov Substitution Principle}
+L'interfaccia \texttt{GenericDAO<T, ID>} definisce un ``contratto'' CRUD base e uniforme per tutte le entità. Sottointerfacce come \texttt{StanzaDAO} o \texttt{PrenotazioneDAO} estendono questo contratto aggiungendo operazioni specifiche per il dominio (es. ricerca per stato). Infine, le classi concrete (es. \texttt{StanzaDAOPostgres}) implementano i dettagli tecnologici tramite query SQL. 
 
-\begin{lstlisting}[language=Java, caption=Template Method Pattern: GenericDAO e specializzazione]
+Questo rigoroso design basato su interfacce non solo massimizza il riuso dei contratti, ma garantisce il pieno rispetto del \textbf{Liskov Substitution Principle (LSP)}: il livello \textit{Control} dipende unicamente dalle astrazioni (\texttt{StanzaDAO}), ignorando la controparte concreta.
+
+\begin{lstlisting}[language=Java, caption=Gerarchia delle interfacce DAO]
 public interface GenericDAO<T, ID> {
     void save(T entity);
     T findById(ID id);
@@ -212,7 +214,7 @@ Qualsiasi tentativo di aggiungere o rimuovere elementi dalla lista restituita ca
 Per illustrare l'interazione dinamica tra gli oggetti, sono stati prodotti tre diagrammi di sequenza:
 \begin{itemize}
     \item \textbf{UC1:} mostra il flusso di prenotazione (Figura \ref{fig:sequence_prenotazione}), evidenziando la catena CLI $\rightarrow$ Controller $\rightarrow$ DAO $\rightarrow$ Strategy.
-    \item \textbf{UC3:} mostra il flusso di aggiornamento stato stanza (Figura \ref{fig:sequence_gestione_stato}), con delega allo State Pattern e il flusso alternativo per transizioni non valide.
+    \item \textbf{UC3:} mostra il flusso di aggiornamento stato stanza (Figura \ref{fig:sequence_gestione_stato_cap3}), con delega allo State Pattern e il flusso alternativo per transizioni non valide.
     \item \textbf{UC4:} mostra il cambio tariffa (Figura \ref{fig:sequence_tariffe}).
 \end{itemize}
 
@@ -220,7 +222,7 @@ Per illustrare l'interazione dinamica tra gli oggetti, sono stati prodotti tre d
     \centering
     \includegraphics[width=0.95\textwidth]{images/sequence_gestione_stato.png}
     \caption{Diagramma di Sequenza: UC3 - Aggiornamento Stato Stanza (State Pattern)}
-    \label{fig:sequence_gestione_stato}
+    \label{fig:sequence_gestione_stato_cap4}
 \end{figure}
 
 

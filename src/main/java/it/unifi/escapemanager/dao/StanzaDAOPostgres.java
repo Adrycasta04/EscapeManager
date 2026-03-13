@@ -48,7 +48,7 @@ public class StanzaDAOPostgres implements StanzaDAO {
     @Override
     public List<Stanza> findAll() {
         List<Stanza> stanze = new ArrayList<>();
-        String query = "SELECT * FROM STANZA";
+        String query = "SELECT * FROM STANZA ORDER BY id";
         try (Statement stmt = getConnection().createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {

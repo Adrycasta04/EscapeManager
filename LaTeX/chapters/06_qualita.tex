@@ -13,7 +13,7 @@ L'architettura di \textit{EscapeManager} è stata progettata seguendo sistematic
 \end{itemize}
 
 \section{Analisi ISO/IEC 25010}
-Lo standard ISO/IEC 25010 definisce otto caratteristiche di qualità del software. La tabella~\ref{tab:iso25010} sintetizza la valutazione del sistema rispetto alle caratteristiche più rilevanti per il dominio.
+Lo standard ISO/IEC 25010 definisce otto caratteristiche di qualità del software. La tabella seguente sintetizza la valutazione del sistema rispetto alle caratteristiche più rilevanti per il dominio.
 
 \begin{table}[H]
     \centering
@@ -72,8 +72,7 @@ La combinazione di architettura a strati, DAO Factory, Dependency Injection e pa
     \item La migrazione a un diverso DBMS richiede solo una nuova \texttt{DAOFactory} concreta.
 \end{itemize}
 
-\section{Sicurezza e Privacy (Baseline)}
-Il modello dati prevede il campo \texttt{password\_hash} per le credenziali utente. La gestione completa dell'autenticazione e autorizzazione non fa parte del prototipo e viene trattata come estensione futura (Capitolo~\ref{chap:conclusioni}).
+Il modello dati prevede il campo \texttt{password\_hash} per le credenziali utente. La gestione completa dell'autenticazione e autorizzazione non fa parte del prototipo e viene trattata come estensione futura (Conclusioni).
 
 \section{Limiti del Prototipo}
 Il sistema è un proof-of-concept focalizzato sui casi d'uso principali. Alcuni aspetti sono volutamente semplificati: autenticazione reale, gestione avanzata degli slot, notifiche automatiche della lista d'attesa e amministrazione completa delle sedi.
