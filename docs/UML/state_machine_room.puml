@@ -1,0 +1,63 @@
+@startuml state_machine_room
+
+title Diagramma a Stati - Ciclo di Vita della Stanza (State Pattern)
+
+skinparam backgroundColor #FFFFFF
+skinparam state {
+    BackgroundColor #F0F4F8
+    BorderColor #2C3E50
+    FontSize 13
+    ArrowColor #2C3E50
+}
+
+[*] --> Disponibile : Creazione Stanza
+
+state "Disponibile" as Disponibile #E8F5E9 {
+}
+
+state "In Corso" as InCorso #FFECB3 {
+}
+
+state "In Pulizia" as InPulizia #E3F2FD {
+}
+
+state "In Manutenzione" as InManutenzione #FFCDD2 {
+}
+
+Disponibile --> InCorso : iniziaSessione()
+Disponibile --> InManutenzione : setManutenzione()
+
+InCorso --> InPulizia : terminaSessione()
+InCorso --> InManutenzione : setManutenzione()
+
+InPulizia --> Disponibile : setDisponibile()
+InPulizia --> InManutenzione : setManutenzione()
+
+InManutenzione --> Disponibile : setDisponibile()
+
+note right of Disponibile
+  La stanza è pronta per
+  prenotazioni e sessioni.
+  Stato di default alla creazione.
+end note
+
+note right of InCorso
+  Una sessione di gioco è
+  attiva. Prenotazioni non
+  consentite per questo slot.
+end note
+
+note left of InPulizia
+  Transizione automatica
+  dopo ogni sessione.
+  La stanza va ripristinata.
+end note
+
+note left of InManutenzione
+  Guasto tecnico o
+  manutenzione preventiva.
+  Accessibile da ogni stato
+  tranne [*].
+end note
+
+@enduml

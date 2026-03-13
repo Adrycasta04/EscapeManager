@@ -115,14 +115,14 @@ public class StanzaDAOPostgres implements StanzaDAO {
             rs.getDouble("prezzo_base")
         );
         
-        // Ricostruzione dello State Pattern partendo dal Database! (Factory Method informale)
+        // Ricostruzione dello State Pattern partendo dal Database (Factory Method informale)
         String statoDb = rs.getString("stato_corrente");
         if ("IN_CORSO".equals(statoDb)) {
-            stanza.setStato(new InCorsoState()); // Decommenta quando crei la classe
+            stanza.setStato(new InCorsoState());
         } else if ("IN_MANUTENZIONE".equals(statoDb)) {
-            stanza.setStato(new InManutenzioneState()); // Decommenta quando crei la classe
+            stanza.setStato(new InManutenzioneState());
         } else if ("IN_PULIZIA".equals(statoDb)) {
-            stanza.setStato(new InPuliziaState()); // Decommenta quando crei la classe
+            stanza.setStato(new InPuliziaState());
         } else {
             stanza.setStato(new DisponibileState());
         }

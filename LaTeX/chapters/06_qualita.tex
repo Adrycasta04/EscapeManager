@@ -1,29 +1,79 @@
-﻿\chapter{Qualità del Software}
+\chapter{Qualità del Software}
+
+In questo capitolo si analizza la qualità del software prodotto secondo le metriche e i principi più rilevanti in ambito di Ingegneria del Software, con riferimento allo standard ISO/IEC 25010 (SQuaRE) e ai principi SOLID dell'Object-Oriented Design.
 
 \section{Aderenza ai Principi SOLID}
-L'architettura di \textit{EscapeManager} segue i principi SOLID come guida pratica:
+L'architettura di \textit{EscapeManager} è stata progettata seguendo sistematicamente i principi SOLID:
 \begin{itemize}
-    \item \textbf{SRP:} i Controller coordinano i casi d'uso, i DAO gestiscono la persistenza e il Domain Model incapsula la logica di business.
-    \item \textbf{OCP:} nuovi stati o nuove strategie di prezzo possono essere aggiunti senza modificare il codice esistente (State/Strategy).
-    \item \textbf{LSP:} le sottoclassi di \texttt{Utente} possono essere sostituite senza alterare il comportamento atteso.
-    \item \textbf{ISP:} le interfacce DAO sono specifiche e minimali per il loro dominio.
-    \item \textbf{DIP:} i Controller dipendono da interfacce DAO, non da implementazioni concrete.
+    \item \textbf{Single Responsibility Principle (SRP):} ogni classe ha una responsabilità ben definita. I Controller coordinano i casi d'uso, i DAO gestiscono la persistenza, il Domain Model incapsula la logica di business e la CLI gestisce l'interazione utente.
+    \item \textbf{Open-Closed Principle (OCP):} nuovi stati (\texttt{RoomState}) o nuove strategie di prezzo (\texttt{PricingStrategy}) possono essere aggiunti creando nuove classi concrete senza modificare il codice esistente della \texttt{Stanza} o dei Controller.
+    \item \textbf{Liskov Substitution Principle (LSP):} le sottoclassi di \texttt{Utente} (Cliente, GameMaster, Admin) possono essere sostituite nelle interfacce che accettano il tipo base senza alterare il comportamento atteso del sistema.
+    \item \textbf{Interface Segregation Principle (ISP):} le interfacce DAO sono specifiche e minimali. \texttt{WaitingListDAO} espone solo 2 metodi, \texttt{StanzaDAO} e \texttt{PrenotazioneDAO} estendono \texttt{GenericDAO} con metodi mirati.
+    \item \textbf{Dependency Inversion Principle (DIP):} tutti i Controller dipendono da \textit{interfacce} DAO iniettate tramite costruttore, non da implementazioni concrete. Questo è il fondamento della testabilità con Mockito.
+\end{itemize}
+
+\section{Analisi ISO/IEC 25010}
+Lo standard ISO/IEC 25010 definisce otto caratteristiche di qualità del software. La tabella~\ref{tab:iso25010} sintetizza la valutazione del sistema rispetto alle caratteristiche più rilevanti per il dominio.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|>{\centering\arraybackslash}p{2cm}|}
+        \hline
+        Caratteristica & Descrizione e realizzazione nel progetto & Livello \\
+        \hline
+        Adeguatezza Funzionale & Tutti e 4 gli UC (UC1--UC4) sono implementati e testati con test funzionali tracciati. & Alto \\
+        \hline
+        Affidabilità & Le eccezioni sono gestite con gerarchia custom e validazioni a ogni livello. Le operazioni DAO usano try-with-resources per prevenire resource leak. & Alto \\
+        \hline
+        Usabilità & La CLI guida l'utente con menu espliciti, validazione input e messaggi di errore chiari. I mockup JavaFX mostrano l'interfaccia progettata. & Medio \\
+        \hline
+        Efficienza & Query mirate con PreparedStatement. Dataset contenuto. Scalabile con indici aggiuntivi (es. su \texttt{data\_ora}). & Medio \\
+        \hline
+        Manutenibilità & Architettura a strati, pattern GoF, interfacce DAO, DI tramite costruttore. Aggiungere una nuova feature richiede impatto minimo. & Alto \\
+        \hline
+        Portabilità & Java + JDBC + configurazione esterna (\texttt{db.properties} o env vars). Eseguibile su Windows, macOS, Linux. & Alto \\
+        \hline
+    \end{tabularx}
+    \caption{Valutazione ISO/IEC 25010 del sistema EscapeManager}
+    \label{tab:iso25010}
+\end{table}
+
+\section{Code Coverage (JaCoCo)}
+Per quantificare la copertura del codice, è stato integrato il plugin \textbf{JaCoCo} (Java Code Coverage) nel ciclo di build Maven. Il report viene generato automaticamente ad ogni esecuzione della suite di test tramite il comando:
+\begin{verbatim}
+mvnw.cmd test
+\end{verbatim}
+Il report HTML risultante è consultabile in \texttt{target/site/jacoco/index.html}.
+
+La suite di test comprende \textbf{37 test cases} distribuiti su 4 livelli:
+\begin{itemize}
+    \item \textbf{Unit Test (White-Box):} 22 test sul Domain Model (State, Strategy, Observer, Builder).
+    \item \textbf{Mock Test (Mockito):} 15 test sui Controller in isolamento dal DB.
+    \item \textbf{Integration Test (DAO):} test di persistenza sul database reale.
+    \item \textbf{Functional Test (Black-Box):} test end-to-end tracciati sugli UC templates.
 \end{itemize}
 
 \section{Affidabilità e Coerenza dei Dati}
-La coerenza del sistema è garantita da validazioni nel layer di controllo e da vincoli nel database (PK/FK). Le eccezioni applicative sono propagate in modo controllato, evitando stati intermedi non consistenti.
+La coerenza del sistema è garantita da:
+\begin{itemize}
+    \item \textbf{Validazioni nel layer di controllo:} ogni Controller verifica pre-condizioni e regole di business prima di operare sul DB.
+    \item \textbf{Vincoli nel database:} chiavi primarie, chiavi esterne con \texttt{ON DELETE CASCADE}, constraint \texttt{NOT NULL} e \texttt{UNIQUE} su campi critici (es. email).
+    \item \textbf{Eccezioni applicative:} la gerarchia \texttt{EscapeManagerException} propaga errori in modo controllato, evitando stati intermedi non consistenti.
+    \item \textbf{State Pattern:} le transizioni illegali sono bloccate a livello di dominio (\texttt{IllegalStateException}), impedendo operazioni incoerenti.
+\end{itemize}
 
 \section{Manutenibilità ed Estendibilità}
-La combinazione di architettura a strati, DAO Factory e pattern comportamentali consente di introdurre nuove funzionalità con impatto minimo. Ad esempio, una nuova strategia tariffaria richiede solo una nuova classe che implementa \texttt{PricingStrategy} e un mapping nel DAO.
-
-\section{Prestazioni}
-Le operazioni principali sono supportate da query mirate sui DAO e da un dataset contenuto. La struttura dati è progettata per scalare aggiungendo indici mirati (es. su \texttt{stanza\_id} e \texttt{data\_ora}) qualora il volume di prenotazioni crescesse.
-
-\section{Portabilità e Configurazione}
-L'applicazione è basata su Java e JDBC, quindi eseguibile su Windows, macOS e Linux. La configurazione del database è esterna al codice tramite \texttt{db.properties} o variabili d'ambiente, aumentando la portabilità e la sicurezza della configurazione.
+La combinazione di architettura a strati, DAO Factory, Dependency Injection e pattern comportamentali consente di introdurre nuove funzionalità con impatto minimo. Esempi concreti:
+\begin{itemize}
+    \item Una nuova strategia tariffaria (es. \texttt{TariffaNotturna}) richiede solo una nuova classe che implementa \texttt{PricingStrategy} e un mapping nel DAO --- nessuna modifica ai Controller.
+    \item Un nuovo stato operativo (es. \texttt{InPreparazioneState}) richiede solo una nuova classe che implementa \texttt{RoomState} --- il codice di \texttt{Stanza} resta invariato (OCP).
+    \item La migrazione a un diverso DBMS richiede solo una nuova \texttt{DAOFactory} concreta.
+\end{itemize}
 
 \section{Sicurezza e Privacy (Baseline)}
-Il modello dati prevede il campo \texttt{password\_hash} per le credenziali. La gestione completa dell'autenticazione e autorizzazione non fa parte del prototipo e viene trattata come estensione futura.
+Il modello dati prevede il campo \texttt{password\_hash} per le credenziali utente. La gestione completa dell'autenticazione e autorizzazione non fa parte del prototipo e viene trattata come estensione futura (Capitolo~\ref{chap:conclusioni}).
 
 \section{Limiti del Prototipo}
-Il sistema è pensato come proof-of-concept focalizzato sui casi d'uso principali. Alcuni aspetti sono volutamente semplificati: autenticazione reale, gestione avanzata degli slot, notifiche automatiche della lista d'attesa e amministrazione completa delle sedi.
+Il sistema è un proof-of-concept focalizzato sui casi d'uso principali. Alcuni aspetti sono volutamente semplificati: autenticazione reale, gestione avanzata degli slot, notifiche automatiche della lista d'attesa e amministrazione completa delle sedi.

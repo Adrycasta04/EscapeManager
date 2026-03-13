@@ -1,15 +1,15 @@
 package it.unifi.escapemanager.controllers;
 
-import it.unifi.escapemanager.dao.DAOFactory;
 import it.unifi.escapemanager.dao.StanzaDAO;
 import it.unifi.escapemanager.domain.Stanza;
 
 public class GestioneStatoController {
 
-    private StanzaDAO stanzaDao;
+    private final StanzaDAO stanzaDao;
 
-    public GestioneStatoController() {
-        this.stanzaDao = DAOFactory.getDAOFactory().getStanzaDAO();
+    // Dependency Injection: DAO iniettato dal costruttore per facilitare il testing (Mockito)
+    public GestioneStatoController(StanzaDAO stanzaDao) {
+        this.stanzaDao = stanzaDao;
     }
 
     public void eseguiTransizione(String stanzaId, String comando) {

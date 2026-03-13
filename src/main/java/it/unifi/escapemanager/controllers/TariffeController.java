@@ -1,6 +1,5 @@
 package it.unifi.escapemanager.controllers;
 
-import it.unifi.escapemanager.dao.DAOFactory;
 import it.unifi.escapemanager.dao.StanzaDAO;
 import it.unifi.escapemanager.domain.Stanza;
 import it.unifi.escapemanager.domain.TariffaBase;
@@ -9,10 +8,11 @@ import it.unifi.escapemanager.exceptions.ValidationException;
 
 public class TariffeController {
 
-    private StanzaDAO stanzaDao;
+    private final StanzaDAO stanzaDao;
 
-    public TariffeController() {
-        this.stanzaDao = DAOFactory.getDAOFactory().getStanzaDAO();
+    // Dependency Injection: DAO iniettato dal costruttore per facilitare il testing (Mockito)
+    public TariffeController(StanzaDAO stanzaDao) {
+        this.stanzaDao = stanzaDao;
     }
 
     public void cambiaTariffa(String stanzaId, String tipoTariffa) {

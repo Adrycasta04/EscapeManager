@@ -1,12 +1,13 @@
-﻿\chapter{Collaudo e Testing}
+\chapter{Collaudo e Testing}
 
-La fase di verifica e validazione del sistema \textbf{EscapeManager} è stata condotta seguendo un approccio multilivello, utilizzando il framework \textbf{JUnit 5}. L'obiettivo del collaudo non è stato solo quello di garantire l'assenza di difetti evidenti (bug), ma soprattutto di dimostrare la robustezza dell'architettura e la perfetta aderenza ai requisiti funzionali delineati nel Capitolo 2.
+La fase di verifica e validazione del sistema \textbf{EscapeManager} è stata condotta seguendo un approccio multilivello, utilizzando i framework \textbf{JUnit 5} e \textbf{Mockito}. L'obiettivo del collaudo non è stato solo quello di garantire l'assenza di difetti evidenti (bug), ma soprattutto di dimostrare la robustezza dell'architettura e la perfetta aderenza ai requisiti funzionali delineati nel Capitolo 2.
 
 \section{Strategia di Verifica}
-La strategia di test è organizzata su tre livelli:
+La strategia di test è organizzata su quattro livelli complementari:
 \begin{itemize}
-    \item \textbf{Unit Test (White-Box):} verificano le logiche pure del Domain Model e dei Design Pattern.
-    \item \textbf{Integration Test (DAO/DB):} verificano il mapping ORM e la correttezza delle query principali.
+    \item \textbf{Unit Test (White-Box):} verificano le logiche pure del Domain Model e dei Design Pattern in completo isolamento.
+    \item \textbf{Mock Test (Mockito):} testano i Controller sostituendo i DAO reali con oggetti simulati, isolando la logica di business dal database.
+    \item \textbf{Integration Test (DAO/DB):} verificano il mapping ORM e la correttezza delle query principali su database reale.
     \item \textbf{Functional Test (Black-Box):} esercitano i Controller come surrogati della UI, in linea con i template UC.
 \end{itemize}
 
@@ -37,7 +38,42 @@ class PricingStrategyTest {
 }
 \end{lstlisting}
 
-Oltre al calcolo del prezzo, i test unitari verificano anche le transizioni di stato della \texttt{Stanza} (State Pattern) e la corretta gestione delle eccezioni in caso di transizioni non valide.
+Oltre al calcolo del prezzo, i test unitari verificano anche le transizioni di stato della \texttt{Stanza} (State Pattern, con 11 test per tutte le transizioni valide e illegali), il meccanismo Observer della \texttt{WaitingList} (attach, detach, notify), e la costruzione fluente tramite \texttt{Builder Pattern}.
+
+\section{Testing con Mock (Mockito)}
+
+Per verificare la correttezza della logica di business dei Controller \textit{indipendentemente} dal database, sono stati implementati test con \textbf{Mockito}. Questo framework permette di creare oggetti simulati (mock) delle interfacce DAO, controllando il loro comportamento e verificando le interazioni.
+
+L'annotazione \texttt{@ExtendWith(MockitoExtension.class)} abilita l'integrazione automatica con JUnit 5, mentre \texttt{@Mock} inietta i DAO simulati e \texttt{verify()} asserisce che i metodi attesi siano stati invocati.
+
+\begin{lstlisting}[caption={Mock Test: flusso base UC1 con Mockito}, label={lst:test_mock}]
+@ExtendWith(MockitoExtension.class)
+class PrenotazioneControllerMockTest {
+
+    @Mock private PrenotazioneDAO prenotazioneDAO;
+    @Mock private StanzaDAO stanzaDAO;
+    private PrenotazioneController controller;
+
+    @BeforeEach
+    void setUp() {
+        controller = new PrenotazioneController(prenotazioneDAO, stanzaDAO);
+    }
+
+    @Test
+    void testPrenotazioneRiuscita_FlussoBase_UC1() {
+        Stanza stanza = new Stanza("R01", "FI01", "Horror", 6, 20.0);
+        when(stanzaDAO.findById("R01")).thenReturn(stanza);
+        when(prenotazioneDAO.isSlotOccupato(eq("R01"), any())).thenReturn(false);
+
+        Prenotazione result = controller.effettuaPrenotazione("C01", "R01",
+                LocalDateTime.of(2026, 10, 31, 21, 0), 4);
+
+        assertNotNull(result);
+        assertEquals(80.0, result.getPrezzoTotale());
+        verify(prenotazioneDAO, times(1)).save(any(Prenotazione.class));
+    }
+}
+\end{lstlisting}
 
 \section{Testing di Integrazione (DAO e Database)}
 
@@ -69,72 +105,50 @@ Il livello più alto di collaudo ha riguardato i \texttt{Controllers}. In questa
 
 Per garantire la massima \textbf{tracciabilità}, ogni test funzionale è stato mappato direttamente su uno specifico \textit{Use Case Template} (Sezione 2.2). Sono stati collaudati sia i \textit{Flussi Base} che i \textit{Flussi Alternativi} (le eccezioni).
 
-Il Listing \ref{lst:test_funzionale} dimostra come il sistema gestisce fluidamente la \textit{Race Condition} descritta nell'UC1 (Alternativa 3a), negando la prenotazione se lo slot risulta già occupato a database.
-
-\begin{lstlisting}[caption={Functional Test tracciato sull'UC1 (Flusso Alternativo 3a)}, label={lst:test_funzionale}]
-class PrenotazioneControllerTest {
-    private PrenotazioneController controller;
-    private PrenotazioneDAO prenotazioneDAO;
-
-    @BeforeEach
-    void setUp() {
-        DatabaseHelper.resetTestDatabase();
-        DAOFactory factory = DAOFactory.getDAOFactory();
-        prenotazioneDAO = factory.getPrenotazioneDAO();
-        StanzaDAO stanzaDAO = factory.getStanzaDAO();
-        controller = new PrenotazioneController(prenotazioneDAO, stanzaDAO);
-    }
-
-    @Test
-    void testPrenotazioneNegataPerSlotOccupato_UC1_Alt3a() {
-        // Setup: Il Cliente 2 tenta di prenotare uno slot appena occupato dal Cliente 1
-        String stanzaId = "R01";
-        LocalDateTime slotRichiesto = LocalDateTime.of(2026, 10, 31, 21, 0);
-        
-        // Simulo la race condition pre-occupando lo slot via DAO
-        Prenotazione esistente = new Prenotazione(
-            UUID.randomUUID().toString(), "CLIENTE_01", stanzaId,
-            slotRichiesto, 3, 60.0, "CONFERMATA");
-        prenotazioneDAO.save(esistente);
-
-        // Execution & Assertion
-        SlotNonDisponibileException eccezione = assertThrows(
-            SlotNonDisponibileException.class, 
-            () -> controller.effettuaPrenotazione("CLIENTE_02", stanzaId, slotRichiesto, 4)
-        );
-        
-        assertEquals("Lo slot orario selezionato non e' piu' disponibile.", eccezione.getMessage());
-    }
-}
-\end{lstlisting}
-
 \subsection{Catalogo dei Test}
-La Tabella \ref{tab:test_catalog} riassume l'intera suite di test, indicando tipo e identificativo.
+La Tabella \ref{tab:test_catalog} riassume l'intera suite di test, indicando tipo, classe e identificativo.
 
 \begin{table}[H]
     \centering
     \small
-    \renewcommand{\arraystretch}{1.2}
-    \begin{tabularx}{\textwidth}{|>{\bfseries}l|>{\bfseries}l|X|}
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|>{\bfseries}l|>{\raggedright\arraybackslash}X|}
         \hline
         ID & Tipo & Test \\ \hline
-        U1 & Unit & \texttt{PricingStrategyTest.testTariffaBaseCalcoloCorretto} \\ \hline
-        U2 & Unit & \texttt{StanzaTest.testTransizioneCorretta} \\ \hline
-        U3 & Unit & \texttt{StanzaTest.testEccezioneStatoNonValido} \\ \hline
-        I1 & Integration & \texttt{StanzaDAOPostgresTest.testSaveAndFindById} \\ \hline
-        F1 & Functional & \texttt{PrenotazioneControllerTest.testPrenotazioneNegataPerSlotOccupato\_UC1\_Alt3a} \\ \hline
-        F2 & Functional & \texttt{ListaAttesaControllerTest.testIscrizioneListaAttesa\_OK} \\ \hline
-        F3 & Functional & \texttt{ListaAttesaControllerTest.testIscrizioneListaAttesa\_Duplicato} \\ \hline
-        F4 & Functional & \texttt{GestioneStatoControllerTest.testEseguiTransizioneAvvia} \\ \hline
-        F5 & Functional & \texttt{GestioneStatoControllerTest.testTransizioneNonValida\_TerminaSuDisponibile\_UC3\_Alt4a} \\ \hline
-        F6 & Functional & \texttt{TariffeControllerTest.testCambioTariffaWeekend\_UC4} \\ \hline
+        U1 & Unit & {\ttfamily\footnotesize StanzaTest.\newline testTransizioneCorretta} \\ \hline
+        U2 & Unit & {\ttfamily\footnotesize StanzaTest.\newline testTransizioneInCorso\_TerminaSessione\_VaInPulizia} \\ \hline
+        U3 & Unit & {\ttfamily\footnotesize StanzaTest.\newline testTransizioneDisponibile\_ImpostaManutenzione} \\ \hline
+        U4 & Unit & {\ttfamily\footnotesize StanzaTest.\newline testCicloCompletoStati} \\ \hline
+        U5 & Unit & {\ttfamily\footnotesize StanzaTest.\newline testEccezioneStatoNonValido (+ 3 varianti)} \\ \hline
+        U6 & Unit & {\ttfamily\footnotesize PricingStrategyTest.\newline testTariffaBaseCalcoloCorretto} \\ \hline
+        U7 & Unit & {\ttfamily\footnotesize PricingStrategyTest.\newline testTariffaWeekendMaggiorazione} \\ \hline
+        U8 & Unit & {\ttfamily\footnotesize PricingStrategyTest.\newline testCambioStrategiaARuntimeDaBaseAWeekend} \\ \hline
+        U9 & Unit & {\ttfamily\footnotesize WaitingListObserverTest.\newline testAttachENotifica} \\ \hline
+        U10 & Unit & {\ttfamily\footnotesize WaitingListObserverTest.\newline testDetachNonRiceveNotifica} \\ \hline
+        U11 & Unit & {\ttfamily\footnotesize WaitingListObserverTest.\newline testNotificaMultipleObservers} \\ \hline
+        U12 & Unit & {\ttfamily\footnotesize PrenotazioneBuilderTest.\newline testBuilderCreaPrenotazioneCompleta} \\ \hline
+        M1 & Mock & {\ttfamily\footnotesize PrenotazioneControllerMockTest.\newline testPrenotazioneRiuscita\_FlussoBase\_UC1} \\ \hline
+        M2 & Mock & {\ttfamily\footnotesize PrenotazioneControllerMockTest.\newline testPrenotazioneNegata\_SlotOccupato\_UC1\_Alt3a} \\ \hline
+        M3 & Mock & {\ttfamily\footnotesize PrenotazioneControllerMockTest.\newline testPrenotazioneNegata\_CapienzaSuperata\_UC1\_Alt4a} \\ \hline
+        M4 & Mock & {\ttfamily\footnotesize GestioneStatoControllerMockTest.\newline testAvviaSessione\_DaDisponibile\_UC3\_FlussoBase} \\ \hline
+        M5 & Mock & {\ttfamily\footnotesize GestioneStatoControllerMockTest.\newline testTransizioneNonValida\_UC3\_Alt4a} \\ \hline
+        M6 & Mock & {\ttfamily\footnotesize ListaAttesaControllerMockTest.\newline testIscrizioneRiuscita\_UC2\_FlussoBase} \\ \hline
+        M7 & Mock & {\ttfamily\footnotesize ListaAttesaControllerMockTest.\newline testIscrizioneDuplicata\_UC2\_Alt5a} \\ \hline
+        M8 & Mock & {\ttfamily\footnotesize TariffeControllerMockTest.\newline testCambioTariffaWeekend\_UC4\_FlussoBase} \\ \hline
+        I1 & Integration & {\ttfamily\footnotesize StanzaDAOPostgresTest.\newline testSaveAndFindById} \\ \hline
+        F1 & Functional & {\ttfamily\footnotesize PrenotazioneControllerTest.\newline testPrenotazioneNegataPerSlotOccupato\_UC1\_Alt3a} \\ \hline
+        F2 & Functional & {\ttfamily\footnotesize ListaAttesaControllerTest.\newline testIscrizioneListaAttesa\_OK} \\ \hline
+        F3 & Functional & {\ttfamily\footnotesize ListaAttesaControllerTest.\newline testIscrizioneListaAttesa\_Duplicato} \\ \hline
+        F4 & Functional & {\ttfamily\footnotesize GestioneStatoControllerTest.\newline testEseguiTransizioneAvvia} \\ \hline
+        F5 & Functional & {\ttfamily\footnotesize GestioneStatoControllerTest.\newline testTransizioneNonValida\_UC3\_Alt4a} \\ \hline
+        F6 & Functional & {\ttfamily\footnotesize TariffeControllerTest.\newline testCambioTariffaWeekend\_UC4} \\ \hline
     \end{tabularx}
-    \caption{Catalogo dei test (unit, integrazione, funzionali)}
+    \caption{Catalogo dei test (unit, mock, integrazione, funzionali)}
     \label{tab:test_catalog}
 \end{table}
 
 \subsection{Tracciabilità Use Case \textrightarrow{} Test}
-I test funzionali F1--F6 sono tracciati direttamente sui template del Capitolo 2. La Tabella \ref{tab:traceability} sintetizza la copertura dei flussi base e alternativi.
+I test funzionali e con mock sono tracciati direttamente sui template del Capitolo 2. La Tabella \ref{tab:traceability} sintetizza la copertura dei flussi base e alternativi.
 
 \begin{table}[H]
     \centering
@@ -143,23 +157,23 @@ I test funzionali F1--F6 sono tracciati direttamente sui template del Capitolo 2
     \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|}
         \hline
         Use Case / Flusso & Test ID \\ \hline
-        UC1 - Flusso alternativo 3a (slot occupato) & F1 \\ \hline
-        UC2 - Flusso base (iscrizione) & F2 \\ \hline
-        UC2 - Alternativa 5a (duplicato) & F3 \\ \hline
-        UC3 - Flusso base (avvio sessione) & F4 \\ \hline
-        UC3 - Alternativa 4a (transizione non valida) & F5 \\ \hline
-        UC4 - Flusso base (cambio tariffa) & F6 \\ \hline
+        UC1 - Flusso base (prenotazione) & M1 \\ \hline
+        UC1 - Alternativa 3a (slot occupato) & M2, F1 \\ \hline
+        UC1 - Alternativa 4a (capienza) & M3 \\ \hline
+        UC2 - Flusso base (iscrizione) & M6, F2 \\ \hline
+        UC2 - Alternativa 5a (duplicato) & M7, F3 \\ \hline
+        UC3 - Flusso base (avvio sessione) & M4, F4 \\ \hline
+        UC3 - Alternativa 4a (transizione non valida) & M5, F5 \\ \hline
+        UC4 - Flusso base (cambio tariffa) & M8, F6 \\ \hline
     \end{tabularx}
     \caption{Matrice di tracciabilità Use Case \textrightarrow{} Test}
     \label{tab:traceability}
 \end{table}
 
 \section{Risultati}
-La suite di test è composta da \textbf{7 classi} e \textbf{10 test cases}, distribuiti tra unit, integrazione e test funzionali. Non è stata eseguita una misura formale di coverage, ma i test coprono i principali rami decisionali dei pattern e i flussi alternativi più critici nei casi d'uso.
+La suite di test è composta da \textbf{12 classi di test} e \textbf{37 test methods}, distribuiti su 4 livelli (unit, mock, integrazione, funzionale). La code coverage è misurabile tramite il report JaCoCo generato automaticamente in fase di build (\texttt{target/site/jacoco/}).
 
 \section{Conclusioni}
 
 L'approccio metodologico adottato, guidato dai principi dell'Object-Oriented Design e supportato dall'uso estensivo dei Design Pattern, ha permesso di sviluppare \textbf{EscapeManager} come un sistema robusto, altamente coeso e disaccoppiato. 
-La suite di collaudo ha confermato la solidità della logica di business e la corretta integrazione con il layer relazionale, soddisfacendo integralmente i requisiti posti in fase di analisi e fornendo un'architettura facilmente estensibile per sviluppi futuri (es. integrazione di sensori fisici nelle stanze tramite \textit{Adapter Pattern} o implementazione di un'interfaccia grafica avanzata al posto dell'attuale CLI).
-
-
+L'introduzione di \textbf{Mockito} ha permesso di testare i Controller in totale isolamento dal database, garantendo test rapidi e deterministici. La suite di collaudo ha confermato la solidità della logica di business e la corretta integrazione con il layer relazionale, soddisfacendo integralmente i requisiti posti in fase di analisi.

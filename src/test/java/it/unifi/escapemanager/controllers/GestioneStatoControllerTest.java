@@ -19,8 +19,8 @@ class GestioneStatoControllerTest {
     @BeforeEach
     void setUp() {
         DatabaseHelper.resetTestDatabase();
-        controller = new GestioneStatoController();
         stanzaDao = DAOFactory.getDAOFactory().getStanzaDAO();
+        controller = new GestioneStatoController(stanzaDao);
     }
 
     @Test

@@ -1,0 +1,23 @@
+\chapter{Conclusioni e Sviluppi Futuri}
+\label{chap:conclusioni}
+
+\section{Obiettivi raggiunti}
+Il progetto \textit{EscapeManager} ha raggiunto gli obiettivi prefissati nella fase di analisi:
+\begin{itemize}
+    \item \textbf{Architettura solida:} l'applicazione è strutturata secondo il paradigma BCE (Boundary-Control-Entity) con una rigida separazione delle responsabilità tra i livelli di presentazione, controllo, dominio e persistenza.
+    \item \textbf{Design Pattern GoF:} sono stati applicati e documentati 5 pattern fondamentali: \textbf{State} (ciclo di vita della Stanza), \textbf{Strategy} (politiche di prezzo), \textbf{Observer} (lista d'attesa), \textbf{Builder} (costruzione fluente delle Prenotazioni) e \textbf{Singleton} (gestione centralizzata della connessione DB).
+    \item \textbf{Pattern architetturali:} DAO, Abstract Factory (DAO Factory) e Dependency Injection sono utilizzati per disaccoppiare la logica di business dalla tecnologia di persistenza.
+    \item \textbf{Persistenza relazionale:} il database PostgreSQL, progettato con Single Table Inheritance e junction table, supporta integralmente il Domain Model.
+    \item \textbf{Testing multi-livello:} la suite di collaudo comprende test unitari (White-Box), test con mock (Mockito), test di integrazione (DAO) e test funzionali (Black-Box) tracciati sui casi d'uso, per un totale di 37 test cases.
+\end{itemize}
+
+\section{Sviluppi Futuri}
+L'architettura disaccoppiata consente di estendere il sistema in diverse direzioni:
+\begin{enumerate}
+    \item \textbf{Interfaccia Grafica Completa (JavaFX):} i mockup attuali possono essere trasformati in una GUI funzionale collegata ai Controller esistenti, senza modificare il Domain Model.
+    \item \textbf{Autenticazione e Autorizzazione:} il campo \texttt{password\_hash} è già predisposto nel modello dati. L'implementazione di un sistema di login con hashing sicuro (es. BCrypt) e controllo degli accessi basato sul ruolo (\texttt{ruolo} in tabella \texttt{UTENTE}) è il passo successivo naturale.
+    \item \textbf{Notifiche automatiche (Observer):} l'infrastruttura Observer per la lista d'attesa è implementata a livello di dominio. L'estensione prevede l'invio automatico di notifiche (email/push) quando uno slot viene liberato (cancellazione prenotazione).
+    \item \textbf{API REST:} l'esposizione di endpoint RESTful tramite un framework leggero (es. Javalin o Spring Boot) permetterebbe l'integrazione con frontend web o mobile, mantenendo intatta la Business Logic.
+    \item \textbf{Adapter Pattern per IoT:} l'integrazione di sensori fisici nelle stanze (es. timer di sessione, rilevatori di completamento enigma) potrebbe essere realizzata tramite il pattern \textit{Adapter}, adattando l'interfaccia dei dispositivi al Domain Model esistente.
+    \item \textbf{Gestione multi-sede avanzata:} l'entità \texttt{Sede} è già presente nel database. Un modulo di amministrazione centralizzata per la gestione di più filiali rappresenta un'estensione modulare del sistema.
+\end{enumerate}

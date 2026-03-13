@@ -30,8 +30,8 @@ public class ConsoleMenu {
         DAOFactory factory = DAOFactory.getDAOFactory();
         this.stanzaDAO = factory.getStanzaDAO();
         this.prenotazioneController = new PrenotazioneController(factory.getPrenotazioneDAO(), stanzaDAO);
-        this.gestioneStatoController = new GestioneStatoController();
-        this.tariffeController = new TariffeController();
+        this.gestioneStatoController = new GestioneStatoController(stanzaDAO);
+        this.tariffeController = new TariffeController(stanzaDAO);
         this.listaAttesaController = new ListaAttesaController(factory.getWaitingListDAO());
         this.scanner = new Scanner(System.in);
     }

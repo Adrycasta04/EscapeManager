@@ -1,4 +1,4 @@
-﻿\chapter{Implementazione e Architettura del Codice}
+\chapter{Implementazione e Architettura del Codice}
 
 Questo capitolo descrive la traduzione del Domain Model e dello Schema Logico in codice sorgente Java. L'architettura software è stata strutturata seguendo il pattern architetturale \textit{Layered} (a strati), che ricalca logicamente il paradigma BCE (Boundary-Control-Entity), garantendo un elevato disaccoppiamento e facilitando il testing isolato dei componenti.
 
@@ -126,6 +126,21 @@ public class WaitingList {
         }
     }
 }
+\end{lstlisting}
+
+\subsection{Builder Pattern}
+La classe \texttt{Prenotazione} necessita di 7 parametri per la sua costruzione. Per migliorare la leggibilità e prevenire errori nell'ordine dei parametri, è stato implementato il pattern \textbf{Builder} (GoF --- Creazionale). Questo pattern è particolarmente utile quando una classe ha molti attributi opzionali o quando la costruzione dell'oggetto richiede più passi logici.
+
+\begin{lstlisting}[caption={Builder Pattern per la classe Prenotazione}, label={lst:builder_pattern}]
+Prenotazione p = new Prenotazione.Builder()
+        .id(UUID.randomUUID().toString())
+        .clienteId("C01")
+        .stanzaId("R01")
+        .dataOra(LocalDateTime.of(2026, 10, 31, 21, 0))
+        .numeroGiocatori(4)
+        .prezzoTotale(80.0)
+        .statoPartita("CONFERMATA")
+        .build();
 \end{lstlisting}
 
 \section{Dependency Injection e Testabilità}

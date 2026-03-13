@@ -2,6 +2,7 @@ Corso_Di_SWE/
 # Maven / Java build artifacts
 /target/
 .m2/
+.tmp/
 src/main/resources/db.properties
 *.class
 *.jar

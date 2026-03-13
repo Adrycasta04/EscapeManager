@@ -18,8 +18,8 @@ class TariffeControllerTest {
     @BeforeEach
     void setUp() {
         DatabaseHelper.resetTestDatabase();
-        controller = new TariffeController();
         stanzaDao = DAOFactory.getDAOFactory().getStanzaDAO();
+        controller = new TariffeController(stanzaDao);
     }
 
     @Test

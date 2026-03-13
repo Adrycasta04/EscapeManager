@@ -1,4 +1,4 @@
-﻿\chapter{Progettazione Architetturale e di Dominio}
+\chapter{Progettazione Architetturale e di Dominio}
 
 Il processo di transizione dall'analisi dei requisiti alla progettazione ha seguito i principi dell'Object-Oriented Design (OOD) e l'approccio BCE (Boundary-Control-Entity). In questo capitolo viene dettagliata la struttura statica del Domain Model, ponendo particolare enfasi sull'applicazione dei Design Pattern fondamentali per garantire la manutenibilità, l'estensibilità e il disaccoppiamento del sistema.
 
@@ -66,6 +66,16 @@ L'architettura del dominio è stata concepita per risolvere nativamente le compl
 
 Oltre ai pattern, si sottolinea l'uso dell'ereditarietà per la gestione degli attori (\texttt{Utente} come classe astratta generalizzata) e la presenza di un riferimento a \texttt{Sede} tramite \texttt{sede\_id} nel modello dati, che consente di mantenere la coerenza con il concetto di franchising pur non essendo oggetto di operazioni dirette nella CLI.
 
+\subsection{State Machine Diagram}
+Per documentare formalmente il ciclo di vita operativo della Stanza, è stato prodotto il diagramma a stati della Figura \ref{fig:state_machine_room}. Questo diagramma è una vista complementare al class diagram del Domain Model e descrive le transizioni valide tra i 4 stati concreti dell'interfaccia \texttt{RoomState}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/state_machine_room.png}
+    \caption{State Machine Diagram per il ciclo di vita della Stanza (RoomState)}
+    \label{fig:state_machine_room}
+\end{figure}
+
 
 \section{Progettazione del Database}
 
@@ -87,10 +97,11 @@ La Figura \ref{fig:er_diagram} mostra il diagramma Entità-Relazione (ER) del da
 Il design relazionale affronta la dicotomia tra il paradigma a oggetti e quello tabellare attraverso le seguenti scelte implementative:
 
 \begin{itemize}[leftmargin=*]
-\emergencystretch=3em
+\raggedright
+\setlength{\emergencystretch}{3em}
     \item \textbf{Mapping dell'Ereditarietà (Single Table Strategy):} La gerarchia della classe astratta \texttt{Utente} (Cliente, GameMaster, Admin) è stata mappata utilizzando il pattern \textit{Single Table Inheritance}. È stata creata un'unica tabella \texttt{UTENTE} provvista di una colonna discriminante (\texttt{ruolo}). Gli attributi specifici delle sottoclassi (es. \texttt{matricola} per il Game Master o \texttt{telefono} per il Cliente) sono stati resi \textit{nullable}. Questa scelta ottimizza le query di autenticazione evitando costose operazioni di \texttt{JOIN}.
     
-    \item \textbf{Mapping dei Design Pattern (State e Strategy):} Le interfacce \texttt{RoomState} e \texttt{PricingStrategy} non diventano tabelle separate. All'interno della tabella \texttt{STANZA}, esse sono persistite tramite stringhe (es.\ \texttt{stato\_corrente} = \texttt{'IN\_MANUTENZIONE'}). A livello di codice Java, i Data Access Object (DAO) utilizzeranno un meccanismo di \textit{Factory} per istanziare l'oggetto concreto corrispondente al valore testuale letto dal database.
+    \item \textbf{Mapping dei Design Pattern (State e Strategy):} Le interfacce \texttt{RoomState} e \texttt{PricingStrategy} non diventano tabelle separate. Nella tabella \texttt{STANZA} sono persistite tramite stringhe (ad es.\ \texttt{stato\_corrente\allowbreak=\allowbreak IN\_MANUTENZIONE}). A livello di codice Java, i Data Access Object (DAO) utilizzano un meccanismo di \textit{Factory} per istanziare l'oggetto concreto corrispondente al valore letto dal database.
     
     \item \textbf{Associazioni Molti-a-Molti (Observer Pattern):} La logica Publish-Subscribe della Lista d'Attesa (UC2) si traduce relazionalmente nella tabella di \textit{junction} \texttt{LISTA\_ATTESA}. Questa tabella mappa la relazione N:N tra Clienti e Stanze, utilizzando una chiave primaria composita formata dalle foreign key e dal timestamp della richiesta.
 \end{itemize}
