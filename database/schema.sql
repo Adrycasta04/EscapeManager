@@ -60,3 +60,49 @@ CREATE TABLE LISTA_ATTESA (
     FOREIGN KEY (cliente_id) REFERENCES UTENTE(id) ON DELETE CASCADE,
     FOREIGN KEY (stanza_id) REFERENCES STANZA(id) ON DELETE CASCADE
 );
+
+-- ========================================
+-- INDICI PER OTTIMIZZAZIONE PERFORMANCE
+-- ========================================
+
+-- Indici per query frequenti su PRENOTAZIONE
+CREATE INDEX idx_prenotazione_cliente ON PRENOTAZIONE(cliente_id);
+CREATE INDEX idx_prenotazione_stanza ON PRENOTAZIONE(stanza_id);
+CREATE INDEX idx_prenotazione_stanza_data ON PRENOTAZIONE(stanza_id, data_ora);
+CREATE INDEX idx_prenotazione_data_ora ON PRENOTAZIONE(data_ora);
+
+-- Indici per query sulla LISTA_ATTESA
+CREATE INDEX idx_lista_attesa_stanza ON LISTA_ATTESA(stanza_id);
+CREATE INDEX idx_lista_attesa_cliente ON LISTA_ATTESA(cliente_id);
+
+-- Indici per ricerche su STANZA
+CREATE INDEX idx_stanza_sede ON STANZA(sede_id);
+CREATE INDEX idx_stanza_sede_stato ON STANZA(sede_id, stato_corrente);
+CREATE INDEX idx_stanza_stato ON STANZA(stato_corrente);
+
+-- Indice per login rapido su UTENTE
+CREATE INDEX idx_utente_email ON UTENTE(email);
+CREATE INDEX idx_utente_ruolo ON UTENTE(ruolo);
+
+-- Indice per ricerche su SEDE
+CREATE INDEX idx_sede_citta ON SEDE(citta);
+
+-- ========================================
+-- CONSTRAINT AGGIUNTIVI PER BUSINESS RULES
+-- ========================================
+
+-- Vincolo: numero giocatori deve essere positivo
+ALTER TABLE PRENOTAZIONE ADD CONSTRAINT chk_numero_giocatori
+CHECK (numero_giocatori > 0);
+
+-- Vincolo: prezzo totale non negativo
+ALTER TABLE PRENOTAZIONE ADD CONSTRAINT chk_prezzo_totale
+CHECK (prezzo_totale >= 0);
+
+-- Vincolo: capienza massima stanza positiva
+ALTER TABLE STANZA ADD CONSTRAINT chk_capienza_max
+CHECK (capienza_max > 0);
+
+-- Vincolo: prezzo base non negativo
+ALTER TABLE STANZA ADD CONSTRAINT chk_prezzo_base
+CHECK (prezzo_base >= 0);

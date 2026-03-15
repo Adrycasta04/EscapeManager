@@ -151,6 +151,26 @@ La Figura \ref{fig:sequence_gestione_stato_cap3} mostra il Sequence Diagram per 
     \label{fig:sequence_gestione_stato_cap3}
 \end{figure}
 
+\section{Activity Diagram: Flusso di Prenotazione}
+
+Per documentare la logica di controllo e i punti decisionali del caso d'uso principale (UC1), è stato prodotto l'\textbf{Activity Diagram} della Figura \ref{fig:activity_prenotazione}. Questo diagramma complementa i Sequence Diagram mostrando il flusso di attività dal punto di vista del processo di business, evidenziando:
+
+\begin{itemize}
+    \item Le \textbf{condizioni di branch} (capienza massima, disponibilità slot)
+    \item I \textbf{flussi alternativi} (slot occupato $\rightarrow$ lista d'attesa, capienza superata $\rightarrow$ correzione input)
+    \item La \textbf{relazione <<extend>>} con UC2 (Iscrizione Lista d'Attesa)
+    \item I punti di applicazione dei \textbf{Design Pattern} (Strategy per calcolo prezzo, Builder per creazione prenotazione)
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{images/activity_prenotazione.png}
+    \caption{Activity Diagram del caso d'uso UC1 (Prenotazione Stanza) con flussi alternativi}
+    \label{fig:activity_prenotazione}
+\end{figure}
+
+L'Activity Diagram è particolarmente utile per identificare i test cases necessari: ogni percorso decisionale corrisponde a un test funzionale (flusso base + flussi alternativi 3a e 4a).
+
 \section{Pattern Creazionali: DAO Factory}
 Come evincibile dal diagramma di sequenza, il sistema adotta il pattern \textbf{Abstract Factory} (nella specifica accezione di \textit{DAO Factory}) per la generazione degli oggetti preposti all'accesso ai dati. 
 L'obiettivo di questa scelta progettuale è garantire il totale disaccoppiamento tra la Business Logic (Controller) e l'infrastruttura di persistenza (PostgreSQL). Il Controller non istanzia mai in modo diretto una classe concreta come \texttt{StanzaDAOPostgres}, ma si affida all'interfaccia esposta dalla Factory:

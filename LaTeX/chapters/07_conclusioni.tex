@@ -12,12 +12,81 @@ Il progetto \textit{EscapeManager} ha raggiunto gli obiettivi prefissati nella f
 \end{itemize}
 
 \section{Sviluppi Futuri}
-L'architettura disaccoppiata consente di estendere il sistema in diverse direzioni:
-\begin{enumerate}
-    \item \textbf{Interfaccia Grafica Completa (JavaFX):} i mockup attuali possono essere trasformati in una GUI funzionale collegata ai Controller esistenti, senza modificare il Domain Model.
-    \item \textbf{Autenticazione e Autorizzazione:} il campo \texttt{password\_hash} è già predisposto nel modello dati. L'implementazione di un sistema di login con hashing sicuro (es. BCrypt) e controllo degli accessi basato sul ruolo (\texttt{ruolo} in tabella \texttt{UTENTE}) è il passo successivo naturale.
-    \item \textbf{Notifiche automatiche (Observer):} l'infrastruttura Observer per la lista d'attesa è implementata a livello di dominio. L'estensione prevede l'invio automatico di notifiche (email/push) quando uno slot viene liberato (cancellazione prenotazione).
-    \item \textbf{API REST:} l'esposizione di endpoint RESTful tramite un framework leggero (es. Javalin o Spring Boot) permetterebbe l'integrazione con frontend web o mobile, mantenendo intatta la Business Logic.
-    \item \textbf{Adapter Pattern per IoT:} l'integrazione di sensori fisici nelle stanze (es. timer di sessione, rilevatori di completamento enigma) potrebbe essere realizzata tramite il pattern \textit{Adapter}, adattando l'interfaccia dei dispositivi al Domain Model esistente.
-    \item \textbf{Gestione multi-sede avanzata:} l'entità \texttt{Sede} è già presente nel database. Un modulo di amministrazione centralizzata per la gestione di più filiali rappresenta un'estensione modulare del sistema.
-\end{enumerate}
+
+Il sistema EscapeManager è stato progettato con un'architettura modulare e disaccoppiata che facilita future estensioni. Alcune direzioni di evoluzione includono:
+
+\subsection{Interfaccia Grafica Completa (JavaFX/Web)}
+I mockup attuali possono essere trasformati in una GUI funzionale collegata ai Controller esistenti, senza modificare il Domain Model. In alternativa, una migrazione a frontend web (React/Angular) con backend Spring Boot richiederebbe solo la trasformazione dei Controller in \texttt{@RestController}.
+
+\subsection{Autenticazione e Autorizzazione}
+Il campo \texttt{password\_hash} è già predisposto nel modello dati. L'implementazione prevede:
+\begin{itemize}
+    \item Hashing sicuro delle password con BCrypt o Argon2
+    \item Login con generazione di token JWT (JSON Web Token)
+    \item Controllo accessi basato su ruolo (\texttt{RBAC}) con annotazioni \texttt{@Secured}
+    \item Session management con timeout automatico
+\end{itemize}
+
+\subsection{Notifiche Push per Lista d'Attesa}
+L'infrastruttura Observer è implementata a livello di dominio. L'estensione futura prevede:
+\begin{itemize}
+    \item Invio email automatico tramite JavaMail API quando uno slot si libera
+    \item Notifiche push mobile tramite Firebase Cloud Messaging (FCM)
+    \item SMS tramite Twilio API per notifiche urgenti
+    \item Dashboard in tempo reale con WebSocket per aggiornamenti live
+\end{itemize}
+
+\subsection{Integrazione con Sistemi di Pagamento}
+Integrazione con gateway come Stripe o PayPal per gestire pagamenti online:
+\begin{itemize}
+    \item Persistenza dello stato transazionale (PENDING, COMPLETED, FAILED)
+    \item Rollback automatico della prenotazione in caso di fallimento pagamento
+    \item Refund automatico in caso di cancellazione entro X ore
+    \item Gestione 3D Secure per transazioni sicure
+\end{itemize}
+
+\subsection{Integrazione Google Calendar e Outlook}
+Sincronizzazione bidirezionale delle prenotazioni con calendar esterni:
+\begin{itemize}
+    \item API OAuth2 per accesso sicuro ai calendar
+    \item Creazione automatica eventi in Google Calendar alla conferma prenotazione
+    \item Reminder automatici via email 24h prima della sessione
+    \item iCalendar export per compatibilità con tutti i client
+\end{itemize}
+
+\subsection{Sistema di Raccomandazioni con Machine Learning}
+Analisi dei pattern di prenotazione per suggerimenti personalizzati:
+\begin{itemize}
+    \item Algoritmi di Collaborative Filtering per raccomandare stanze simili
+    \item Analisi predittiva della domanda per ottimizzazione prezzi dinamici
+    \item Clustering dei clienti per campagne marketing mirate
+    \item Sentiment analysis delle recensioni per improvement continuo
+\end{itemize}
+
+\subsection{Dashboard Analytics e Reporting}
+Modulo di Business Intelligence per amministratori:
+\begin{itemize}
+    \item KPI in tempo reale (tasso di occupazione, revenue per stanza, NPS)
+    \item Grafici interattivi con Chart.js o D3.js
+    \item Export report in PDF/Excel per presentazioni executive
+    \item Heatmap delle prenotazioni per identificare fasce orarie critiche
+\end{itemize}
+
+\subsection{Gestione Multi-Sede Avanzata}
+L'entità \texttt{Sede} è già presente nel database. Estensioni:
+\begin{itemize}
+    \item Dashboard centralizzata per manager multi-filiale
+    \item Trasferimento prenotazioni tra sedi (rebooking automatico)
+    \item Configurazione tariffe e stati differenziati per sede
+    \item Sincronizzazione inventario (es. kit di gioco) tra sedi
+\end{itemize}
+
+\subsection{Adapter Pattern per IoT e Gamification}
+Integrazione di sensori fisici e meccaniche di gioco:
+\begin{itemize}
+    \item Timer fisico in stanza con integrazione REST API
+    \item Sensori di completamento enigmi (RFID, NFC) per tracking progress
+    \item Leaderboard globale con classifica performance giocatori
+    \item Achievement system con badge e rewards virtuali
+    \item Integrazione Arduino/Raspberry Pi per automazione stanza
+\end{itemize}
