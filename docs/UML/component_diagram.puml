@@ -1,17 +1,82 @@
 @startuml component_diagram
 skinparam componentStyle rectangle
-skinparam linetype ortho
+skinparam linetype polyline
 
-component "CLI\n(Boundary)" as CLI
-component "Controllers\n(Control)" as CTRL
-component "Domain Model\n(Entity)" as DOM
-component "DAO / Persistence" as DAO
+' Definizione colori per stereotipi BCE
+skinparam component {
+    BackgroundColor<<Boundary>> LightBlue
+    BackgroundColor<<Control>> LightYellow
+    BackgroundColor<<Entity>> LightGreen
+    BackgroundColor<<Persistence>> LightPink
+    BorderColor DarkSlateGray
+    ArrowColor DarkSlateGray
+    FontSize 12
+}
+
+skinparam database {
+    BackgroundColor WhiteSmoke
+    BorderColor DarkSlateGray
+}
+
+skinparam package {
+    BorderColor DarkSlateGray
+    BackgroundColor AliceBlue
+    FontSize 13
+    FontStyle bold
+}
+
+skinparam note {
+    BackgroundColor LemonChiffon
+    BorderColor DarkGoldenRod
+}
+
+title Architettura del Sistema - Pattern BCE
+
+package "Presentation Layer" {
+    component "CLI / UI" as CLI <<Boundary>>
+}
+
+package "Business Logic Layer" {
+    component "Controllers" as CTRL <<Control>>
+    component "Domain Model" as DOM <<Entity>>
+}
+
+package "Data Access Layer" {
+    component "DAO / Persistence" as DAO <<Persistence>>
+}
 
 database "PostgreSQL" as DB
 
-CLI --> CTRL
-CTRL --> DOM
-CTRL --> DAO
-DAO --> DB
+' Flusso di dipendenze unidirezionale
+CLI -down-> CTRL : "Invia input /\nRichiede vista"
+CTRL -down-> DOM : "Orchestra\nlogica di business"
+CTRL -right-> DAO : "Richiede\npersistenza"
+DAO -down-> DB : "Esegue SQL"
+
+' Annotazioni esplicative posizionate sotto
+note bottom of CLI
+    **«Boundary»**
+    Gestione interazione utente.
+    Disaccoppiata dalla logica.
+end note
+
+note bottom of CTRL
+    **«Control»**
+    Orchestrazione logica di business.
+    Richiede DAO e Domain Model.
+end note
+
+note bottom of DOM
+    **«Entity»**
+    Core del sistema.
+    Contiene Design Pattern
+    (State, Strategy, Observer).
+end note
+
+note bottom of DAO
+    **«Persistence»**
+    Persistenza dati.
+    Esegue SQL.
+end note
 
 @enduml

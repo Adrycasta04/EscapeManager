@@ -7,8 +7,46 @@ L'architettura è organizzata in strati coerenti con il paradigma BCE. Le intera
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{images/component_diagram.png}
-    \caption{Architettura a strati e separazione BCE}
+    \begin{tikzpicture}[
+        layer/.style={draw, rectangle, minimum width=0.98\textwidth, minimum height=2.3cm, fill=gray!5, dashed, font=\bfseries\sffamily, rounded corners},
+        llabel/.style={anchor=north west, font=\bfseries\sffamily\scriptsize, gray!60, xshift=4mm, yshift=-2mm},
+        comp/.style={draw, rectangle, fill=white, minimum width=3.8cm, minimum height=1.1cm, align=center, font=\small\sffamily, thick},
+        boundary/.style={comp, fill=green!10},
+        control/.style={comp, fill=yellow!15},
+        entity/.style={comp, fill=red!10},
+        dao/.style={comp, fill=blue!5},
+        arrow/.style={-Stealth, thick}
+    ]
+
+        % Layer 1: Boundary
+        \node[layer] (L1) {};
+        \node[llabel] at (L1.north west) {Presentation Layer (Boundary)};
+        \node[boundary, xshift=-2.4cm, yshift=-2mm] at (L1.center) (cli) {\guillemotleft boundary\guillemotright\\CLI Interface};
+        \node[boundary, xshift=2.4cm, yshift=-2mm] at (L1.center) (mock) {\guillemotleft boundary\guillemotright\\Web/UI Mockups};
+
+        % Layer 2: Control
+        \node[layer, below=1cm of L1] (L2) {};
+        \node[llabel] at (L2.north west) {Application Layer (Control)};
+        \node[control, yshift=-2mm] at (L2.center) (ctrl) {\guillemotleft control\guillemotright\\Business Controllers};
+
+        % Layer 3: Entity
+        \node[layer, below=1cm of L2] (L3) {};
+        \node[llabel] at (L3.north west) {Domain Layer (Entity)};
+        \node[entity, yshift=-2mm] at (L3.center) (ent) {\guillemotleft entity\guillemotright\\Domain Model Objects};
+
+        % Layer 4: Persistence
+        \node[layer, below=1cm of L3] (L4) {};
+        \node[llabel] at (L4.north west) {Data Source Layer (Persistence)};
+        \node[dao, yshift=-2mm] at (L4.center) (dao) {DAO System / DB\\(PostgreSQL Persistence)};
+
+        % Connections
+        \draw[arrow] (cli.south) -- (ctrl.north -| cli.south);
+        \draw[arrow] (mock.south) -- (ctrl.north -| mock.south);
+        \draw[arrow] (ctrl) -- (ent);
+        \draw[arrow] (ent) -- (dao);
+
+    \end{tikzpicture}
+    \caption{Architettura a strati e separazione BCE del sistema EscapeManager (UML Component Diagram)}
     \label{fig:component_diagram}
 \end{figure}
 
@@ -65,6 +103,21 @@ L'architettura del dominio è stata concepita per risolvere nativamente le compl
 \end{itemize}
 
 Oltre ai pattern, si sottolinea l'uso dell'ereditarietà per la gestione degli attori (\texttt{Utente} come classe astratta generalizzata) e la presenza di un riferimento a \texttt{Sede} tramite \texttt{sede\_id} nel modello dati, che consente di mantenere la coerenza con il concetto di franchising pur non essendo oggetto di operazioni dirette nella CLI.
+
+\subsection{Object Diagram: Istanza Runtime del Pattern Observer}
+
+Per illustrare concretamente il funzionamento del \textbf{Pattern Observer} (descritto nel Domain Model), la Figura \ref{fig:object_diagram} mostra un \textit{Object Diagram} rappresentativo di una specifica configurazione runtime del sistema.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/object_diagram.png}
+    \caption{Object Diagram: Esempio di istanza runtime del Pattern Observer (Lista d'Attesa)}
+    \label{fig:object_diagram}
+\end{figure}
+
+L'Object Diagram raffigura tre clienti (\texttt{:Cliente}) registrati come osservatori (\texttt{WaitingList}\allowbreak\texttt{Observer}) sulla \texttt{:WaitingList} associata a una stanza specifica (\texttt{:Stanza}). Quando lo slot richiesto si libera, il Subject (\texttt{WaitingList}) invocherà il metodo \texttt{update()} su tutti e tre gli Observer, notificandoli della disponibilità.
+
+Questo diagramma evidenzia inoltre le relazioni con i pattern \textbf{State} (stato corrente della stanza) e \textbf{Strategy} (politica di prezzo dinamica), mostrando come i tre pattern collaborino a runtime per realizzare la logica di business del franchising.
 
 \subsection{State Machine Diagram}
 Per documentare formalmente il ciclo di vita operativo della Stanza, è stato prodotto il diagramma a stati della Figura \ref{fig:state_machine_room}. Questo diagramma è una vista complementare al class diagram del Domain Model e descrive le transizioni valide tra i 4 stati concreti dell'interfaccia \texttt{RoomState}.

@@ -1,0 +1,81 @@
+@startuml object_diagram
+skinparam objectBorderColor DarkSlateGray
+skinparam objectBackgroundColor LightCyan
+
+title Object Diagram - Esempio Runtime: Observer Pattern (Lista d'Attesa)
+
+' Oggetti concreti del dominio
+object ":Cliente" as c1 {
+    id = "C001"
+    nome = "Mario Rossi"
+    email = "mario.rossi@email.it"
+    telefono = "+39 333 1234567"
+    ultimaNotifica = null
+}
+
+object ":Cliente" as c2 {
+    id = "C002"
+    nome = "Laura Bianchi"
+    email = "laura.bianchi@email.it"
+    telefono = "+39 347 7654321"
+    ultimaNotifica = null
+}
+
+object ":Cliente" as c3 {
+    id = "C003"
+    nome = "Giuseppe Verdi"
+    email = "g.verdi@email.it"
+    telefono = "+39 349 9876543"
+    ultimaNotifica = null
+}
+
+object ":Stanza" as s1 {
+    id = "S001"
+    sedeId = "SEDE_FI_01"
+    tema = "L'Enigma di Da Vinci"
+    capienzaMax = 6
+    prezzoBase = 80.00
+}
+
+object ":WaitingList" as wl {
+    observers.size() = 3
+}
+
+object ":DisponibileState" as state {
+    (implementa RoomState)
+}
+
+object ":TariffaWeekend" as strategy {
+    moltiplicatore = 1.3
+}
+
+' Relazioni tra oggetti (link - istanze di associazioni)
+c1 ..|> wl : <<Observer>>
+c2 ..|> wl : <<Observer>>
+c3 ..|> wl : <<Observer>>
+
+s1 --> wl : ha >
+s1 --> state : statoCorrente
+s1 --> strategy : pricingStrategy
+
+note right of wl
+    **Pattern Observer attivo**
+    Quando uno slot si libera,
+    la WaitingList notifica
+    tutti e 3 i clienti in attesa.
+end note
+
+note bottom of s1
+    **Context dei Pattern**
+    - State Pattern: statoCorrente
+    - Strategy Pattern: pricingStrategy
+    - Observer Pattern: WaitingList
+end note
+
+note top of c1
+    Clienti registrati come
+    **WaitingListObserver**
+    per ricevere notifiche.
+end note
+
+@enduml
