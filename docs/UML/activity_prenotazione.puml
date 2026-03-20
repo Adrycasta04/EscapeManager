@@ -18,11 +18,11 @@ start
 
 :Cliente inserisce numero giocatori;
 
-if (Numero giocatori <= capienza max?) then (sì)
+if (Numero giocatori <= capienza max?) then (Yes)
 
   :Sistema verifica disponibilità slot;
 
-  if (Slot disponibile?) then (sì)
+  if (Slot disponibile?) then (Yes)
 
     :Sistema calcola prezzo\n(Strategy Pattern);
 
@@ -42,7 +42,7 @@ if (Numero giocatori <= capienza max?) then (sì)
 
     :Sistema mostra messaggio\n"Slot non disponibile";
 
-    if (Cliente vuole iscriversi\na lista d'attesa?) then (sì)
+    if (Cliente vuole iscriversi\na lista d'attesa?) then (Yes)
 
       :<<extend>>\nUC2: Iscrizione Lista d'Attesa;
 

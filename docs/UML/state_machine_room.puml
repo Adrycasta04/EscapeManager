@@ -36,13 +36,13 @@ InPulizia --> InManutenzione : setManutenzione()
 InManutenzione --> Disponibile : setDisponibile()
 
 note right of Disponibile
-  La stanza è pronta per
+  La stanza e' pronta per
   prenotazioni e sessioni.
   Stato di default alla creazione.
 end note
 
 note right of InCorso
-  Una sessione di gioco è
+  Una sessione di gioco e'
   attiva. Prenotazioni non
   consentite per questo slot.
 end note

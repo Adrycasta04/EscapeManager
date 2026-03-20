@@ -25,7 +25,7 @@ Il Package Diagram (Figura \ref{fig:package_diagram}) descrive la struttura logi
 \section{Scelte Progettuali e Trade-off}
 Le principali scelte progettuali sono motivate da requisiti di manutenibilità e chiarezza didattica:
 \begin{itemize}
-    \item \textbf{DAO + JDBC} invece di ORM: maggiore controllo sul mapping e migliore trasparenza dei flussi dati in un contesto d'esame.
+    \item \textbf{DAO + JDBC} invece di ORM: architettura leggera studiata per garantire maggiore controllo sul mapping e totale trasparenza dei flussi dati.
     \item \textbf{CLI come Boundary} per ridurre l'impatto della UI e concentrare lo sforzo sulla logica di business.
     \item \textbf{Pattern GoF espliciti} (State/Strategy/Observer) per rendere evidenti i punti di estensione del dominio.
     \item \textbf{Single Table Inheritance} per la gerarchia \texttt{Utente}, semplificando query e autenticazione futura.
@@ -50,6 +50,16 @@ Per documentare la vista di implementazione dei layer di controllo e presentazio
     \includegraphics[width=0.9\textwidth]{images/class_diagram_controllers.png}
     \caption{Class Diagram: Controllers e Boundary (CLI)}
     \label{fig:class_diagram_controllers}
+\end{figure}
+
+\section{Class Diagram del Package DAO (Persistenza)}
+Il livello di persistenza segue il pattern \textbf{Abstract Factory} (DAO Factory) per disaccoppiare completamente i Controller dall'infrastruttura di database. La Figura \ref{fig:class_diagram_dao} mostra l'organizzazione delle classi nel package \texttt{dao}, evidenziando la gerarchia delle interfacce, le implementazioni concrete per PostgreSQL e il \texttt{ConnectionManager} Singleton.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/class_diagram_persistence.png}
+    \caption{Class Diagram: Package DAO e Gerarchia delle eccezioni}
+    \label{fig:class_diagram_dao}
 \end{figure}
 
 \subsection{Scelte Architetturali e Design Pattern}

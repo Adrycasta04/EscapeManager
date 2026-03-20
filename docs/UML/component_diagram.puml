@@ -1,8 +1,9 @@
 @startuml component_diagram
 skinparam componentStyle rectangle
+skinparam shadowing true
+skinparam defaultFontSize 12
 skinparam linetype polyline
 
-' Definizione colori per stereotipi BCE
 skinparam component {
     BackgroundColor<<Boundary>> LightBlue
     BackgroundColor<<Control>> LightYellow
@@ -25,11 +26,6 @@ skinparam package {
     FontStyle bold
 }
 
-skinparam note {
-    BackgroundColor LemonChiffon
-    BorderColor DarkGoldenRod
-}
-
 title Architettura del Sistema - Pattern BCE
 
 package "Presentation Layer" {
@@ -48,35 +44,23 @@ package "Data Access Layer" {
 database "PostgreSQL" as DB
 
 ' Flusso di dipendenze unidirezionale
-CLI -down-> CTRL : "Invia input /\nRichiede vista"
-CTRL -down-> DOM : "Orchestra\nlogica di business"
-CTRL -right-> DAO : "Richiede\npersistenza"
-DAO -down-> DB : "Esegue SQL"
+CLI -down-> CTRL : "Input / Vista"
+CTRL -down-> DOM : "Logica di business"
+CTRL -right-> DAO : "Persistenza"
+DAO -down-> DB : "SQL / JDBC"
 
-' Annotazioni esplicative posizionate sotto
-note bottom of CLI
-    **«Boundary»**
-    Gestione interazione utente.
+' Annotazioni sintetiche
+note right of CLI
+    <<Boundary>>
+    Interfaccia utente (CLI).
     Disaccoppiata dalla logica.
 end note
 
-note bottom of CTRL
-    **«Control»**
-    Orchestrazione logica di business.
-    Richiede DAO e Domain Model.
-end note
-
-note bottom of DOM
-    **«Entity»**
+note right of DOM
+    <<Entity>>
     Core del sistema.
-    Contiene Design Pattern
-    (State, Strategy, Observer).
-end note
-
-note bottom of DAO
-    **«Persistence»**
-    Persistenza dati.
-    Esegue SQL.
+    Design Pattern: State,
+    Strategy, Observer.
 end note
 
 @enduml

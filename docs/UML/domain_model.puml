@@ -108,7 +108,7 @@ package "Domain Model (Entities & Core Logic)" {
 
 ' --- Collaboration Annotations (Design Pattern Roles) ---
 note right of RoomState
-    **State Pattern — GoF Behavioral**
+    **State Pattern - GoF Behavioral**
     Elimina gli if/else per la gestione
     del ciclo di vita della Stanza.
     **Context:** Stanza
@@ -118,7 +118,7 @@ note right of RoomState
 end note
 
 note right of PricingStrategy
-    **Strategy Pattern — GoF Behavioral**
+    **Strategy Pattern - GoF Behavioral**
     Calcolo dinamico delle tariffe
     intercambiabile a runtime.
     **Context:** Stanza
@@ -127,7 +127,7 @@ note right of PricingStrategy
 end note
 
 note top of WaitingList
-    **Observer Pattern — GoF Behavioral**
+    **Observer Pattern - GoF Behavioral**
     Notifica asincrona dei clienti in lista d'attesa.
     **Subject:** WaitingList
     **Observer:** WaitingListObserver (interface)
@@ -136,7 +136,7 @@ note top of WaitingList
 end note
 
 note bottom of PBuilder
-    **Builder Pattern — GoF Creational**
+    **Builder Pattern - GoF Creational**
     Costruzione fluente della Prenotazione
     evitando costruttori con 7 parametri.
     **Director:** PrenotazioneController

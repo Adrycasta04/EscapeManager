@@ -22,6 +22,23 @@
 \usepackage{newtxtext,newtxmath} % Per un font più professionale (Times New Roman)
 \usepackage{hyperref}        % Per i link ipertestuali
 
+% --- STILE BOX APPROFONDIMENTO ---
+\newtcolorbox{approfondimento}[1][]{%
+    enhanced,
+    colback=green!5,          % Sfondo verde chiarissimo
+    colframe=green!50!black,  % Bordo e intestazione verde scuro
+    coltitle=white,           % Testo del titolo bianco
+    fonttitle=\bfseries,      % Titolo in grassetto
+    title=Approfondimento,    % Titolo in alto fisso
+    arc=3mm,                  % Bordi arrotondati
+    boxrule=1pt,              % Spessore del bordo
+    left=10pt,
+    right=10pt,
+    top=10pt,
+    bottom=10pt,
+    #1
+}
+
 % --- CONFIGURAZIONE LINK E COLORI ---
 \definecolor{linkblue}{RGB}{0, 0, 238}
 \definecolor{darkblue}{RGB}{0, 0, 139}

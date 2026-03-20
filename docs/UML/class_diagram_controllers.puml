@@ -1,6 +1,10 @@
 @startuml class_diagram_controllers
 skinparam classAttributeIconSize 0
 skinparam linetype ortho
+skinparam shadowing true
+skinparam packageStyle folder
+skinparam nodesep 50
+skinparam ranksep 40
 
 package "cli" {
     class Main

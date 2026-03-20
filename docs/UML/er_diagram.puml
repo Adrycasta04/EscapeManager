@@ -1,8 +1,12 @@
 @startuml er_diagram
 hide circle
 skinparam linetype ortho
-skinparam EntityBackgroundColor LightCyan
-skinparam EntityBorderColor DarkCyan
+skinparam EntityBackgroundColor #FFECB3
+skinparam EntityBorderColor #E65100
+skinparam EntityHeaderBackgroundColor #FB8C00
+skinparam EntityFontColor Black
+skinparam nodesep 80
+skinparam ranksep 60
 
 entity "SEDE" as sede {
   * id : VARCHAR <<PK>>

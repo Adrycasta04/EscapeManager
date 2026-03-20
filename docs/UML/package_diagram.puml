@@ -1,39 +1,24 @@
 @startuml package_diagram
 skinparam linetype ortho
+skinparam shadowing true
+skinparam packageStyle folder
 skinparam packageBackgroundColor LightCyan
 skinparam packageBorderColor DarkCyan
+skinparam nodesep 60
+skinparam ranksep 50
 
 package "it.unifi.escapemanager" {
     
     package "cli (View)" as view {
-        class Main
-        class ConsoleMenu
     }
     
     package "controllers (Control)" as controllers {
-        class PrenotazioneController
-        class GestioneStatoController
-        class TariffeController
-        class ListaAttesaController
     }
     
     package "domain (Entity)" as domain {
-        class Stanza
-        class Cliente
-        class Prenotazione
-        note right: State, Strategy,\ne Observer patterns\nsono implementati qui
     }
     
     package "dao (Persistence)" as dao {
-        interface StanzaDAO
-        interface PrenotazioneDAO
-        interface WaitingListDAO
-        class StanzaDAOPostgres
-        class PrenotazioneDAOPostgres
-        class WaitingListDAOPostgres
-        interface DAOFactory
-        class PostgresDAOFactory
-        class ConnectionManager <<Singleton>>
     }
 }
 
@@ -41,5 +26,11 @@ view ..> controllers : <<usa>>
 controllers ..> domain : <<orchestra>>
 controllers ..> dao : <<legge/scrive>>
 dao ..> domain : <<mappa>>
+
+note right of domain
+    State, Strategy e
+    Observer patterns
+    sono implementati qui
+end note
 
 @enduml

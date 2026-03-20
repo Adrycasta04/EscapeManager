@@ -26,7 +26,7 @@ SDAO --> CTRL : stanza (stato = Disponibile)
 deactivate SDAO
 
 ' Delega allo State Pattern
-note over CTRL, STATE : Il Controller non contiene\nlogica di stato: delega tutto\nallo State Pattern (OCP)
+note over CTRL : Il Controller non contiene\nlogica di stato: delega tutto\nallo State Pattern (OCP)
 CTRL -> S : iniziaSessione()
 activate S
 

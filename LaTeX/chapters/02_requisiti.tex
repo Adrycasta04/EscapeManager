@@ -60,8 +60,9 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
 \begin{table}[H]
     \centering
     \renewcommand{\arraystretch}{1.3} % Aumenta lo spazio tra le righe
-    \begin{tabularx}{\textwidth}{|>{\columncolor{lightgray!30}\bfseries}l|X|}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|}
         \hline
+        \rowcolor{cyan!15}
         Nome Use Case & UC1 - Prenotazione Stanza \\
         \hline
         Attore Principale & Cliente \\
@@ -112,8 +113,9 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
 \begin{table}[H]
     \centering
     \renewcommand{\arraystretch}{1.3}
-    \begin{tabularx}{\textwidth}{|>{\columncolor{lightgray!30}\bfseries}l|X|}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|}
         \hline
+        \rowcolor{cyan!15}
         Nome Use Case & UC1.1 - Annullamento Prenotazione \\
         \hline
         Attore Principale & Cliente \\
@@ -159,8 +161,9 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
 \begin{table}[H]
     \centering
     \renewcommand{\arraystretch}{1.3}
-    \begin{tabularx}{\textwidth}{|>{\columncolor{lightgray!30}\bfseries}l|X|}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|}
         \hline
+        \rowcolor{cyan!15}
         Nome Use Case & UC2 - Iscrizione Lista d'Attesa \\
         \hline
         Attore Principale & Cliente \\
@@ -208,8 +211,9 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
 \begin{table}[H]
     \centering
     \renewcommand{\arraystretch}{1.3}
-    \begin{tabularx}{\textwidth}{|>{\columncolor{lightgray!30}\bfseries}l|X|}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|}
         \hline
+        \rowcolor{cyan!15}
         Nome Use Case & UC3 - Aggiornamento Stato Stanza \\
         \hline
         Attore Principale & Game Master \\
@@ -252,8 +256,9 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
 \begin{table}[H]
     \centering
     \renewcommand{\arraystretch}{1.3}
-    \begin{tabularx}{\textwidth}{|>{\columncolor{lightgray!30}\bfseries}l|X|}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|}
         \hline
+        \rowcolor{cyan!15}
         Nome Use Case & UC4 - Configurazione Tariffe Stanza \\
         \hline
         Attore Principale & Admin \\
@@ -295,8 +300,9 @@ Caso d'uso riutilizzabile incluso in UC1. Applica il \textbf{Strategy Pattern} p
 \begin{table}[H]
     \centering
     \renewcommand{\arraystretch}{1.3}
-    \begin{tabularx}{\textwidth}{|>{\columncolor{lightgray!30}\bfseries}l|X|}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|}
         \hline
+        \rowcolor{cyan!15}
         \textbf{UC9} & Consultazione Storico Prenotazioni \\ \hline
         Livello & User Goal \\ \hline
         Descrizione & Il Cliente visualizza l'elenco completo delle proprie prenotazioni passate e future \\ \hline
@@ -323,8 +329,9 @@ Caso d'uso riutilizzabile incluso in UC1. Applica il \textbf{Strategy Pattern} p
 \begin{table}[H]
     \centering
     \renewcommand{\arraystretch}{1.3}
-    \begin{tabularx}{\textwidth}{|>{\columncolor{lightgray!30}\bfseries}l|X|}
+    \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|}
         \hline
+        \rowcolor{cyan!15}
         \textbf{UC10} & Rimozione da Lista d'Attesa \\ \hline
         Livello & User Goal \\ \hline
         Descrizione & Il Cliente rimuove la propria iscrizione alla lista d'attesa per una stanza \\ \hline
@@ -371,6 +378,8 @@ La Figura \ref{fig:navigation_diagram} rappresenta il flusso di navigazione dell
 
 \section{Mockup e Interfaccia Utente (UI)}
 Al fine di concretizzare l'analisi dei requisiti e validare le interazioni previste nei casi d'uso principali, sono stati realizzati dei mockup per le schermate core del sistema. Questa fase di \textit{prototipazione low-fidelity} garantisce una mappatura visiva diretta tra le intenzioni dell'attore (User Goal) e le effettive funzionalità esposte dal sistema \textit{EscapeManager}. I mockup sono identificati come M1..M4 e richiamati nei template.
+
+È importante specificare che, sebbene l'implementazione finale del prototipo utilizzi una \textbf{Command Line Interface (CLI)} per focalizzarsi sulla Business Logic, la produzione dei mockup è stata fondamentale in sede di analisi. Essa ha permesso di definire con precisione le interazioni Boundary-Control, garantendo che lo strato di business logic (Application Layer) sia già predisposto e indipendente (secondo il pattern BCE): se in futuro si volesse sviluppare una vera interfaccia web basata su tali mockup, il dominio e i controller rimarrebbero invariati.
 
 \begin{figure}[H]
     \centering

@@ -1,14 +1,15 @@
 @startuml usecase_diagram
 left to right direction
 skinparam packageStyle rectangle
+skinparam shadowing true
 skinparam usecase {
-    BackgroundColor LightCyan
-    BorderColor DarkCyan
-    ArrowColor DarkCyan
+    BackgroundColor White
+    BorderColor DarkSlateGray
+    FontSize 11
+    Shadowing true
 }
 skinparam actor {
-    BackgroundColor Khaki
-    BorderColor DarkGoldenRod
+    BorderColor DarkSlateGray
 }
 
 actor "Cliente" as C
@@ -17,27 +18,32 @@ actor "Admin" as A
 
 rectangle "EscapeManager System" {
 
+    ' --- Use case condivisi (Autenticazione) ---
+    usecase "Registrazione" as UC_REG
+    usecase "Autenticazione" as UC_AUTH
+
     ' --- Casi d'uso Cliente ---
     usecase "UC1\nPrenotazione Stanza" <<user goal>> as UC_C1
-    usecase "UC1.1\nAnnullamento Prenotazione" <<sub-function>> as UC_C1_1
-    usecase "UC2\nIscrizione Lista d'Attesa" <<user goal>> as UC_C2
-    usecase "UC9\nConsultazione Storico Prenotazioni" <<user goal>> as UC_C9
-    usecase "UC10\nRimozione da Lista d'Attesa" <<user goal>> as UC_C10
+    usecase "UC1.1\nAnnullamento\nPrenotazione" <<sub-function>> as UC_C1_1
+    usecase "UC2\nIscrizione Lista\nd'Attesa" <<user goal>> as UC_C2
+    usecase "UC9\nConsultazione Storico\nPrenotazioni" <<user goal>> as UC_C9
+    usecase "UC10\nRimozione da\nLista d'Attesa" <<user goal>> as UC_C10
 
     ' --- Casi d'uso Game Master ---
-    usecase "UC3\nAggiornamento Stato Stanza" <<user goal>> as UC_GM3
+    usecase "UC3\nAggiornamento\nStato Stanza" <<user goal>> as UC_GM3
 
     ' --- Casi d'uso Admin ---
-    usecase "UC4\nConfigurazione Tariffe Stanza" <<user goal>> as UC_A2
+    usecase "UC4\nConfigurazione\nTariffe Stanza" <<user goal>> as UC_A2
 
     ' --- Casi d'uso di livello Function (riutilizzabili) ---
-    usecase "UC5\nVisualizzazione Catalogo Stanze" <<function>> as UC_F5
-    usecase "UC6\nRicerca Disponibilità Slot" <<function>> as UC_F6
-    usecase "UC7\nCalcolo Prezzo Dinamico" <<function>> as UC_F7
+    usecase "UC5\nVisualizzazione\nCatalogo Stanze" <<function>> as UC_F5
+    usecase "UC6\nRicerca Disponibilita'\nSlot" <<function>> as UC_F6
+    usecase "UC7\nCalcolo Prezzo\nDinamico" <<function>> as UC_F7
 }
 
 ' --- Relazioni Attori -> Casi d'uso ---
 C --> UC_C1
+C --> UC_C1_1
 C --> UC_C2
 C --> UC_C9
 C --> UC_C10
@@ -46,6 +52,12 @@ GM --> UC_GM3
 
 A --> UC_A2
 
+' --- Login/Register per tutti ---
+C --> UC_AUTH
+C --> UC_REG
+GM --> UC_AUTH
+A --> UC_AUTH
+
 ' --- Relazioni <<extend>> (Flussi alternativi/opzionali) ---
 UC_C2 .up.> UC_C1 : <<extend>>\n(se slot occupato)
 
@@ -53,6 +65,7 @@ UC_C2 .up.> UC_C1 : <<extend>>\n(se slot occupato)
 UC_C1 ..> UC_F5 : <<include>>
 UC_C1 ..> UC_F6 : <<include>>
 UC_C1 ..> UC_F7 : <<include>>
+UC_C1 ..> UC_C1_1 : <<include>>
 
 UC_C2 ..> UC_F5 : <<include>>
 

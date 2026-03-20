@@ -20,11 +20,11 @@ Contiene le interfacce DAO, le implementazioni PostgreSQL e l'oggetto \texttt{Co
 
 \section{Livello di Persistenza (Pattern DAO)}
 
-Per soddisfare i requisiti del modulo di Laboratorio di Informatica, l'accesso al database PostgreSQL è stato isolato tramite il pattern \textbf{Data Access Object (DAO)}. Questo garantisce che la logica di business rimanga del tutto agnostica rispetto alla tecnologia di persistenza.
+Al fine di garantire la massima portabilità e manutenibilità, l'accesso al database PostgreSQL è stato isolato tramite il pattern \textbf{Data Access Object (DAO)}. Questo garantisce che la logica di business rimanga del tutto agnostica rispetto alla tecnologia di persistenza.
 
 La connessione al database è gestita tramite un \textbf{Singleton Pattern} (\texttt{ConnectionManager}), che assicura l'esistenza di un'unica istanza di connessione (o di un connection pool) condivisa per tutta l'applicazione, evitando l'overhead di connessioni multiple.
 
-\begin{lstlisting}[caption={Interfaccia DAO e uso dei Generics}, label={lst:dao_interface}]
+\begin{lstlisting}[caption={Interfaccia generica DAO (\texttt{GenericDAO.java})}, label={lst:dao_interface}]
 public interface GenericDAO<T, ID> {
     void save(T entity);
     T findById(ID id);
@@ -32,7 +32,9 @@ public interface GenericDAO<T, ID> {
     void update(T entity);
     void delete(ID id);
 }
+\end{lstlisting}
 
+\begin{lstlisting}[caption={Specializzazione per il dominio (\texttt{StanzaDAO.java})}, label={lst:stanza_dao}]
 public interface StanzaDAO extends GenericDAO<Stanza, String> {
     List<Stanza> findBySedeAndStato(String sedeId, String statoCorrente);
 }
@@ -63,7 +65,7 @@ Di seguito vengono riportati i frammenti di codice più significativi che mostra
 \subsection{State Pattern}
 Lo State Pattern elimina la necessità di costrutti condizionali complessi per la gestione del ciclo di vita della \texttt{Stanza}. Ogni stato concreto implementa il comportamento specifico e gestisce, ove necessario, la transizione allo stato successivo.
 
-\begin{lstlisting}[caption={Implementazione dello State Pattern}, label={lst:state_pattern}]
+\begin{lstlisting}[caption={Interfaccia dello State Pattern (\texttt{RoomState.java})}, label={lst:state_interface}]
 public interface RoomState {
     void prenota(Stanza stanza);
     void iniziaSessione(Stanza stanza);
@@ -72,7 +74,9 @@ public interface RoomState {
     void setDisponibile(Stanza stanza);
     String getStatusString();
 }
+\end{lstlisting}
 
+\begin{lstlisting}[caption={Stato concreto (\texttt{DisponibileState.java})}, label={lst:state_concrete}]
 public class DisponibileState implements RoomState {
     @Override
     public void iniziaSessione(Stanza stanza) {
@@ -81,20 +85,34 @@ public class DisponibileState implements RoomState {
     
     @Override
     public void terminaSessione(Stanza stanza) {
-        throw new IllegalStateException("Impossibile terminare una sessione per una stanza DISPONIBILE.");
+        throw new IllegalStateException(
+            "Impossibile terminare una sessione per una stanza DISPONIBILE.");
     }
     // ... altri metodi
 }
 \end{lstlisting}
 
+\begin{approfondimento}
+\textbf{State Pattern vs Strategy Pattern}
+
+Lo \textbf{State Pattern} e lo \textbf{Strategy Pattern} condividono la stessa struttura meccanica: entrambi delegano il comportamento a un oggetto che implementa un'interfaccia comune, favorendo il polimorfismo rispetto ai costrutti condizionali. Tuttavia, differiscono nell'\textit{intento}:
+\begin{itemize}
+    \item \textbf{Strategy}: l'algoritmo viene scelto \textit{una tantum} dall'esterno (es. l'Admin seleziona \texttt{TariffaWeekend}) e resta fisso per la durata dell'operazione. Le strategie sono intercambiabili ma non si sostituiscono autonomamente.
+    \item \textbf{State}: l'oggetto \textit{transiziona automaticamente} tra stati in base alla propria logica interna. Ad esempio, \texttt{DisponibileState} sa che dopo \texttt{iniziaSessione()} lo stato diventa \texttt{InCorsoState}. La transizione è governata dallo stato stesso, non dal client.
+\end{itemize}
+Nel progetto, questa distinzione è evidente: la \texttt{PricingStrategy} viene impostata esplicitamente dal \texttt{TariffeController}. Al contrario, il \texttt{RoomState} si auto-sostituisce: ogni stato concreto invoca \texttt{stanza.setStato()} all'interno dei propri metodi di transizione, senza intervento esterno.
+\end{approfondimento}
+
 \subsection{Strategy Pattern}
 Il calcolo del prezzo della prenotazione (UC1) è demandato alla \texttt{PricingStrategy}. L'Admin, tramite il \texttt{TariffeController}, seleziona la strategia appropriata e la imposta sulla stanza.
 
-\begin{lstlisting}[caption={Implementazione dello Strategy Pattern}, label={lst:strategy_pattern}]
+\begin{lstlisting}[caption={Interfaccia dello Strategy Pattern (\texttt{PricingStrategy.java})}, label={lst:strategy_interface}]
 public interface PricingStrategy {
     double calcola(double prezzoBase, int numeroGiocatori);
 }
+\end{lstlisting}
 
+\begin{lstlisting}[caption={Strategia concreta (\texttt{TariffaWeekend.java})}, label={lst:strategy_concrete}]
 public class TariffaWeekend implements PricingStrategy {
     private static final double SOVRAPPREZZO = 1.20; // +20%
     
@@ -108,11 +126,13 @@ public class TariffaWeekend implements PricingStrategy {
 \subsection{Observer Pattern}
 La lista d'attesa (UC2) implementa un sistema Publisher-Subscriber puro in Java, disaccoppiando l'evento di cancellazione di una prenotazione dall'invio effettivo delle notifiche.
 
-\begin{lstlisting}[caption={Implementazione dell'Observer Pattern}, label={lst:observer_pattern}]
+\begin{lstlisting}[caption={Interfaccia Observer (\texttt{WaitingListObserver.java})}, label={lst:observer_interface}]
 public interface WaitingListObserver {
     void update(Stanza stanza, LocalDateTime slotLiberato);
 }
+\end{lstlisting}
 
+\begin{lstlisting}[caption={Subject concreto (\texttt{WaitingList.java})}, label={lst:observer_subject}]
 public class WaitingList {
     private List<WaitingListObserver> observers = new ArrayList<>();
 
@@ -224,5 +244,4 @@ Per illustrare l'interazione dinamica tra gli oggetti, sono stati prodotti tre d
     \caption{Diagramma di Sequenza: UC3 - Aggiornamento Stato Stanza (State Pattern)}
     \label{fig:sequence_gestione_stato_cap4}
 \end{figure}
-
 
