@@ -181,7 +181,7 @@ java -cp "target/classes;target/dependency/*" it.unifi.escapemanager.cli.Main
 
 ### Relazione LaTeX
 - **Sorgente**: `LaTeX/main.tex`
-- **PDF finale**: `LaTeX/main.pdf` (52 pagine)
+- **PDF finale**: `LaTeX/main.pdf`
 
 **Compilazione**:
 ```bash
@@ -195,9 +195,7 @@ latexmk -pdf main.tex
 2. Analisi Requisiti (Use Case + Templates)
 3. Progettazione Architetturale (UML + Design Pattern)
 4. Implementazione e Architettura Codice
-5. Testing e Coverage (JaCoCo)
-6. Qualità Software (SOLID + ISO 25010)
-7. Conclusioni e Sviluppi Futuri
+5. Testing e Collaudo
 
 ### Diagrammi UML
 - **Sorgenti PlantUML**: `docs/UML/*.puml`
@@ -211,7 +209,6 @@ latexmk -pdf main.tex
 - ER Diagram (Database)
 - State Machine Diagram (RoomState)
 - Sequence Diagram (x3: UC1, UC3, UC4)
-- Activity Diagram (UC1 con flussi alternativi)
 
 **Rigenerazione**:
 ```bash
