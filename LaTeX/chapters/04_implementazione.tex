@@ -20,7 +20,7 @@ Contiene le interfacce DAO, le implementazioni PostgreSQL e l'oggetto \texttt{Co
 
 \section{Livello di Persistenza (Pattern DAO)}
 
-Per non mischiare la logica dell'applicazione con il codice SQL, l'accesso a PostgreSQL è gestito dal pattern \textbf{Data Access Object (DAO)}. In questo modo la business logic non sa (e non deve sapere) nulla di come funziona materialmente il database.
+Per non mischiare la logica dell'applicazione con il codice SQL, l'accesso a PostgreSQL è isolato tramite il pattern \textbf{Data Access Object (DAO)}, garantendo che la business logic rimanga agnostica rispetto alla tecnologia di persistenza.
 
 La connessione al database è gestita tramite un \textbf{Singleton Pattern} (\texttt{ConnectionManager}), che assicura l'esistenza di un'unica istanza di connessione (o di un connection pool) condivisa per tutta l'applicazione, evitando l'overhead di connessioni multiple.
 
@@ -149,7 +149,7 @@ public class WaitingList {
 \end{lstlisting}
 
 \subsection{Builder Pattern}
-La classe \texttt{Prenotazione} richiede 7 parametri diversi nel costruttore. Per evitare confusione con l'ordine delle variabili ho usato il pattern creazionale \textbf{Builder}, che rende il codice molto più leggibile quando si devono inizializzare molti attributi.
+Data la presenza di molteplici attributi nella classe \texttt{Prenotazione}, l'istanziazione è delegata al pattern creazionale \textbf{Builder}, ottimizzando la leggibilità e prevenendo errori nell'ordine di inizializzazione dei parametri.
 
 \begin{lstlisting}[caption={Builder Pattern per la classe Prenotazione}, label={lst:builder_pattern}]
 Prenotazione p = new Prenotazione.Builder()
@@ -220,7 +220,7 @@ public interface StanzaDAO extends GenericDAO<Stanza, String> {
 \end{lstlisting}
 
 \section{Copia Difensiva (Defensive Copy)}
-Per tenere al sicuro i dati ho usato una tecnica chiamata \textbf{copia difensiva}. La classe \texttt{WaitingList} contiene internamente la lista degli iscritti (Observer). Se fornissi la lista tramite un classico getter, chiunque potrebbe manipolarla dall'esterno. Per proteggerla (Information Hiding), \texttt{getObservers()} ne restituisce una versione in sola lettura:
+Per mantenere l'integrità dei dati e rispettare il principio di Information Hiding, l'accesso alla lista interna degli \texttt{Observer} nella classe \texttt{WaitingList} avviene tramite copia difensiva:
 
 \begin{lstlisting}[language=Java, caption=Copia difensiva nella WaitingList]
 public List<WaitingListObserver> getObservers() {

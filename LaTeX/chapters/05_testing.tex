@@ -42,7 +42,7 @@ Oltre al calcolo del prezzo, i test unitari verificano anche le transizioni di s
 
 \section{Testing con Mock (Mockito)}
 
-Per verificare la correttezza della logica di business dei Controller \textit{indipendentemente} dal database, sono stati implementati test con \textbf{Mockito}. Questo framework permette di creare oggetti simulati (mock) delle interfacce DAO, controllando il loro comportamento e verificando le interazioni.
+I Controller sono collaudati in isolamento tramite \textbf{Mockito}, simulando il comportamento delle interfacce DAO per verificare la logica di business indipendentemente dal livello di persistenza.
 
 L'annotazione \texttt{@ExtendWith(MockitoExtension.class)} abilita l'integrazione automatica con JUnit 5, mentre \texttt{@Mock} inietta i DAO simulati e \texttt{verify()} asserisce che i metodi attesi siano stati invocati.
 
@@ -101,7 +101,7 @@ class StanzaDAOPostgresTest {
 
 \section{Testing Funzionale (Black-Box e Tracciabilità)}
 
-Il livello più alto di collaudo ha riguardato i \texttt{Controllers}. In questa fase (Black-Box Testing) la logica interna viene ignorata e il sistema viene testato esclusivamente in base agli input e agli output attesi.
+I \texttt{Controllers} sono stati sottoposti a test Black-Box, verificando il comportamento del sistema in base agli output prodotti a fronte di specifici input, in conformità ai template degli Use Case.
 
 Per garantire la massima \textbf{tracciabilità}, ogni test funzionale è stato mappato direttamente su uno specifico \textit{Use Case Template} (Sezione 2.2). Sono stati collaudati sia i \textit{Flussi Base} che i \textit{Flussi Alternativi} (le eccezioni).
 

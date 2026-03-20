@@ -144,7 +144,7 @@ Per collegare il mondo a oggetti a quello delle tabelle ho scelto queste strade:
 \end{itemize}
 
 \section{Dinamica del Sistema (Implementation Perspective)}
-Per capire come "parlano" gli oggetti tra loro mentre il programma è in esecuzione, ho disegnato tre Sequence Diagram per i casi d'uso principali.
+Per illustrare le interazioni dinamiche tra gli oggetti a runtime, sono stati realizzati i Sequence Diagram per i casi d'uso principali.
 
 \subsection{UC1 - Prenotazione Stanza}
 La Figura \ref{fig:sequence_prenotazione} mostra il Sequence Diagram relativo al caso d'uso principale. Il diagramma evidenzia il rispetto del pattern architetturale BCE: l'interfaccia utente (Boundary) delega l'elaborazione al \texttt{PrenotazioneController} (Control), il quale orchestra il reperimento delle risorse persistenti e demanda la logica matematica di calcolo del prezzo all'entità \texttt{Stanza} (Entity). Particolare attenzione è stata posta nel disaccoppiamento del Controller dall'accesso ai dati, delegato interamente a un pattern creazionale.

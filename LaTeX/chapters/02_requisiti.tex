@@ -18,11 +18,7 @@ La Figura \ref{fig:usecase_dettagliato} rappresenta i casi d'uso effettivi del s
     \item \textbf{Sub-function} (UC1.1): sotto-funzionalità specifiche di un caso d'uso principale.
 \end{itemize}
 
-Il diagramma evidenzia due tipi di relazioni fondamentali:
-\begin{itemize}
-    \item \textbf{<<extend>>}: la relazione tra UC2 (Iscrizione Lista d'Attesa) e UC1 (Prenotazione) modella un flusso alternativo opzionale che si attiva solo quando lo slot richiesto risulta occupato.
-    \item \textbf{<<include>>}: UC1 include UC5 (Visualizzazione Catalogo), UC6 (Ricerca Disponibilità) e UC7 (Calcolo Prezzo Dinamico), evidenziando la composizione del processo di prenotazione. UC2 e UC4 includono UC5 per la visualizzazione del catalogo.
-\end{itemize}
+
 
 Questa struttura rispetta il principio DRY (Don't Repeat Yourself) ed evita la duplicazione della logica di visualizzazione catalogo nei template dei singoli casi d'uso. L'autenticazione utente, pur essendo fondamentale, non è stata modellata come UC separato in quanto rappresenta una precondizione implicita di tutti i casi d'uso e non costituisce un obiettivo utente autonomo.
 
