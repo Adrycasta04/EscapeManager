@@ -23,7 +23,7 @@ Il Package Diagram (Figura \ref{fig:package_diagram}) descrive la struttura logi
 \end{figure}
 
 \section{Scelte Progettuali e Trade-off}
-Le principali scelte progettuali sono motivate da requisiti di manutenibilità e chiarezza didattica:
+Ecco alcune scelte chiave adottate per mantenere il codice pulito e comprensibile:
 \begin{itemize}
     \item \textbf{DAO + JDBC} invece di ORM: architettura leggera studiata per garantire maggiore controllo sul mapping e totale trasparenza dei flussi dati.
     \item \textbf{CLI come Boundary} per ridurre l'impatto della UI e concentrare lo sforzo sulla logica di business.
@@ -33,7 +33,7 @@ Le principali scelte progettuali sono motivate da requisiti di manutenibilità e
 
 \section{Domain Model (Class Diagram)}
 
-La Figura \ref{fig:domain_model} illustra il diagramma delle classi relativo al nucleo logico dell'applicativo (Entity layer). Il modello non include volutamente i dettagli legati all'accesso ai dati (DAO) o all'interfaccia utente (View/CLI), concentrandosi esclusivamente sulle regole di business del franchise.
+La Figura \ref{fig:domain_model} illustra il diagramma delle classi per il nucleo dell'applicazione (Entity layer). Il modello non include volutamente i dettagli legati all'accesso ai dati (DAO) o all'interfaccia utente (View/CLI), concentrandosi esclusivamente sulle regole del franchise.
 
 \begin{figure}[H]
     \centering
@@ -43,7 +43,7 @@ La Figura \ref{fig:domain_model} illustra il diagramma delle classi relativo al 
 \end{figure}
 
 \section{Class Diagram dei Controller e Boundary}
-Per documentare la vista di implementazione dei layer di controllo e presentazione, la Figura \ref{fig:class_diagram_controllers} mostra le principali classi di coordinamento e le loro dipendenze sui DAO.
+Per documentare i layer di controllo e presentazione, la Figura \ref{fig:class_diagram_controllers} mostra invece i Controllers (il livello Control) e la CLI (il livello Boundary).
 
 \begin{figure}[H]
     \centering
@@ -53,7 +53,7 @@ Per documentare la vista di implementazione dei layer di controllo e presentazio
 \end{figure}
 
 \section{Class Diagram del Package DAO (Persistenza)}
-Il livello di persistenza segue il pattern \textbf{Abstract Factory} (DAO Factory) per disaccoppiare completamente i Controller dall'infrastruttura di database. La Figura \ref{fig:class_diagram_dao} mostra l'organizzazione delle classi nel package \texttt{dao}, evidenziando la gerarchia delle interfacce, le implementazioni concrete per PostgreSQL e il \texttt{ConnectionManager} Singleton.
+Per non legare i Controller direttamente al database Postgres, il sistema usa il pattern \textbf{Abstract Factory} (DAO Factory). La Figura \ref{fig:class_diagram_dao} mostra il package \texttt{dao}, con le interfacce, le classi concrete e la connessione unica (Singleton).
 
 \begin{figure}[H]
     \centering
@@ -64,7 +64,7 @@ Il livello di persistenza segue il pattern \textbf{Abstract Factory} (DAO Factor
 
 \subsection{Scelte Architetturali e Design Pattern}
 
-L'architettura del dominio è stata concepita per risolvere nativamente le complessità emerse durante l'analisi dei casi d'uso (Capitolo 2), ricorrendo a tre Design Pattern della \textit{Gang of Four (GoF)}:
+Per risolvere i problemi principali visti nei casi d'uso (Capitolo 2), ho inserito a livello di dominio tre Design Pattern della \textit{Gang of Four (GoF)}:
 
 \begin{itemize}
     \item \textbf{State Pattern (Gestione ciclo di vita):} Come emerso nell'UC3, la \texttt{Stanza} attraversa fasi operative rigide (Disponibile, In Corso, In Pulizia, In Manutenzione). Invece di delegare il controllo a complessi blocchi \texttt{switch/case} basati su stringhe o enumerazioni, lo stato è stato reificato nell'interfaccia \texttt{RoomState}. Questo garantisce il rispetto del principio \textit{Open-Closed}: l'aggiunta di un nuovo stato futuro non richiederà la modifica del codice della classe \texttt{Stanza}.
@@ -104,7 +104,7 @@ Per documentare formalmente il ciclo di vita operativo della Stanza, è stato pr
 
 \section{Progettazione del Database}
 
-Per garantire la persistenza dei dati e supportare l'infrastruttura di un sistema centralizzato, il Domain Model Object-Oriented è stato mappato su un database relazionale (PostgreSQL). La transizione dal modello concettuale allo schema logico ha richiesto l'applicazione di specifiche strategie di \textit{Object-Relational Mapping (ORM)}.
+Per salvare i dati, il Domain Model a oggetti è stato convertito in un database relazionale (PostgreSQL) usando specifiche strategie di mapping.
 
 \subsection{Diagramma Entity-Relationship}
 
@@ -119,7 +119,7 @@ La Figura \ref{fig:er_diagram} mostra il diagramma Entità-Relazione (ER) del da
 
 \subsection{Strategie di Mapping e Modello Logico}
 
-Il design relazionale affronta la dicotomia tra il paradigma a oggetti e quello tabellare attraverso le seguenti scelte implementative:
+Per collegare il mondo a oggetti a quello delle tabelle ho scelto queste strade:
 
 \begin{itemize}[leftmargin=*]
 \raggedright
@@ -144,7 +144,7 @@ Il design relazionale affronta la dicotomia tra il paradigma a oggetti e quello 
 \end{itemize}
 
 \section{Dinamica del Sistema (Implementation Perspective)}
-Per illustrare le dinamiche di interazione a \textit{run-time} tra gli oggetti, si fa riferimento all'approccio descritto nello standard UML per la \textit{Implementation Perspective}. Di seguito vengono presentati tre Sequence Diagram per i casi d'uso più rappresentativi.
+Per capire come "parlano" gli oggetti tra loro mentre il programma è in esecuzione, ho disegnato tre Sequence Diagram per i casi d'uso principali.
 
 \subsection{UC1 - Prenotazione Stanza}
 La Figura \ref{fig:sequence_prenotazione} mostra il Sequence Diagram relativo al caso d'uso principale. Il diagramma evidenzia il rispetto del pattern architetturale BCE: l'interfaccia utente (Boundary) delega l'elaborazione al \texttt{PrenotazioneController} (Control), il quale orchestra il reperimento delle risorse persistenti e demanda la logica matematica di calcolo del prezzo all'entità \texttt{Stanza} (Entity). Particolare attenzione è stata posta nel disaccoppiamento del Controller dall'accesso ai dati, delegato interamente a un pattern creazionale.
@@ -176,29 +176,11 @@ La Figura \ref{fig:sequence_gestione_stato_cap3} mostra il Sequence Diagram per 
     \label{fig:sequence_gestione_stato_cap3}
 \end{figure}
 
-\section{Activity Diagram: Flusso di Prenotazione}
 
-Per documentare la logica di controllo e i punti decisionali del caso d'uso principale (UC1), è stato prodotto l'\textbf{Activity Diagram} della Figura \ref{fig:activity_prenotazione}. Questo diagramma complementa i Sequence Diagram mostrando il flusso di attività dal punto di vista del processo di business, evidenziando:
-
-\begin{itemize}
-    \item Le \textbf{condizioni di branch} (capienza massima, disponibilità slot)
-    \item I \textbf{flussi alternativi} (slot occupato $\rightarrow$ lista d'attesa, capienza superata $\rightarrow$ correzione input)
-    \item La \textbf{relazione <<extend>>} con UC2 (Iscrizione Lista d'Attesa)
-    \item I punti di applicazione dei \textbf{Design Pattern} (Strategy per calcolo prezzo, Builder per creazione prenotazione)
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{images/activity_prenotazione.png}
-    \caption{Activity Diagram del caso d'uso UC1 (Prenotazione Stanza) con flussi alternativi}
-    \label{fig:activity_prenotazione}
-\end{figure}
-
-L'Activity Diagram è particolarmente utile per identificare i test cases necessari: ogni percorso decisionale corrisponde a un test funzionale (flusso base + flussi alternativi 3a e 4a).
 
 \section{Pattern Creazionali: DAO Factory}
-Come evincibile dal diagramma di sequenza, il sistema adotta il pattern \textbf{Abstract Factory} (nella specifica accezione di \textit{DAO Factory}) per la generazione degli oggetti preposti all'accesso ai dati. 
-L'obiettivo di questa scelta progettuale è garantire il totale disaccoppiamento tra la Business Logic (Controller) e l'infrastruttura di persistenza (PostgreSQL). Il Controller non istanzia mai in modo diretto una classe concreta come \texttt{StanzaDAOPostgres}, ma si affida all'interfaccia esposta dalla Factory:
+Nei diagrammi di sequenza si nota subito che, al momento di salvare i dati, ci si affida a una \textbf{DAO Factory} (Abstract Factory). 
+L'idea è scollegare totalmente i Controller dal database PostgreSQL. Infatti, il Controller non crea mai una classe \texttt{StanzaDAOPostgres} usando \texttt{new}, ma si affida all'interfaccia esposta dalla Factory:
 
 \begin{lstlisting}[language=Java, caption=Utilizzo del pattern DAO Factory nel Controller]
 // Reperimento dinamico dei DAO indipendentemente dal DB sottostante
@@ -206,6 +188,6 @@ DAOFactory factory = DAOFactory.getDAOFactory();
 StanzaDAO stanzaDao = factory.getStanzaDAO();
 PrenotazioneDAO prenotazioneDao = factory.getPrenotazioneDAO();
 \end{lstlisting}
-Questa architettura rende il sistema altamente manutenibile ed estensibile: la migrazione verso un diverso DBMS (es. MySQL o un DB NoSQL) richiederebbe unicamente l'implementazione di una nuova \texttt{Factory} concreta, lasciando intatto il Domain Model e i Controller.
+Questo vuol dire che se un domani fosse necessario passare a MySQL, basterebbe creare una nuova Factory e i file SQL specifici, senza mai toccare il codice dei Controller o di Dominio.
 
 

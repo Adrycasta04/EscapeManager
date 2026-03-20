@@ -1,10 +1,10 @@
 \chapter{Qualità del Software}
 
-In questo capitolo si analizza la qualità del software prodotto secondo le metriche e i principi più rilevanti in ambito di Ingegneria del Software, con riferimento allo standard ISO/IEC 25010 (SQuaRE) e ai principi SOLID dell'Object-Oriented Design.
+Questo capitolo analizza la qualità del codice scritto, usando come riferimento le metriche dello standard ISO/IEC 25010 e i celebri principi SOLID dell'Object-Oriented Design.
 
 \section{Aderenza ai Principi SOLID}
 
-Il design di \textit{EscapeManager} è stato sviluppato seguendo rigorosamente i cinque principi SOLID, che costituiscono il fondamento dell'Object-Oriented Design professionale.
+Le classi principali di \textit{EscapeManager} rispettano i 5 principi SOLID.
 
 \subsection{Single Responsibility Principle (SRP)}
 Ogni classe ha una singola responsabilità ben definita e un unico motivo per cambiare:
@@ -27,7 +27,7 @@ Il sistema è aperto all'estensione ma chiuso alla modifica:
     \item \textbf{DAO Factory}: Migrare da PostgreSQL a MySQL o MongoDB richiede solo una nuova \texttt{DAOFactory} concreta; Controller e Domain rimangono invariati.
 \end{itemize}
 
-Questo design risponde perfettamente al requisito di manutenibilità ed estensibilità del sistema.
+Grazie a questo design aggiungere nuove funzionalità in futuro sarà molto più semplice.
 
 \subsection{Liskov Substitution Principle (LSP)}
 Le classi derivate possono sostituire le superclassi senza compromettere il comportamento:
@@ -38,7 +38,7 @@ Le classi derivate possono sostituire le superclassi senza compromettere il comp
     \item Le sottoclassi di \texttt{Utente} (Cliente, GameMaster, Admin) rispettano il contratto della superclasse: nessun metodo ridefinito altera i contratti (es. \texttt{equals()}, \texttt{hashCode()}).
 \end{itemize}
 
-Questo è verificato automaticamente dai test: i Mock Test usano interfacce DAO senza mai riferirsi alle classi Postgres.
+Questa intercambiabilità è dimostrata dai test: i Mock usano le interfacce senza mai sapere che dietro c'è un'implementazione passata per Postgres.
 
 \subsection{Interface Segregation Principle (ISP)}
 Le interfacce sono piccole, specifiche e focalizzate:
@@ -61,7 +61,7 @@ I moduli di alto livello non dipendono da quelli di basso livello, ma da astrazi
     \item Nei Mock Test, questa inversione permette di sostituire i DAO reali con mock Mockito senza modificare i Controller.
 \end{itemize}
 
-Questo principio è il fondamento della testabilità del sistema: tutti i 15 Mock Test verificano la business logic in totale isolamento dal database.
+È proprio questa invisibilità della classe concreta (Inversion of Control) che ha permesso di scrivere tutti i 15 Mock Test isolando il database dalla logica di business.
 
 \section{Analisi ISO/IEC 25010}
 Lo standard ISO/IEC 25010 definisce otto caratteristiche di qualità del software. La tabella seguente sintetizza la valutazione del sistema rispetto alle caratteristiche più rilevanti per il dominio.
@@ -137,7 +137,7 @@ La Tabella \ref{tab:jacoco_coverage} riporta le percentuali di copertura per i p
 
 \textbf{Coverage dei layer critici} (domain + controllers + dao): \textbf{68\%} di instruction coverage, \textbf{57\%} di branch coverage.
 
-Questi valori sono \textbf{eccellenti} per un progetto didattico e superano gli standard industriali per codice di business (target 60-70\%). La copertura sui Controller (87\%) dimostra l'efficacia dei Mock Test con Mockito.
+Questi valori (66\% e 87\%) garantiscono una buona copertura del codice per un progetto semestrale didattico e dimostrano l'efficacia strutturale dei Mock Test per simulare il database.
 
 \section{Affidabilità e Coerenza dei Dati}
 La coerenza del sistema è garantita da:

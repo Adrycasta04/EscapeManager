@@ -1,6 +1,6 @@
 \chapter{Collaudo e Testing}
 
-La fase di verifica e validazione del sistema \textbf{EscapeManager} è stata condotta seguendo un approccio multilivello, utilizzando i framework \textbf{JUnit 5} e \textbf{Mockito}. L'obiettivo del collaudo non è stato solo quello di garantire l'assenza di difetti evidenti (bug), ma soprattutto di dimostrare la robustezza dell'architettura e la perfetta aderenza ai requisiti funzionali delineati nel Capitolo 2.
+Il testing del sistema \textbf{EscapeManager} utilizza i framework \textbf{JUnit 5} e \textbf{Mockito} ed è organizzato su più livelli. Lo scopo, oltre a trovare eventuali bug, è dimostrare che l'architettura funziona come previsto dai requisiti (Capitolo 2).
 
 \section{Strategia di Verifica}
 La strategia di test è organizzata su quattro livelli complementari:
@@ -181,11 +181,3 @@ I test funzionali e con mock sono tracciati direttamente sui template del Capito
     \caption{Matrice di tracciabilità Use Case \textrightarrow{} Test}
     \label{tab:traceability}
 \end{table}
-
-\section{Risultati}
-La suite di test è composta da \textbf{14 classi di test} e \textbf{44 test methods}, distribuiti su 4 livelli (unit, mock, integrazione, funzionale). La code coverage è misurabile tramite il report JaCoCo generato automaticamente in fase di build (\texttt{target/site/jacoco/}).
-
-\section{Conclusioni}
-
-L'approccio metodologico adottato, guidato dai principi dell'Object-Oriented Design e supportato dall'uso estensivo dei Design Pattern, ha permesso di sviluppare \textbf{EscapeManager} come un sistema robusto, altamente coeso e disaccoppiato. 
-L'introduzione di \textbf{Mockito} ha permesso di testare i Controller in totale isolamento dal database, garantendo test rapidi e deterministici. La suite di collaudo ha confermato la solidità della logica di business e la corretta integrazione con il layer relazionale, soddisfacendo integralmente i requisiti posti in fase di analisi.

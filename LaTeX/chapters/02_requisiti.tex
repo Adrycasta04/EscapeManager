@@ -286,74 +286,16 @@ Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, 
     \end{tabularx}
 \end{table}
 
-\subsection{UC5 - Visualizzazione Catalogo Stanze (<<function>>)}
-Caso d'uso riutilizzabile incluso in UC1, UC2, UC4. Espone l'elenco delle stanze disponibili nel sistema filtrabili per sede e tema.
+\paragraph{Altri Casi d'Uso e Funzioni di Supporto}
+Oltre ai casi d'uso principali sopra dettagliati, il sistema implementa diverse funzionalità di supporto e casi d'uso secondari che, pur essendo pienamente funzionali nel codice, presentano una complessità logica minore o agiscono come funzioni di utilità riutilizzabili:
 
-\subsection{UC6 - Ricerca Disponibilità Slot (<<function>>)}
-Caso d'uso riutilizzabile incluso in UC1. Verifica la disponibilità di una stanza in un determinato slot temporale interrogando la tabella \texttt{PRENOTAZIONE}.
-
-\subsection{UC7 - Calcolo Prezzo Dinamico (<<function>>)}
-Caso d'uso riutilizzabile incluso in UC1. Applica il \textbf{Strategy Pattern} per calcolare il prezzo totale della prenotazione in base alla strategia tariffaria corrente (\texttt{TariffaBase}, \texttt{TariffaWeekend}, ecc.).
-
-\subsection{UC9 - Consultazione Storico Prenotazioni}
-
-\begin{table}[H]
-    \centering
-    \renewcommand{\arraystretch}{1.3}
-    \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|}
-        \hline
-        \rowcolor{cyan!15}
-        \textbf{UC9} & Consultazione Storico Prenotazioni \\ \hline
-        Livello & User Goal \\ \hline
-        Descrizione & Il Cliente visualizza l'elenco completo delle proprie prenotazioni passate e future \\ \hline
-        Attori & Cliente \\ \hline
-        Pre-condizioni & Il Cliente è autenticato nel sistema \\ \hline
-        Post-condizioni & Il sistema mostra l'elenco cronologico delle prenotazioni del Cliente \\ \hline
-        Flusso Base &
-        \begin{enumerate}[label=\arabic*., nosep, leftmargin=*]
-            \item Il Cliente seleziona "Storico Prenotazioni"
-            \item Il sistema recupera tutte le prenotazioni associate al \texttt{cliente\_id}
-            \item Il sistema ordina le prenotazioni per data (decrescente)
-            \item Il sistema mostra l'elenco con: codice, stanza, data/ora, numero giocatori, prezzo, stato
-        \end{enumerate} \\ \hline
-        Flussi Alternativi &
-        \textbf{2a. Nessuna prenotazione trovata:}
-        \begin{enumerate}[label=\arabic*., nosep, leftmargin=*]
-            \item Il sistema mostra messaggio "Nessuna prenotazione effettuata"
-        \end{enumerate} \\ \hline
-    \end{tabularx}
-\end{table}
-
-\subsection{UC10 - Rimozione da Lista d'Attesa}
-
-\begin{table}[H]
-    \centering
-    \renewcommand{\arraystretch}{1.3}
-    \begin{tabularx}{\textwidth}{|>{\bfseries}l|X|}
-        \hline
-        \rowcolor{cyan!15}
-        \textbf{UC10} & Rimozione da Lista d'Attesa \\ \hline
-        Livello & User Goal \\ \hline
-        Descrizione & Il Cliente rimuove la propria iscrizione alla lista d'attesa per una stanza \\ \hline
-        Attori & Cliente \\ \hline
-        Pre-condizioni & Il Cliente è iscritto alla lista d'attesa per almeno una stanza \\ \hline
-        Post-condizioni & L'iscrizione è rimossa dal database (\texttt{LISTA\_ATTESA}) \\ \hline
-        Flusso Base &
-        \begin{enumerate}[label=\arabic*., nosep, leftmargin=*]
-            \item Il Cliente seleziona "Le mie liste d'attesa"
-            \item Il sistema mostra l'elenco delle stanze per cui il Cliente è in attesa
-            \item Il Cliente seleziona una stanza
-            \item Il Cliente clicca "Rimuovi da lista"
-            \item Il sistema elimina il record dalla tabella \texttt{LISTA\_ATTESA}
-            \item Il sistema mostra conferma "Rimosso con successo"
-        \end{enumerate} \\ \hline
-        Flussi Alternativi &
-        \textbf{2a. Nessuna iscrizione trovata:}
-        \begin{enumerate}[label=\arabic*., nosep, leftmargin=*]
-            \item Il sistema mostra messaggio "Non sei iscritto a nessuna lista"
-        \end{enumerate} \\ \hline
-    \end{tabularx}
-\end{table}
+\begin{itemize}
+    \item \textbf{UC5 - Visualizzazione Catalogo Stanze (<<function>>):} Espone l'elenco delle stanze filtrabili per sede e tema; è incluso in UC1, UC2 e UC4.
+    \item \textbf{UC6 - Ricerca Disponibilità Slot (<<function>>):} Verifica la disponibilità di una stanza interrogando la persistenza; è incluso in UC1.
+    \item \textbf{UC7 - Calcolo Prezzo Dinamico (<<function>>):} Applica lo \textit{Strategy Pattern} per il calcolo del preventivo; è incluso in UC1.
+    \item \textbf{UC9 - Consultazione Storico Prenotazioni:} Permette al Cliente di visualizzare l'elenco cronologico delle proprie attività passate.
+    \item \textbf{UC10 - Rimozione da Lista d'Attesa:} Consente al Cliente di cancellare manualmente una propria iscrizione a una lista d'attesa.
+\end{itemize}
 
 \section{Requisiti non funzionali}
 

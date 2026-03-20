@@ -1,6 +1,6 @@
 \chapter{Implementazione e Architettura del Codice}
 
-Questo capitolo descrive la traduzione del Domain Model e dello Schema Logico in codice sorgente Java. L'architettura software è stata strutturata seguendo il pattern architetturale \textit{Layered} (a strati), che ricalca logicamente il paradigma BCE (Boundary-Control-Entity), garantendo un elevato disaccoppiamento e facilitando il testing isolato dei componenti.
+Questo capitolo mostra come il modello di dominio e lo schema del database sono stati trasformati in vero codice Java. Il progetto usa un'architettura "a strati" (Layered architecture) basata sul modello BCE, studiata per separare le responsabilità e semplificare la scrittura dei test.
 
 \section{Architettura dei Package}
 
@@ -20,7 +20,7 @@ Contiene le interfacce DAO, le implementazioni PostgreSQL e l'oggetto \texttt{Co
 
 \section{Livello di Persistenza (Pattern DAO)}
 
-Al fine di garantire la massima portabilità e manutenibilità, l'accesso al database PostgreSQL è stato isolato tramite il pattern \textbf{Data Access Object (DAO)}. Questo garantisce che la logica di business rimanga del tutto agnostica rispetto alla tecnologia di persistenza.
+Per non mischiare la logica dell'applicazione con il codice SQL, l'accesso a PostgreSQL è gestito dal pattern \textbf{Data Access Object (DAO)}. In questo modo la business logic non sa (e non deve sapere) nulla di come funziona materialmente il database.
 
 La connessione al database è gestita tramite un \textbf{Singleton Pattern} (\texttt{ConnectionManager}), che assicura l'esistenza di un'unica istanza di connessione (o di un connection pool) condivisa per tutta l'applicazione, evitando l'overhead di connessioni multiple.
 
@@ -149,7 +149,7 @@ public class WaitingList {
 \end{lstlisting}
 
 \subsection{Builder Pattern}
-La classe \texttt{Prenotazione} necessita di 7 parametri per la sua costruzione. Per migliorare la leggibilità e prevenire errori nell'ordine dei parametri, è stato implementato il pattern \textbf{Builder} (GoF --- Creazionale). Questo pattern è particolarmente utile quando una classe ha molti attributi opzionali o quando la costruzione dell'oggetto richiede più passi logici.
+La classe \texttt{Prenotazione} richiede 7 parametri diversi nel costruttore. Per evitare confusione con l'ordine delle variabili ho usato il pattern creazionale \textbf{Builder}, che rende il codice molto più leggibile quando si devono inizializzare molti attributi.
 
 \begin{lstlisting}[caption={Builder Pattern per la classe Prenotazione}, label={lst:builder_pattern}]
 Prenotazione p = new Prenotazione.Builder()
@@ -173,7 +173,7 @@ PrenotazioneController controller = new PrenotazioneController(prenotazioneDAO, 
 \end{lstlisting}
 
 \section{Gestione Centralizzata delle Eccezioni (Information Hiding)}
-Un aspetto cruciale dell'implementazione strutturata ha riguardato la gestione dei flussi alternativi e degli errori. Invece di affidarsi alle generiche eccezioni standard di Java (es. \texttt{RuntimeException}), è stata disegnata una gerarchia di eccezioni custom radicata nella classe \texttt{EscapeManagerException}.
+Per il controllo degli errori ho evitato le eccezioni base di Java (come \texttt{RuntimeException}), preferendo una gerarchia di eccezioni custom derivata da \texttt{EscapeManagerException}.
 
 Come illustrato nella Figura \ref{fig:class_diagram_persistence}, la gerarchia divide formalmente gli errori in base al layer architetturale in cui si verificano:
 \begin{itemize}
@@ -188,7 +188,7 @@ Come illustrato nella Figura \ref{fig:class_diagram_persistence}, la gerarchia d
     \label{fig:class_diagram_persistence}
 \end{figure}
 
-Questa struttura risponde in modo rigoroso al principio dell'\textbf{Information Hiding}. Nel livello DAO, le \texttt{SQLException} lanciate dal driver JDBC vengono intercettate, incapsulate in una \texttt{DatabaseException} e rilanciate. In questo modo, eventuali stack trace legati a driver SQL o dettagli implementativi del database non inquinano mai i livelli superiori (Boundary e Control).
+Questo approccio maschera i dettagli tecnici (Information Hiding): se il driver JDBC lancia una \texttt{SQLException}, il livello DAO la cattura e la trasforma in una \texttt{DatabaseException}. Così facendo, il Controller che riceve l'errore non deve preoccuparsi di questioni legate a SQL o al driver.
 
 \begin{lstlisting}[language=Java, caption=Incapsulamento delle eccezioni SQL nel layer DAO]
 try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -200,9 +200,9 @@ try (PreparedStatement stmt = conn.prepareStatement(query)) {
 \end{lstlisting}
 
 \section{Gerarchia delle Interfacce e Liskov Substitution Principle}
-L'interfaccia \texttt{GenericDAO<T, ID>} definisce un ``contratto'' CRUD base e uniforme per tutte le entità. Sottointerfacce come \texttt{StanzaDAO} o \texttt{PrenotazioneDAO} estendono questo contratto aggiungendo operazioni specifiche per il dominio (es. ricerca per stato). Infine, le classi concrete (es. \texttt{StanzaDAOPostgres}) implementano i dettagli tecnologici tramite query SQL. 
+Ho creato l'interfaccia \texttt{GenericDAO<T, ID>} per avere un contratto di base CRUD per tutte le entità. Le sotto-interfacce come \texttt{StanzaDAO} aggiungono le interrogazioni specifiche, e le classi concrete come \texttt{StanzaDAOPostgres} contengono le vere query SQL. 
 
-Questo rigoroso design basato su interfacce non solo massimizza il riuso dei contratti, ma garantisce il pieno rispetto del \textbf{Liskov Substitution Principle (LSP)}: il livello \textit{Control} dipende unicamente dalle astrazioni (\texttt{StanzaDAO}), ignorando la controparte concreta.
+Questo design rispetta il \textbf{Liskov Substitution Principle (LSP)}: il blocco dei \textit{Controller} comunica solo con l'astrazione (\texttt{StanzaDAO}) e ignora totalmente quale sia la classe concreta fornita in quel momento.
 
 \begin{lstlisting}[language=Java, caption=Gerarchia delle interfacce DAO]
 public interface GenericDAO<T, ID> {
@@ -220,7 +220,7 @@ public interface StanzaDAO extends GenericDAO<Stanza, String> {
 \end{lstlisting}
 
 \section{Copia Difensiva (Defensive Copy)}
-Un idiom di programmazione Java applicato nel progetto è la \textbf{copia difensiva}. La classe \texttt{WaitingList} mantiene internamente la lista degli Observer. Per rispettare il principio di \textit{Information Hiding} e prevenire la manipolazione esterna della struttura interna, il metodo \texttt{getObservers()} restituisce una vista non modificabile:
+Per tenere al sicuro i dati ho usato una tecnica chiamata \textbf{copia difensiva}. La classe \texttt{WaitingList} contiene internamente la lista degli iscritti (Observer). Se fornissi la lista tramite un classico getter, chiunque potrebbe manipolarla dall'esterno. Per proteggerla (Information Hiding), \texttt{getObservers()} ne restituisce una versione in sola lettura:
 
 \begin{lstlisting}[language=Java, caption=Copia difensiva nella WaitingList]
 public List<WaitingListObserver> getObservers() {
@@ -230,18 +230,5 @@ public List<WaitingListObserver> getObservers() {
 
 Qualsiasi tentativo di aggiungere o rimuovere elementi dalla lista restituita causerà una \texttt{UnsupportedOperationException}, proteggendo l'integrità dell'incapsulamento.
 
-\section{Diagrammi di Sequenza}
-Per illustrare l'interazione dinamica tra gli oggetti, sono stati prodotti tre diagrammi di sequenza:
-\begin{itemize}
-    \item \textbf{UC1:} mostra il flusso di prenotazione (Figura \ref{fig:sequence_prenotazione}), evidenziando la catena CLI $\rightarrow$ Controller $\rightarrow$ DAO $\rightarrow$ Strategy.
-    \item \textbf{UC3:} mostra il flusso di aggiornamento stato stanza (Figura \ref{fig:sequence_gestione_stato_cap3}), con delega allo State Pattern e il flusso alternativo per transizioni non valide.
-    \item \textbf{UC4:} mostra il cambio tariffa (Figura \ref{fig:sequence_tariffe}).
-\end{itemize}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{images/sequence_gestione_stato.png}
-    \caption{Diagramma di Sequenza: UC3 - Aggiornamento Stato Stanza (State Pattern)}
-    \label{fig:sequence_gestione_stato_cap4}
-\end{figure}
 

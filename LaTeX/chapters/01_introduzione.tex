@@ -1,48 +1,45 @@
 \chapter{Introduzione}
 
 \section{Statement}
-Il progetto \textbf{EscapeManager} modella un sistema software centralizzato per la gestione operativa e commerciale di una catena in \textit{franchising} di Escape Room. L'obiettivo principale dell'applicativo è fornire un'infrastruttura unificata che permetta ai clienti di esplorare le stanze tematiche disponibili ed effettuare prenotazioni e, contestualmente, metta a disposizione del personale strumenti avanzati per il controllo delle sessioni di gioco.
+Il progetto \textbf{EscapeManager} è un sistema gestionale pensato per una catena in \textit{franchising} di Escape Room. L'obiettivo è offrire un'unica applicazione che permetta ai clienti di prenotare le stanze e, allo stesso tempo, fornisca al personale gli strumenti necessari per controllare le sessioni di gioco.
 
-Il dominio applicativo ruota attorno a entità \textit{core} quali \textbf{Sede}, \textbf{Stanza}, \textbf{Utente} (declinato in ruoli) e \textbf{Prenotazione}. Le sedi ospitano diverse stanze fisiche, ciascuna caratterizzata da un tema specifico, un livello di difficoltà, una capienza massima e un ciclo di vita operativo ben definito e rigidamente controllato (es. \textit{Disponibile, In Corso, In Pulizia, In Manutenzione}). 
+Il dominio dell'applicazione si basa su entità principali come \textbf{Sede}, \textbf{Stanza}, \textbf{Utente} (con vari ruoli) e \textbf{Prenotazione}. Ogni sede ospita più stanze, ognuna con un tema, una difficoltà, una capienza e un ciclo di vita operativo preciso (es. \textit{Disponibile, In Corso, In Pulizia, In Manutenzione}).
 
-Il sistema è progettato per supportare tre tipologie principali di utenti:
+Il sistema prevede tre tipi di utenti:
 \begin{itemize}
-    \item \textbf{Cliente:} può visualizzare il catalogo globale delle stanze, prenotare una sessione di gioco per la propria squadra in uno slot temporale libero, e iscriversi a una lista d'attesa per eventuali notifiche future in caso di liberazione di uno slot.
-    \item \textbf{Game Master (Operatore):} gestisce il flusso operativo quotidiano. Può monitorare le prenotazioni del giorno, avviare o terminare le sessioni di gioco, aggiornare dinamicamente lo stato delle stanze (es. bloccando una stanza per un guasto tecnico a un enigma) e registrare l'esito della partita.
-    \item \textbf{Admin (Amministratore):} possiede una visione d'insieme sull'intera catena. Ha i privilegi per configurare politiche di prezzo dinamiche (es. tariffe base o maggiorate).
+    \item \textbf{Cliente:} può sfogliare il catalogo delle stanze, prenotare una sessione e mettersi in lista d'attesa per uno slot momentaneamente occupato.
+    \item \textbf{Game Master (Operatore):} gestisce le operazioni quotidiane. Controlla le prenotazioni, avvia e termina le sessioni, aggiorna lo stato delle stanze (ad esempio bloccandole per manutenzione) e registra l'esito finale della partita.
+    \item \textbf{Admin (Amministratore):} ha una visione globale sul franchising e può configurare le politiche di prezzo (ad esempio impostando i prezzi del weekend).
 \end{itemize}
 
-Per garantire manutenibilità e scalabilità, l'architettura segue il pattern BCE (Boundary-Control-Entity, approfondito nel Capitolo 3) e fa uso di principi di Object-Oriented Design e di Design Pattern strutturali e comportamentali per risolvere problemi specifici del dominio, come la gestione delle variazioni di stato delle stanze, l'applicazione delle tariffe e il sistema di notifiche. La persistenza dei dati, fondamentale per evitare sovrapposizioni nelle prenotazioni e mantenere lo storico delle partite, è gestita tramite un database relazionale connesso al sistema.
+L'architettura segue il pattern BCE (Boundary-Control-Entity) unito ai principi OOD. Per risolvere i problemi di business (come il cambio di stato delle stanze o il calcolo del prezzo dinamico) ho applicato diversi Design Pattern della Gang of Four. I dati, le prenotazioni e le liste d'attesa sono salvati su un database relazionale.
 
 \section{Stack Tecnologico e Strumenti}
-Per la realizzazione del sistema sono state adottate tecnologie standard in ambito enterprise, al fine di garantire robustezza e manutenibilità:
+Nello sviluppo sono state utilizzate le seguenti tecnologie:
 \begin{itemize}
-    \item \textbf{Linguaggio di Programmazione:} Java (JDK 17), scelto per il forte supporto al paradigma Object-Oriented e l'ampia disponibilità di librerie.
-    \item \textbf{Persistenza (RDBMS):} PostgreSQL. L'interazione con il database avviene tramite connettore JDBC, con un layer DAO (Data Access Object) che si occupa del mapping manuale delle entità di dominio sulle tabelle relazionali.
-    \item \textbf{Build Automation:} Maven, utilizzato per la gestione del ciclo di vita del software e delle dipendenze.
-    \item \textbf{UI Mockup:} JavaFX (FXML) per prototipazione grafica, separata dai flussi principali.
-    \item \textbf{Testing Framework:} JUnit 5 (Jupiter) per test unitari e di integrazione, e \textbf{Mockito} per il mock testing dei Controller in isolamento dal database.
-    \item \textbf{Versioning e IDE:} Git con hosting repository su GitHub. L'ambiente di sviluppo integrato utilizzato è Visual Studio Code (VS Code).
-    \item \textbf{Modellazione UML:} PlantUML, integrato direttamente nell'IDE per generare diagrammi come codice (\textit{diagrams-as-code}), facilitando il tracciamento delle modifiche nel versioning.
+    \item \textbf{Linguaggio base:} Java (JDK 17).
+    \item \textbf{Database:} PostgreSQL. Il codice Java si collega tramite JDBC a un layer DAO per mappare gli oggetti sulle tabelle.
+    \item \textbf{Build Tool:} Maven, per gestire le dipendenze e il ciclo di build.
+    \item \textbf{Mockup UI:} JavaFX (FXML), usato solo per creare un prototipo visivo slegato dalla business logic.
+    \item \textbf{Testing:} JUnit 5 (Jupiter) per i test unitari e di integrazione, e \textbf{Mockito} per simulare il database nei Mock test.
+    \item \textbf{Versioning e UML:} Git tramite GitHub, IDE Visual Studio Code, e PlantUML integrato per generare i diagrammi direttamente da formato testo.
 \end{itemize}
 
-\section{Note metodologiche e Uso dell'Intelligenza Artificiale}
-In linea con le moderne pratiche di Ingegneria del Software e con le direttive del corso, lo sviluppo di \textit{EscapeManager} è stato coadiuvato dall'uso consapevole di strumenti di Intelligenza Artificiale Generativa (GitHub Copilot e Google Gemini). 
+\section{Note sull'uso dell'Intelligenza Artificiale}
+Come previsto dalle direttive del corso, nello sviluppo di \textit{EscapeManager} mi sono avvalso di strumenti di Intelligenza Artificiale Generativa (GitHub Copilot e Google Gemini) come supporto alla programmazione. 
 
-L'approccio adottato non è stato di delega totale, ma di \textit{AI-Assisted Pair Programming}:
+L'approccio usato non è stato delegare completamente il lavoro, ma sfruttare l'AI come "aiutante":
 \begin{itemize}
-    \item \textbf{Architettura e Design:} Le scelte architetturali (pattern BCE, identificazione dei Design Pattern GoF come State, Strategy e Observer) e la modellazione concettuale sono state guidate da ragionamento umano basato sui principi del corso.
-    \item \textbf{Generazione del Codice:} L'IA è stata impiegata come "agente" per la stesura del codice boilerplate (es. implementazione dei DAO, getter/setter, refactoring di massa), per l'impalcatura dei test JUnit e per l'isolamento del database nei test di integrazione, sempre previa fornitura di \textit{prompt} ingegnerizzati e rigorosa code review umana.
-    \item \textbf{Documentazione:} L'IA è stata utilizzata come supporto per la formattazione tipografica in \LaTeX\ e per la revisione lessicale del presente documento.
-    \item \textbf{Verifica e Controllo:} ogni output generato è stato verificato manualmente, corretto e integrato nel progetto solo se coerente con requisiti e codice effettivo.
-    \item \textbf{Limiti d'uso:} nessuna sezione è stata inserita senza revisione critica; la responsabilità finale dei contenuti rimane interamente dell'autore.
+    \item \textbf{Decisioni architetturali:} Le scelte di design (uso del pattern BCE, o dove applicare State e Strategy) derivano dallo studio teorico fatto a lezione.
+    \item \textbf{Scrittura codice:} Ho chiesto all'AI di aiutarmi ad accelerare la scrittura di codice ripetitivo (ad esempio i metodi getter/setter, l'ossatura delle classi DAO o la base per i test JUnit).
+    \item \textbf{Revisione testo e \LaTeX:} L'AI è stata utile per impaginare rapidamente i diagrammi e il formattare il testo in \LaTeX.
+    \item In ogni caso, ogni frammento di codice o testo suggerito è stato letto, compreso e spesso modificato prima di essere inserito nel progetto.
 \end{itemize}
 
 \section{Struttura del documento}
-Il presente documento è organizzato come segue: il Capitolo 2 presenta l'analisi dei requisiti funzionali e non funzionali; il Capitolo 3 descrive la progettazione architetturale e di dominio; il Capitolo 4 illustra i dettagli implementativi e l'architettura del codice; il Capitolo 5 è dedicato al collaudo e al testing del sistema; il Capitolo 6 valuta la qualità del software secondo lo standard ISO/IEC 25010; infine, il Capitolo 7 presenta le conclusioni e gli sviluppi futuri.
+La relazione è suddivisa in questo modo: il Capitolo 2 presenta l'analisi dei requisiti; il Capitolo 3 discute le scelte architetturali; il Capitolo 4 mostra frammenti di implementazione Java; infine, il Capitolo 5 riassume le batterie di test.
 
-\section{Limiti del prototipo e sviluppi futuri}
-Allo stato attuale, \textit{EscapeManager} è un \textit{proof of concept} pienamente funzionale a livello di Business Logic e persistenza dati. L'interazione utente è attualmente veicolata attraverso una essenziale ma robusta Command Line Interface (CLI); i mockup JavaFX sono presenti come prototipo separato. La notifica automatica delle liste d'attesa e la gestione completa delle filiali sono previste come estensioni future. Sviluppi futuri prevedono inoltre l'esposizione di API REST per un frontend Web/Mobile o, in alternativa, l'implementazione di un'interfaccia grafica desktop completa tramite JavaFX, mantenendo intatto l'attuale Domain Model grazie al rigoroso disaccoppiamento garantito dall'architettura BCE.
+\section{Stato del prototipo e limitazioni}
+\textit{EscapeManager} è attualmente un prototipo scolastico funzionante che si concentra sulla logica di business e sui dati. Per interagirci si utilizza un semplice menu a linea di comando (CLI), mentre le schermate grafiche inserite nella relazione fungono solo da mockup per mostrare il design immaginato. 
 
-
-
+L'infrastruttura di base (come l'iscrizione a una lista d'attesa modellata con il pattern Observer) è testata e implementata correttamente lato codice. Tuttavia, alcune dinamiche reali (come l'invio concreto di un'email tramite SMTP o un gateway di pagamento) esulano dal perimetro prototipale in esame e non sono state implementate.

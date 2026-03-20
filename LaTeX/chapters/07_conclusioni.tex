@@ -2,7 +2,7 @@
 \label{chap:conclusioni}
 
 \section{Obiettivi raggiunti}
-Il progetto \textit{EscapeManager} ha raggiunto gli obiettivi prefissati nella fase di analisi:
+Il prototipo \textit{EscapeManager} ha centrato gli obiettivi iniziali:
 \begin{itemize}
     \item \textbf{Architettura solida:} l'applicazione è strutturata secondo il paradigma BCE (Boundary-Control-Entity) con una rigida separazione delle responsabilità tra i livelli di presentazione, controllo, dominio e persistenza.
     \item \textbf{Design Pattern GoF:} sono stati applicati e documentati 5 pattern fondamentali: \textbf{State} (ciclo di vita della Stanza), \textbf{Strategy} (politiche di prezzo), \textbf{Observer} (lista d'attesa), \textbf{Builder} (costruzione fluente delle Prenotazioni) e \textbf{Singleton} (gestione centralizzata della connessione DB).
@@ -13,7 +13,7 @@ Il progetto \textit{EscapeManager} ha raggiunto gli obiettivi prefissati nella f
 
 \section{Sviluppi Futuri}
 
-Il sistema EscapeManager è stato progettato con un'architettura modulare e disaccoppiata che facilita future estensioni. Alcune direzioni di evoluzione includono:
+Essendo suddiviso in moduli indipendenti, il sistema lascia aperte molte possibilità per eventuali estensioni. Di seguito alcune idee per tappe future (funzionalità non implementate in questa prima versione):
 
 \subsection{Interfaccia Grafica Completa (JavaFX/Web)}
 I mockup attuali possono essere trasformati in una GUI funzionale collegata ai Controller esistenti, senza modificare il Domain Model. In alternativa, una migrazione a frontend web (React/Angular) con backend Spring Boot richiederebbe solo la trasformazione dei Controller in \texttt{@RestController}.
