@@ -1,4 +1,4 @@
-@startuml sequence_tariffe
+@startuml fig_3_10_sequence_tariffe
 actor "Admin" as Admin
 participant "ConsoleMenu\n(Boundary)" as UI
 participant "TariffeController\n(Control)" as CTRL

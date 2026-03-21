@@ -1,4 +1,4 @@
-@startuml object_diagram
+@startuml fig_3_6_object_diagram
 skinparam objectBorderColor DarkSlateGray
 skinparam objectBackgroundColor LightCyan
 

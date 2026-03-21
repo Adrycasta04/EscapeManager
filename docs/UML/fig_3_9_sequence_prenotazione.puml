@@ -1,4 +1,4 @@
-@startuml sequence_prenotazione
+@startuml fig_3_9_sequence_prenotazione
 skinparam style strictuml
 skinparam sequenceMessageAlign center
 skinparam maxMessageSize 150

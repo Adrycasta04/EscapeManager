@@ -1,4 +1,4 @@
-@startuml sequence_gestione_stato
+@startuml fig_3_11_sequence_gestione_stato
 
 skinparam style strictuml
 skinparam sequenceMessageAlign center

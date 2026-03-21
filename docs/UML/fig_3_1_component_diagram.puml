@@ -1,4 +1,4 @@
-@startuml component_diagram
+@startuml fig_3_1_component_diagram
 skinparam componentStyle rectangle
 skinparam shadowing true
 skinparam defaultFontSize 12

@@ -206,9 +206,13 @@ latexmk -pdf main.tex
 - Domain Model (Class Diagram con Design Pattern)
 - Package Diagram
 - Component Diagram
-- ER Diagram (Database)
-- State Machine Diagram (RoomState)
-- Sequence Diagram (x3: UC1, UC3, UC4)
+- Component Diagram
+- ER Diagram (Database con legenda Crow's Foot)
+- State Machine Diagram (Ciclo di vita Stanza)
+- Sequence Diagram (UC1, UC3, UC4)
+- Class Diagram Eccezioni (Capitolo 4)
+
+Tutti i file seguono la convenzione di naming **`fig_X_Y_nome.puml`** per una perfetta tracciabilità con la relazione.
 
 **Rigenerazione**:
 ```bash

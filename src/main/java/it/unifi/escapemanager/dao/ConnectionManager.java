@@ -8,8 +8,12 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionManager {
-    // Istanza statica unica (Singleton)
-    private static ConnectionManager instance;
+
+    
+    // Costrutto thread-safe: Initialization-on-demand holder idiom
+    private static class Holder {
+        private static final ConnectionManager INSTANCE = new ConnectionManager();
+    }
     private Connection connection;
 
     private static final String PROP_FILE = "db.properties";
@@ -46,10 +50,7 @@ public class ConnectionManager {
 
     // Metodo per ottenere l'istanza
     public static ConnectionManager getInstance() {
-        if (instance == null) {
-            instance = new ConnectionManager();
-        }
-        return instance;
+        return Holder.INSTANCE;
     }
 
     // Metodo per ottenere la connessione JDBC

@@ -1,4 +1,4 @@
-@startuml package_diagram
+@startuml fig_3_2_package_diagram
 skinparam linetype ortho
 skinparam shadowing true
 skinparam packageStyle folder

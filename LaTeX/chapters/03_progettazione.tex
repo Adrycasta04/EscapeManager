@@ -7,7 +7,7 @@ L'architettura è organizzata in strati coerenti con il paradigma BCE. Le intera
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{images/component_diagram.png}
+    \includegraphics[width=\textwidth]{images/fig_3_1_component_diagram.png}
     \caption{Architettura a strati e separazione BCE}
     \label{fig:component_diagram}
 \end{figure}
@@ -17,7 +17,7 @@ Il Package Diagram (Figura \ref{fig:package_diagram}) descrive la struttura logi
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{images/package_diagram.png}
+    \includegraphics[width=0.75\textwidth]{images/fig_3_2_package_diagram.png}
     \caption{Package Diagram dell'architettura di sistema}
     \label{fig:package_diagram}
 \end{figure}
@@ -28,7 +28,7 @@ Ecco alcune scelte chiave adottate per mantenere il codice pulito e comprensibil
     \item \textbf{DAO + JDBC} invece di ORM: architettura leggera studiata per garantire maggiore controllo sul mapping e totale trasparenza dei flussi dati.
     \item \textbf{CLI come Boundary} per ridurre l'impatto della UI e concentrare lo sforzo sulla logica di business.
     \item \textbf{Pattern GoF espliciti} (State/Strategy/Observer) per rendere evidenti i punti di estensione del dominio.
-    \item \textbf{Single Table Inheritance} per la gerarchia \texttt{Utente}, semplificando query e autenticazione futura.
+    \item \textbf{Single Table Inheritance} per la gerarchia \texttt{Utente}: semplifica le query e l'autenticazione, assumendosi il lieve svantaggio di tollerare colonne vuote (\texttt{NULL}) per gli attributi non in comune.
 \end{itemize}
 
 \section{Domain Model (Class Diagram)}
@@ -37,7 +37,7 @@ La Figura \ref{fig:domain_model} illustra il diagramma delle classi per il nucle
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{images/domain_model.png}
+    \includegraphics[width=1\textwidth]{images/fig_3_3_domain_model.png}
     \caption{Diagramma delle Classi del Domain Model con Design Pattern}
     \label{fig:domain_model}
 \end{figure}
@@ -47,7 +47,7 @@ Per documentare i layer di controllo e presentazione, la Figura \ref{fig:class_d
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{images/class_diagram_controllers.png}
+    \includegraphics[width=0.9\textwidth]{images/fig_3_4_class_diagram_controllers.png}
     \caption{Class Diagram: Controllers e Boundary (CLI)}
     \label{fig:class_diagram_controllers}
 \end{figure}
@@ -57,8 +57,8 @@ Per non legare i Controller direttamente al database Postgres, il sistema usa il
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{images/class_diagram_persistence.png}
-    \caption{Class Diagram: Package DAO e Gerarchia delle eccezioni}
+    \includegraphics[width=0.95\textwidth]{images/fig_3_5_class_diagram_dao.png}
+    \caption{Class Diagram: Package DAO (Abstract Factory)}
     \label{fig:class_diagram_dao}
 \end{figure}
 
@@ -82,7 +82,7 @@ Per illustrare concretamente il funzionamento del \textbf{Pattern Observer} (des
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{images/object_diagram.png}
+    \includegraphics[width=0.95\textwidth]{images/fig_3_6_object_diagram.png}
     \caption{Object Diagram: Esempio di istanza runtime del Pattern Observer (Lista d'Attesa)}
     \label{fig:object_diagram}
 \end{figure}
@@ -96,7 +96,7 @@ Per documentare formalmente il ciclo di vita operativo della Stanza, è stato pr
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{images/state_machine_room.png}
+    \includegraphics[width=0.85\textwidth]{images/fig_3_7_state_machine_room.png}
     \caption{State Machine Diagram per il ciclo di vita della Stanza (RoomState)}
     \label{fig:state_machine_room}
 \end{figure}
@@ -112,7 +112,7 @@ La Figura \ref{fig:er_diagram} mostra il diagramma Entità-Relazione (ER) del da
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{images/er_diagram.png}
+    \includegraphics[width=0.85\textwidth]{images/fig_3_8_er_diagram.png}
     \caption{Diagramma Entity-Relationship (ER) del sistema}
     \label{fig:er_diagram}
 \end{figure}
@@ -124,7 +124,7 @@ Per collegare il mondo a oggetti a quello delle tabelle ho scelto queste strade:
 \begin{itemize}[leftmargin=*]
 \raggedright
 \setlength{\emergencystretch}{3em}
-    \item \textbf{Mapping dell'Ereditarietà (Single Table Strategy):} La gerarchia della classe astratta \texttt{Utente} (Cliente, GameMaster, Admin) è stata mappata utilizzando il pattern \textit{Single Table Inheritance}. È stata creata un'unica tabella \texttt{UTENTE} provvista di una colonna discriminante (\texttt{ruolo}). Gli attributi specifici delle sottoclassi (es. \texttt{matricola} per il Game Master o \texttt{telefono} per il Cliente) sono stati resi \textit{nullable}. Questa scelta ottimizza le query di autenticazione evitando costose operazioni di \texttt{JOIN}.
+    \item \textbf{Mapping dell'Ereditarietà (Single Table Strategy):} La gerarchia della classe astratta \texttt{Utente} (Cliente, GameMaster, Admin) è stata mappata utilizzando il pattern \textit{Single Table Inheritance}. È stata creata un'unica tabella \texttt{UTENTE} provvista di una colonna discriminante (\texttt{ruolo}). Gli attributi specifici delle sottoclassi (es. \texttt{matricola} per il Game Master o \texttt{telefono} per il Cliente) sono stati resi \textit{nullable}. Questa scelta ottimizza le query di autenticazione evitando costose operazioni di \texttt{JOIN}, accettando come fisiologico compromesso lo svantaggio di avere campi \texttt{NULL}.
     
     \item \textbf{Mapping dei Design Pattern (State e Strategy):} Le interfacce \texttt{RoomState} e \texttt{PricingStrategy} non diventano tabelle separate. Nella tabella \texttt{STANZA} sono persistite tramite stringhe (ad es.\ \texttt{stato\_corrente\allowbreak=\allowbreak IN\_MANUTENZIONE}). A livello di codice Java, i Data Access Object (DAO) utilizzano un meccanismo di \textit{Factory} per istanziare l'oggetto concreto corrispondente al valore letto dal database.
     
@@ -147,11 +147,11 @@ Per collegare il mondo a oggetti a quello delle tabelle ho scelto queste strade:
 Per illustrare le interazioni dinamiche tra gli oggetti a runtime, sono stati realizzati i Sequence Diagram per i casi d'uso principali.
 
 \subsection{UC1 - Prenotazione Stanza}
-La Figura \ref{fig:sequence_prenotazione} mostra il Sequence Diagram relativo al caso d'uso principale. Il diagramma evidenzia il rispetto del pattern architetturale BCE: l'interfaccia utente (Boundary) delega l'elaborazione al \texttt{PrenotazioneController} (Control), il quale orchestra il reperimento delle risorse persistenti e demanda la logica matematica di calcolo del prezzo all'entità \texttt{Stanza} (Entity). Particolare attenzione è stata posta nel disaccoppiamento del Controller dall'accesso ai dati, delegato interamente a un pattern creazionale.
+La Figura \ref{fig:sequence_prenotazione} mostra il Sequence Diagram relativo al caso d'uso principale. Il diagramma evidenzia il rispetto del pattern architetturale BCE: l'interfaccia utente (Boundary) delega l'elaborazione al \texttt{PrenotazioneController} (Control), il quale orchestra il reperimento delle risorse persistenti e demanda la logica matematica di calcolo del prezzo all'entità \texttt{Stanza} (Entity). Particolare attenzione è stata posta nel disaccoppiamento del Controller dall'accesso ai dati, delegato interamente a un pattern creazionale (DAO Factory).
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{images/sequence_prenotazione.png}
+    \includegraphics[width=\textwidth]{images/fig_3_9_sequence_prenotazione.png}
     \caption{Sequence Diagram del caso d'uso UC1 (Prenotazione Stanza)}
     \label{fig:sequence_prenotazione}
 \end{figure}
@@ -161,7 +161,7 @@ La Figura \ref{fig:sequence_tariffe} descrive il flusso di configurazione delle 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{images/sequence_tariffe.png}
+    \includegraphics[width=0.95\textwidth]{images/fig_3_10_sequence_tariffe.png}
     \caption{Sequence Diagram del caso d'uso UC4 (Configurazione Tariffe)}
     \label{fig:sequence_tariffe}
 \end{figure}
@@ -171,7 +171,7 @@ La Figura \ref{fig:sequence_gestione_stato_cap3} mostra il Sequence Diagram per 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{images/sequence_gestione_stato.png}
+    \includegraphics[width=0.95\textwidth]{images/fig_3_11_sequence_gestione_stato.png}
     \caption{Sequence Diagram del caso d'uso UC3 (Aggiornamento Stato Stanza)}
     \label{fig:sequence_gestione_stato_cap3}
 \end{figure}

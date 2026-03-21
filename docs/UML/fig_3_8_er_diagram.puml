@@ -1,13 +1,15 @@
-@startuml er_diagram
+@startuml fig_3_8_er_diagram
 hide circle
 skinparam linetype ortho
-skinparam EntityBackgroundColor #FFECB3
-skinparam EntityBorderColor #E65100
-skinparam EntityHeaderBackgroundColor #FB8C00
-skinparam EntityFontColor Black
 skinparam nodesep 80
 skinparam ranksep 60
 
+note as N1
+  **Legenda Notazione (Crow's Foot)**
+  --
+  ||  : Uno e uno solo (obbligatorio)
+  o|< : Zero, uno o molti (opzionale)
+end note
 entity "SEDE" as sede {
   * id : VARCHAR <<PK>>
   --

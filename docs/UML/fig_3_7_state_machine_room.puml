@@ -1,4 +1,4 @@
-@startuml state_machine_room
+@startuml fig_3_7_state_machine_room
 
 title Diagramma a Stati - Ciclo di Vita della Stanza (State Pattern)
 
@@ -57,7 +57,7 @@ note left of InManutenzione
   Guasto tecnico o
   manutenzione preventiva.
   Accessibile da ogni stato
-  tranne [*].
+  tranne [*] (creazione istanza).
 end note
 
 @enduml

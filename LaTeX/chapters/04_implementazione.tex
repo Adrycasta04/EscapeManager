@@ -4,7 +4,7 @@ Questo capitolo mostra come il modello di dominio e lo schema del database sono 
 
 \section{Architettura dei Package}
 
-L'applicazione è organizzata in quattro package principali (Figura \ref{fig:package_diagram}). Le dipendenze tra i package sono rigorosamente direzionali: lo strato di presentazione (\texttt{cli}) non accede mai direttamente al database, ma passa per i \texttt{controllers}, che a loro volta orchestrano il \texttt{domain} e si interfacciano con i \texttt{dao}.
+L'architettura del sistema è strutturata in quattro package distinti (Figura \ref{fig:package_diagram}), le cui interdipendenze seguono un vincolo di direzionalità rigorosa. Tale approccio garantisce un elevato disaccoppiamento: il layer di presentazione (\texttt{cli}), agendo come Boundary, non ha visibilità diretta della persistenza, ma interagisce esclusivamente con i \texttt{controllers} (layer Control). Questi ultimi orchestrano il flusso dei dati interfacciandosi con il \texttt{domain} (Entity) e delegando l'accesso fisico al database al package \texttt{dao} (Persistence).
 
 \subsection{cli (Boundary)}
 Contiene il punto di ingresso dell'applicazione e la CLI. La classe \texttt{ConsoleMenu} gestisce l'interazione con l'utente, la validazione di input di base e la delega delle operazioni ai Controller.
@@ -183,7 +183,7 @@ Come illustrato nella Figura \ref{fig:class_diagram_persistence}, la gerarchia d
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{images/class_diagram_persistence.png}
+    \includegraphics[width=0.85\textwidth]{images/fig_4_1_class_diagram_exceptions.png}
     \caption{Diagramma delle Classi: Pattern DAO Factory e Gerarchia Eccezioni}
     \label{fig:class_diagram_persistence}
 \end{figure}

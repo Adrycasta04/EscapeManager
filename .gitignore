@@ -12,12 +12,18 @@ src/main/resources/db.properties
 # Maven Wrapper (keep .properties, ignore downloaded jar)
 .mvn/wrapper/maven-wrapper.jar
 
-# IDE / OS
+# IDE / OS / Build
 /.idea/
 /.vscode/
+/.dist/
+/.settings/
+/.project
+/.classpath
 *.iml
 .DS_Store
 Thumbs.db
+bin/
+gen/
 
 # Log files
 *.log
@@ -28,6 +34,11 @@ Thumbs.db
 application-local.properties
 application-dev.properties
 /database/credentials.properties
+
+# Python-specific
+__pycache__/
+*.py[cod]
+*$py.class
 
 # LaTeX build artifacts
 LaTeX/out/
@@ -45,6 +56,8 @@ LaTeX/*.snm
 LaTeX/*.synctex.gz
 LaTeX/*.synctex(busy)
 LaTeX/*.toc
+LaTeX/*.xdv
+
 # Mockup JavaFX (solo per prototipi)
 src/main/java/it/unifi/escapemanager/mockup/
 src/main/resources/fxml/AdminView.fxml
@@ -52,6 +65,3 @@ src/main/resources/fxml/CatalogoView.fxml
 src/main/resources/fxml/DashboardGMView.fxml
 src/main/resources/fxml/ListaAttesaView.fxml
 src/main/resources/css/mockup.css
-LaTeX/*.synctex.gz
-LaTeX/*.toc
-LaTeX/*.xdv

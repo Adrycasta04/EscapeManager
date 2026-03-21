@@ -1,4 +1,4 @@
-﻿@startuml navigation_diagram
+﻿@startuml fig_2_2_navigation_diagram
 left to right direction
 skinparam state {
   BackgroundColor LightCyan

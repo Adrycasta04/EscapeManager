@@ -1,4 +1,4 @@
-@startuml domain_model
+@startuml fig_3_3_domain_model
 skinparam classAttributeIconSize 0
 skinparam linetype ortho
 
@@ -18,7 +18,7 @@ package "Domain Model (Entities & Core Logic)" {
         - nome: String
         - telefono: String
         - ultimaNotifica: String
-        + update(s: Stanza, d: Date): void
+        + update(stanza: Stanza, slotLiberato: LocalDateTime): void
     }
     class GameMaster {
         - matricola: String
@@ -46,7 +46,7 @@ package "Domain Model (Entities & Core Logic)" {
     ' --- PRENOTAZIONE con Builder Pattern ---
     class Prenotazione {
         - id: String
-        - dataOra: Date
+        - dataOra: LocalDateTime
         - numeroGiocatori: int
         - prezzoTotale: double
         - statoPartita: StatoPartita
@@ -55,7 +55,7 @@ package "Domain Model (Entities & Core Logic)" {
         + id(id: String): Builder
         + clienteId(id: String): Builder
         + stanzaId(id: String): Builder
-        + dataOra(dt: Date): Builder
+        + dataOra(dt: LocalDateTime): Builder
         + numeroGiocatori(n: int): Builder
         + prezzoTotale(p: double): Builder
         + statoPartita(s: StatoPartita): Builder
@@ -63,19 +63,19 @@ package "Domain Model (Entities & Core Logic)" {
     }
     PBuilder ..> Prenotazione : <<creates>>
 
-    Cliente "1" -- "*" Prenotazione : effettua >
+    Cliente "1" -- "*" Prenotazione : \n effettua >   
     Prenotazione "*" -- "1" Stanza : riservata per >
 
     ' Observer Pattern per Lista Attesa
     interface WaitingListObserver <<Observer>> {
-        + update(stanza: Stanza, data: Date): void
+        + update(stanza: Stanza, slotLiberato: LocalDateTime): void
     }
     class WaitingList <<Subject>> {
         - observers: List<WaitingListObserver>
         + attach(o: WaitingListObserver): void
         + detach(o: WaitingListObserver): void
-        + notifyObservers(s: Stanza, d: Date): void
-        + getObservers(): List (copia difensiva)
+        + notifyObservers(s: Stanza, d: LocalDateTime): void
+        + getObservers(): List<WaitingListObserver>
         + getObserverCount(): int
     }
     Cliente ..|> WaitingListObserver

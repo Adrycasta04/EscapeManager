@@ -1,15 +1,5 @@
-@startuml class_diagram_persistence
+@startuml fig_3_5_class_diagram_dao
 skinparam classAttributeIconSize 0
-
-package "it.unifi.escapemanager.exceptions" #E3F2FD {
-    class EscapeManagerException extends RuntimeException
-    
-    class DatabaseException extends EscapeManagerException
-    
-    class ValidationException extends EscapeManagerException
-    
-    class SlotNonDisponibileException extends ValidationException
-}
 
 package "it.unifi.escapemanager.dao" #F0F4C3 {
     interface DAOFactory <<interface>> {
@@ -47,9 +37,6 @@ package "it.unifi.escapemanager.dao" #F0F4C3 {
     PostgresDAOFactory .down.> StanzaDAOPostgres : <<creates>>
     PostgresDAOFactory .down.> PrenotazioneDAOPostgres : <<creates>>
     PostgresDAOFactory .down.> WaitingListDAOPostgres : <<creates>>
-    
-    StanzaDAOPostgres .up.> DatabaseException : <<throws>>
-    WaitingListDAOPostgres .up.> DatabaseException : <<throws>>
 
     StanzaDAO --|> GenericDAO
     PrenotazioneDAO --|> GenericDAO

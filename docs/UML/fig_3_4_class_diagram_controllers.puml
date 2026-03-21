@@ -1,4 +1,4 @@
-@startuml class_diagram_controllers
+@startuml fig_3_4_class_diagram_controllers
 skinparam classAttributeIconSize 0
 skinparam linetype ortho
 skinparam shadowing true
@@ -33,6 +33,6 @@ PrenotazioneController --> PrenotazioneDAO : dipende
 PrenotazioneController --> StanzaDAO : dipende
 GestioneStatoController --> StanzaDAO : dipende
 TariffeController --> StanzaDAO : dipende
-ListaAttesaController --> WaitingListDAO : dipende
+ListaAttesaController --> WaitingListDAO : ".               dipende"
 
 @enduml
