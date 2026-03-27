@@ -1,7 +1,7 @@
 \chapter{Introduzione}
 
 \section{Statement}
-Il progetto \textbf{EscapeManager} è un sistema gestionale pensato per una catena in \textit{franchising} di Escape Room. L'obiettivo è offrire un'unica applicazione che permetta ai clienti di prenotare le stanze e, allo stesso tempo, fornisca al personale gli strumenti necessari per controllare le sessioni di gioco.
+Il progetto \textbf{EscapeManager} è un sistema gestionale pensato per una catena in \textit{franchising} di Escape Room. L'idea è centralizzare in un unico software la prenotazione delle stanze da parte dei clienti e il controllo delle sessioni di gioco da parte del personale.
 
 Il dominio dell'applicazione si basa su entità principali come \textbf{Sede}, \textbf{Stanza}, \textbf{Utente} (con vari ruoli) e \textbf{Prenotazione}. Ogni sede ospita più stanze, ognuna con un tema, una difficoltà, una capienza e un ciclo di vita operativo preciso (es. \textit{Disponibile, In Corso, In Pulizia, In Manutenzione}).
 
@@ -12,7 +12,7 @@ Il sistema prevede tre tipi di utenti:
     \item \textbf{Admin (Amministratore):} ha una visione globale sul franchising e può configurare le politiche di prezzo (ad esempio impostando i prezzi del weekend).
 \end{itemize}
 
-L'architettura segue il pattern BCE (Boundary-Control-Entity) unito ai principi OOD. Per risolvere i problemi di business (come il cambio di stato delle stanze o il calcolo del prezzo dinamico) ho applicato diversi Design Pattern della Gang of Four. I dati, le prenotazioni e le liste d'attesa sono salvati su un database relazionale.
+Ho organizzato il codice secondo il pattern BCE (Boundary-Control-Entity), applicando i principi dell'Object-Oriented Design. Per i problemi centrali del dominio — come il cambio di stato delle stanze o il calcolo del prezzo dinamico — ho applicato diversi Design Pattern GoF. I dati sono salvati su un database relazionale PostgreSQL.
 
 \section{Stack Tecnologico e Strumenti}
 Nello sviluppo sono state utilizzate le seguenti tecnologie:
@@ -26,9 +26,9 @@ Nello sviluppo sono state utilizzate le seguenti tecnologie:
 \end{itemize}
 
 \section{Note sull'uso dell'Intelligenza Artificiale}
-Come previsto dalle direttive del corso, nello sviluppo di \textit{EscapeManager} mi sono avvalso di strumenti di Intelligenza Artificiale Generativa (GitHub Copilot e Google Gemini) come supporto alla programmazione. 
+Come previsto dalle direttive del corso, nello sviluppo di \textit{EscapeManager} ho usato strumenti di AI generativa (GitHub Copilot e Google Gemini) come supporto alla programmazione. 
 
-L'approccio usato non è stato delegare completamente il lavoro, ma sfruttare l'AI come "aiutante":
+Non ho delegato il lavoro all'AI, ma l'ho usata come supporto pratico:
 \begin{itemize}
     \item \textbf{Decisioni architetturali:} Le scelte di design (uso del pattern BCE, o dove applicare State e Strategy) derivano dallo studio teorico fatto a lezione.
     \item \textbf{Scrittura codice:} Ho chiesto all'AI di aiutarmi ad accelerare la scrittura di codice ripetitivo (ad esempio i metodi getter/setter, l'ossatura delle classi DAO o la base per i test JUnit).
@@ -37,9 +37,9 @@ L'approccio usato non è stato delegare completamente il lavoro, ma sfruttare l'
 \end{itemize}
 
 \section{Struttura del documento}
-La relazione è suddivisa in questo modo: il Capitolo 2 presenta l'analisi dei requisiti; il Capitolo 3 discute le scelte architetturali; il Capitolo 4 mostra frammenti di implementazione Java; infine, il Capitolo 5 riassume le batterie di test.
+Nei capitoli che seguono: il 2 copre l'analisi dei requisiti con Use Case e mockup; il 3 presenta le scelte di progettazione e i diagrammi UML; il 4 mostra i frammenti di codice Java più significativi; il 5 descrive la strategia di test.
 
 \section{Stato del prototipo e limitazioni}
-\textit{EscapeManager} è attualmente un prototipo scolastico funzionante che si concentra sulla logica di business e sui dati. Per interagirci si utilizza un semplice menu a linea di comando (CLI), mentre le schermate grafiche inserite nella relazione fungono solo da mockup per mostrare il design immaginato. 
+\textit{EscapeManager} è un prototipo didattico funzionante, focalizzato sulla logica di business e sulla persistenza dei dati. L'interazione avviene tramite un menu a linea di comando (CLI); le schermate grafiche presenti nella relazione sono mockup che illustrano l'interfaccia ipotizzata.
 
 L'infrastruttura di base (come l'iscrizione a una lista d'attesa modellata con il pattern Observer) è testata e implementata correttamente lato codice. Tuttavia, alcune dinamiche reali (come l'invio concreto di un'email tramite SMTP o un gateway di pagamento) esulano dal perimetro prototipale in esame e non sono state implementate.

@@ -33,6 +33,6 @@ PrenotazioneController --> PrenotazioneDAO : dipende
 PrenotazioneController --> StanzaDAO : dipende
 GestioneStatoController --> StanzaDAO : dipende
 TariffeController --> StanzaDAO : dipende
-ListaAttesaController --> WaitingListDAO : ".               dipende"
+ListaAttesaController --> WaitingListDAO : dipende
 
 @enduml

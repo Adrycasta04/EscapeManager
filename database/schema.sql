@@ -1,9 +1,5 @@
--- Pulizia iniziale (utile per i test e per resettare lo stato)
-DROP TABLE IF EXISTS LISTA_ATTESA;
-DROP TABLE IF EXISTS PRENOTAZIONE;
-DROP TABLE IF EXISTS UTENTE;
-DROP TABLE IF EXISTS STANZA;
-DROP TABLE IF EXISTS SEDE;
+-- Schema del database EscapeManager
+-- Per resettare il DB prima di ricreare le tabelle, eseguire: reset.sql
 
 -- 1. Tabella SEDE
 CREATE TABLE SEDE (

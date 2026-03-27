@@ -1,9 +1,9 @@
 \chapter{Progettazione Architetturale e di Dominio}
 
-Il processo di transizione dall'analisi dei requisiti alla progettazione ha seguito i principi dell'Object-Oriented Design (OOD) e l'approccio BCE (Boundary-Control-Entity). In questo capitolo viene dettagliata la struttura statica del Domain Model, ponendo particolare enfasi sull'applicazione dei Design Pattern fondamentali per garantire la manutenibilità, l'estensibilità e il disaccoppiamento del sistema.
+Partendo dai casi d'uso del Capitolo 2, la progettazione segue i principi dell'Object-Oriented Design (OOD) con architettura BCE (Boundary-Control-Entity). In questo capitolo viene presentata la struttura statica del sistema e l'applicazione dei Design Pattern scelti per mantenere il codice estensibile e disaccoppiato.
 
 \section{Architettura a Strati e BCE}
-L'architettura è organizzata in strati coerenti con il paradigma BCE. Le interazioni tra Boundary (CLI e mockup), Control (Controllers) ed Entity (Domain Model) sono strettamente direzionali, mentre la persistenza è isolata nel layer DAO.
+L'architettura è organizzata in strati coerenti con il paradigma BCE. L'interfaccia (CLI/mockup) comunica solo coi Controller, i quali gestiscono le entità del dominio e delegano la persistenza al layer DAO. Le dipendenze vanno solo verso il basso.
 
 \begin{figure}[H]
     \centering
@@ -53,7 +53,7 @@ Per documentare i layer di controllo e presentazione, la Figura \ref{fig:class_d
 \end{figure}
 
 \section{Class Diagram del Package DAO (Persistenza)}
-Per non legare i Controller direttamente al database Postgres, il sistema usa il pattern \textbf{Abstract Factory} (DAO Factory). La Figura \ref{fig:class_diagram_dao} mostra il package \texttt{dao}, con le interfacce, le classi concrete e la connessione unica (Singleton).
+Per scollegare i Controller dal database concreto, il sistema usa il pattern \textbf{Abstract Factory} (DAO Factory): la Factory espone metodi per ottenere i DAO di tutte le entità (Stanza, Prenotazione, WaitingList), e i Controller lavorano solo con le interfacce restituite, senza sapere quale database ci sia sotto. La Figura \ref{fig:class_diagram_dao} mostra il package \texttt{dao}, con le interfacce, le classi concrete e la connessione unica (Singleton).
 
 \begin{figure}[H]
     \centering
@@ -89,7 +89,7 @@ Per illustrare concretamente il funzionamento del \textbf{Pattern Observer} (des
 
 L'Object Diagram raffigura tre clienti (\texttt{:Cliente}) registrati come osservatori (\texttt{WaitingList}\allowbreak\texttt{Observer}) sulla \texttt{:WaitingList} associata a una stanza specifica (\texttt{:Stanza}). Quando lo slot richiesto si libera, il Subject (\texttt{WaitingList}) invocherà il metodo \texttt{update()} su tutti e tre gli Observer, notificandoli della disponibilità.
 
-Questo diagramma evidenzia inoltre le relazioni con i pattern \textbf{State} (stato corrente della stanza) e \textbf{Strategy} (politica di prezzo dinamica), mostrando come i tre pattern collaborino a runtime per realizzare la logica di business del franchising.
+L'Object Diagram mostra anche come i pattern State e Strategy coesistano a runtime sulla stessa istanza di Stanza: lo stato corrente governa le transizioni, la strategia di prezzo governa il calcolo economico, e la WaitingList gestisce le notifiche.
 
 \subsection{State Machine Diagram}
 Per documentare formalmente il ciclo di vita operativo della Stanza, è stato prodotto il diagramma a stati della Figura \ref{fig:state_machine_room}. Questo diagramma è una vista complementare al class diagram del Domain Model e descrive le transizioni valide tra i 4 stati concreti dell'interfaccia \texttt{RoomState}.
@@ -147,7 +147,7 @@ Per collegare il mondo a oggetti a quello delle tabelle ho scelto queste strade:
 Per illustrare le interazioni dinamiche tra gli oggetti a runtime, sono stati realizzati i Sequence Diagram per i casi d'uso principali.
 
 \subsection{UC1 - Prenotazione Stanza}
-La Figura \ref{fig:sequence_prenotazione} mostra il Sequence Diagram relativo al caso d'uso principale. Il diagramma evidenzia il rispetto del pattern architetturale BCE: l'interfaccia utente (Boundary) delega l'elaborazione al \texttt{PrenotazioneController} (Control), il quale orchestra il reperimento delle risorse persistenti e demanda la logica matematica di calcolo del prezzo all'entità \texttt{Stanza} (Entity). Particolare attenzione è stata posta nel disaccoppiamento del Controller dall'accesso ai dati, delegato interamente a un pattern creazionale (DAO Factory).
+La Figura \ref{fig:sequence_prenotazione} mostra il Sequence Diagram relativo al caso d'uso principale. Il flusso segue il pattern BCE: la CLI (Boundary) delega al \texttt{PrenotazioneController} (Control), che recupera i dati attraverso la DAO Factory e demanda il calcolo del prezzo all'entità \texttt{Stanza} (Entity). Il Controller non accede mai direttamente al database.
 
 \begin{figure}[H]
     \centering

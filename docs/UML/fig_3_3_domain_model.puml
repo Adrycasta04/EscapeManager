@@ -88,6 +88,7 @@ package "Domain Model (Entities & Core Logic)" {
         + terminaSessione(s: Stanza): void
         + setManutenzione(s: Stanza): void
         + setDisponibile(s: Stanza): void
+        + getStatusString(): String
     }
     class DisponibileState implements RoomState
     class InCorsoState implements RoomState

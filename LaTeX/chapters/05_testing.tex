@@ -1,13 +1,13 @@
 \chapter{Collaudo e Testing}
 
-Il testing del sistema \textbf{EscapeManager} utilizza i framework \textbf{JUnit 5} e \textbf{Mockito} ed è organizzato su più livelli. Lo scopo, oltre a trovare eventuali bug, è dimostrare che l'architettura funziona come previsto dai requisiti (Capitolo 2).
+Il testing di \textbf{EscapeManager} è strutturato su più livelli con \textbf{JUnit 5} e \textbf{Mockito}. Oltre a verificare l'assenza di bug, i test servono a dimostrare che ogni Design Pattern e ogni flusso dei casi d'uso funzionano come previsto.
 
 \section{Strategia di Verifica}
 La strategia di test è organizzata su quattro livelli complementari:
 \begin{itemize}
     \item \textbf{Unit Test (White-Box):} verificano le logiche pure del Domain Model e dei Design Pattern in completo isolamento.
     \item \textbf{Mock Test (Mockito):} testano i Controller sostituendo i DAO reali con oggetti simulati, isolando la logica di business dal database.
-    \item \textbf{Integration Test (DAO/DB):} verificano il mapping ORM e la correttezza delle query principali su database reale.
+    \item \textbf{Integration Test (DAO/DB):} verificano il corretto mapping oggetto-relazionale via JDBC e la correttezza delle query su database reale.
     \item \textbf{Functional Test (Black-Box):} esercitano i Controller come surrogati della UI, in linea con i template UC.
 \end{itemize}
 
@@ -77,7 +77,7 @@ class PrenotazioneControllerMockTest {
 
 \section{Testing di Integrazione (DAO e Database)}
 
-Per verificare il corretto interfacciamento tra l'applicazione Java e il database PostgreSQL (livello ORM), sono stati implementati test di integrazione sulle classi DAO.
+Per verificare che le classi DAO mappino correttamente gli oggetti Java sulle tabelle PostgreSQL via JDBC, sono stati scritti test di integrazione su database reale.
 Per garantire la \textbf{ripetibilità} e l'isolamento, il costrutto \texttt{@BeforeEach} invoca \texttt{DatabaseHelper.resetTestDatabase()}, che esegue TRUNCATE e reinserisce un dataset minimo prima di ogni metodo di test.
 
 \begin{lstlisting}[caption={Integration Test per StanzaDAOPostgres con reset dello stato}, label={lst:test_dao}]

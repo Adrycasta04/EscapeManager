@@ -1,10 +1,10 @@
 \chapter{Implementazione e Architettura del Codice}
 
-Questo capitolo mostra come il modello di dominio e lo schema del database sono stati trasformati in vero codice Java. Il progetto usa un'architettura "a strati" (Layered architecture) basata sul modello BCE, studiata per separare le responsabilità e semplificare la scrittura dei test.
+Questo capitolo descrive l'implementazione del modello di dominio e dello schema del database in codice Java. Il progetto adotta un'architettura a strati basata sul modello BCE, pensata per separare le responsabilità e facilitare i test.
 
 \section{Architettura dei Package}
 
-L'architettura del sistema è strutturata in quattro package distinti (Figura \ref{fig:package_diagram}), le cui interdipendenze seguono un vincolo di direzionalità rigorosa. Tale approccio garantisce un elevato disaccoppiamento: il layer di presentazione (\texttt{cli}), agendo come Boundary, non ha visibilità diretta della persistenza, ma interagisce esclusivamente con i \texttt{controllers} (layer Control). Questi ultimi orchestrano il flusso dei dati interfacciandosi con il \texttt{domain} (Entity) e delegando l'accesso fisico al database al package \texttt{dao} (Persistence).
+L'architettura del sistema è divisa in quattro package (Figura \ref{fig:package_diagram}), con dipendenze che vanno sempre nella stessa direzione: la CLI comunica solo coi controller, i controller usano il dominio e i DAO, e il DAO è l'unico che parla col database.
 
 \subsection{cli (Boundary)}
 Contiene il punto di ingresso dell'applicazione e la CLI. La classe \texttt{ConsoleMenu} gestisce l'interazione con l'utente, la validazione di input di base e la delega delle operazioni ai Controller.
@@ -149,7 +149,7 @@ public class WaitingList {
 \end{lstlisting}
 
 \subsection{Builder Pattern}
-Data la presenza di molteplici attributi nella classe \texttt{Prenotazione}, l'istanziazione è delegata al pattern creazionale \textbf{Builder}, ottimizzando la leggibilità e prevenendo errori nell'ordine di inizializzazione dei parametri.
+La classe \texttt{Prenotazione} ha molti attributi, e costruirla con un costruttore tradizionale sarebbe fragile e poco leggibile. Per questo l'istanziazione avviene tramite il pattern \textbf{Builder}:
 
 \begin{lstlisting}[caption={Builder Pattern per la classe Prenotazione}, label={lst:builder_pattern}]
 Prenotazione p = new Prenotazione.Builder()

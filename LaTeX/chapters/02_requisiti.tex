@@ -1,6 +1,6 @@
 \chapter{Analisi dei Requisiti}
 
-Per definire i requisiti funzionali del sistema in ottica Object-Oriented, si è proceduto all'identificazione degli attori principali e dei relativi casi d'uso. La modellazione è stata condotta tramite un diagramma dettagliato per l'analisi tecnica.
+I requisiti funzionali sono stati definiti partendo dall'identificazione degli attori principali e dei relativi casi d'uso. La modellazione è stata condotta con un diagramma dettagliato.
 
 Il sistema prevede le seguenti figure:
 \begin{itemize}
@@ -10,7 +10,7 @@ Il sistema prevede le seguenti figure:
 \end{itemize}
 
 \section{Use Case Diagram}
-La Figura \ref{fig:usecase_dettagliato} rappresenta i casi d'uso del sistema. La gerarchia dei flussi rispetta il principio DRY (Don't Repeat Yourself), delegando operazioni comuni a funzioni riutilizzabili per evitare la duplicazione della logica nei template dei singoli casi d'uso. L'autenticazione utente, pur essendo fondamentale, non è stata modellata come UC separato in quanto rappresenta una precondizione implicita di tutti i casi d'uso.
+La Figura \ref{fig:usecase_dettagliato} rappresenta i casi d'uso del sistema. Le operazioni comuni a più flussi (come la consultazione del catalogo o il calcolo del prezzo) sono state estratte come UC di livello \texttt{\guillemotleft function\guillemotright} e collegate tramite relazioni \texttt{\guillemotleft include\guillemotright}, evitando duplicazioni nei template. L'autenticazione utente non è stata modellata come UC separato in quanto rappresenta una precondizione implicita di tutti i casi d'uso.
 
 \begin{figure}[H]
     \centering
@@ -41,7 +41,7 @@ Nei template dei casi d'uso, ogni passo include tra parentesi il riferimento al 
 \clearpage
 \section{Use Case Templates}
 
-Di seguito vengono dettagliati i template per i casi d'uso primari del sistema, adottando un formato strutturato che esplicita le pre-condizioni, le post-condizioni, il flusso base (Main Success Scenario) e le possibili deviazioni (Alternative Flows). Ogni passo riporta, tra parentesi, i riferimenti a mockup e navigazione (M1..M4, N0..N5). Questa formalizzazione costituisce il contratto per lo sviluppo e la base per la successiva stesura dei test funzionali.
+Ogni caso d'uso è documentato con un template strutturato: pre-condizioni, post-condizioni, flusso base (Main Success Scenario) e deviazioni (Alternative Flows). Ogni passo riporta tra parentesi il riferimento al mockup e al nodo di navigazione (M1..M4, N0..N5). Questa formalizzazione è la base per lo sviluppo e per la stesura dei test funzionali.
 
 \subsection{UC1 - Prenotazione Stanza}
 
@@ -298,8 +298,7 @@ Oltre ai requisiti funzionali, il sistema deve rispettare i seguenti requisiti n
 \end{itemize}
 
 \section{Diagramma di Navigazione}
-La Figura \ref{fig:navigation_diagram} illustra il diagramma di navigazione dell'applicativo, mutuando il formalismo del \textit{Page Navigation Diagram} per adattarlo al contesto di una Command Line Interface (CLI). Il diagramma modella le transizioni di stato logico dell'interfaccia utente, stabilendo una corrispondenza diretta tra i menu di sistema e l'esecuzione dei casi d'uso primari (UC1--UC4). 
-I singoli stati dell'interfaccia sono formalizzati mediante nodi etichettati (\textbf{N0..N5}), i cui riferimenti sono rigorosamente tracciati all'interno dei template dei casi d'uso (Sezione 2.2) al fine di garantire la totale coerenza tra i requisiti funzionali e l'albero di navigazione esposto all'utente.
+La Figura \ref{fig:navigation_diagram} mostra il diagramma di navigazione dell'applicativo. Pur trattandosi di una CLI e non di un'interfaccia web, il diagramma adotta il formalismo del \textit{Page Navigation Diagram} per rappresentare le transizioni logiche tra i menu del sistema. Ogni nodo (\textbf{N0..N5}) corrisponde a uno stato dell'interfaccia ed è tracciato nei passi dei template (Sezione 2.2), così da mantenere coerenza tra requisiti e navigazione.
 
 \begin{figure}[H]
     \centering
@@ -309,9 +308,9 @@ I singoli stati dell'interfaccia sono formalizzati mediante nodi etichettati (\t
 \end{figure}
 
 \section{Mockup e Interfaccia Utente (UI)}
-Al fine di concretizzare l'analisi dei requisiti e validare le interazioni previste nei casi d'uso principali, sono stati realizzati dei mockup per le schermate core del sistema. Questa fase di \textit{modellazione visiva preliminare} garantisce una mappatura visiva diretta tra le intenzioni dell'attore (User Goal) e le effettive funzionalità esposte dal sistema \textit{EscapeManager}. I mockup sono identificati come M1..M4 e richiamati nei template.
+Per concretizzare le interazioni previste nei casi d'uso, ho realizzato dei mockup per le schermate principali. Questo lavoro ha permesso di definire con precisione i dati e i controlli che ogni schermata deve esporre, ancor prima di scrivere il codice. I mockup sono identificati come M1..M4 e richiamati nei template.
 
-È importante specificare che, sebbene l'implementazione finale del prototipo utilizzi una \textbf{Command Line Interface (CLI)} per focalizzarsi sulla Business Logic, la produzione dei mockup è stata fondamentale in sede di analisi. Essa ha permesso di definire con precisione le interazioni Boundary-Control, garantendo che lo strato di business logic (Application Layer) sia già predisposto e indipendente (secondo il pattern BCE): se in futuro si volesse sviluppare una vera interfaccia web basata su tali mockup, il dominio e i controller rimarrebbero invariati.
+L'implementazione finale usa una \textbf{CLI} per concentrarsi sulla logica di business, ma i mockup restano utili perché documentano il confine Boundary-Control: se in futuro si sviluppasse un'interfaccia web, i controller e il dominio non cambierebbero (BCE).
 
 \begin{figure}[H]
     \centering

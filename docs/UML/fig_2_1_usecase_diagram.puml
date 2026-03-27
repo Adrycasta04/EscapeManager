@@ -65,7 +65,7 @@ UC_C2 .up.> UC_C1 : <<extend>>\n(se slot occupato)
 UC_C1 ..> UC_F5 : <<include>>
 UC_C1 ..> UC_F6 : <<include>>
 UC_C1 ..> UC_F7 : <<include>>
-UC_C1 ..> UC_C1_1 : <<include>>
+
 
 UC_C2 ..> UC_F5 : <<include>>
 
